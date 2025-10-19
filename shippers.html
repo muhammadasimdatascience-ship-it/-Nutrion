@@ -1,0 +1,2434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Shipper Ledger Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* All the CSS styles remain the same as in the original code */
+        .status-pill {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-paid {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .status-overdue {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+        .status-credit {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        .form-input {
+            display: block;
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgb(79 70 229 / 0.2);
+        }
+        .message-box {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+        }
+        .tab-button {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .tab-button.active {
+            background-color: #4f46e5;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .delete-btn {
+            color: #ef4444;
+            cursor: pointer;
+        }
+        .delete-btn:hover {
+            color: #dc2626;
+        }
+        .financial-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .financial-item:hover {
+            background-color: #f9fafb;
+        }
+        .shipper-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .shipper-table th, .shipper-table td {
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            text-align: left;
+        }
+        .shipper-table th {
+            background-color: #f9fafb;
+            font-weight: 600;
+        }
+        .shipper-table tr:nth-child(even) {
+            background-color: #f3f4f6;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background-color: #4f46e5;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+        .btn-success {
+            background-color: #10b981;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #059669;
+        }
+        .btn-teal {
+            background-color: #0d9488;
+            color: white;
+        }
+        .btn-teal:hover {
+            background-color: #0f766e;
+        }
+        .btn-purple {
+            background-color: #8b5cf6;
+            color: white;
+        }
+        .btn-purple:hover {
+            background-color: #7c3aed;
+        }
+        .btn-gray {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+        .btn-gray:hover {
+            background-color: #d1d5db;
+        }
+        .filter-section {
+            background-color: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .financial-summary-card {
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .summary-positive {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .summary-negative {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+        .summary-neutral {
+            background-color: #e0e7ff;
+            color: #3730a3;
+        }
+        .credit-balance {
+            background-color: #dbeafe;
+            color: #1e40af;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+        <header class="mb-8 bg-white p-6 rounded-xl shadow-lg">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Enhanced Business Management System</h1>
+            <p class="text-gray-600 mt-1">Manage shippers, finances, and track profit/loss</p>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <div class="bg-white p-4 rounded-xl shadow-lg mb-8">
+            <div class="flex space-x-2">
+                <div class="tab-button active" data-tab="shipper">Shipper Management</div>
+                <div class="tab-button" data-tab="financial">Financial Tracking</div>
+                <div class="tab-button" data-tab="reports">Reports & Analysis</div>
+            </div>
+        </div>
+
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column: Shipper Details Form -->
+            <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg h-fit tab-content active" id="shipper-tab">
+                <h2 class="text-xl font-semibold mb-4 border-b pb-3">Add Shipper Details</h2>
+                <form id="shipperForm">
+                    <div class="space-y-4">
+                        <!-- Shipper Name -->
+                        <div>
+                            <label for="shipperName" class="block text-sm font-medium text-gray-700">Shipper Name</label>
+                            <input type="text" id="shipperName" name="shipperName" required class="mt-1 form-input" placeholder="e.g., ABC Shipping Co.">
+                        </div>
+
+                        <!-- Invoice Number -->
+                        <div>
+                            <label for="invoiceNumber" class="block text-sm font-medium text-gray-700">Invoice Number</label>
+                            <input type="text" id="invoiceNumber" name="invoiceNumber" required class="mt-1 form-input" placeholder="e.g., INV-001">
+                        </div>
+
+                        <!-- Invoice Date -->
+                        <div>
+                            <label for="invoiceDate" class="block text-sm font-medium text-gray-700">Invoice Date</label>
+                            <input type="date" id="invoiceDate" name="invoiceDate" required class="mt-1 form-input">
+                        </div>
+
+                        <!-- Description -->
+                        <div>
+                            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                            <textarea id="description" name="description" required class="mt-1 form-input" placeholder="e.g., Shipping services for August" rows="3"></textarea>
+                        </div>
+
+                        <!-- Total Amount -->
+                        <div>
+                            <label for="totalAmount" class="block text-sm font-medium text-gray-700">Total Amount (PKR)</label>
+                            <input type="number" id="totalAmount" name="totalAmount" required step="0.01" class="mt-1 form-input" placeholder="e.g., 2500.50">
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div>
+                            <button type="submit" id="submitButton" class="w-full btn btn-primary">
+                                <span id="buttonText">Add Shipper Details</span>
+                                <svg id="loadingSpinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Add Payment Form -->
+                <div class="mt-8 pt-6 border-t">
+                    <h2 class="text-xl font-semibold mb-4">Add Payment</h2>
+                    <form id="paymentForm">
+                        <div class="space-y-4">
+                            <!-- Shipper Selection -->
+                            <div>
+                                <label for="paymentShipper" class="block text-sm font-medium text-gray-700">Select Shipper</label>
+                                <select id="paymentShipper" name="paymentShipper" required class="mt-1 form-input">
+                                    <option value="">Select a shipper</option>
+                                    <!-- Options will be populated by JavaScript -->
+                                </select>
+                            </div>
+
+                            <!-- Payment Amount -->
+                            <div>
+                                <label for="paymentAmount" class="block text-sm font-medium text-gray-700">Payment Amount (PKR)</label>
+                                <input type="number" id="paymentAmount" name="paymentAmount" required step="0.01" class="mt-1 form-input" placeholder="e.g., 1500.00">
+                            </div>
+
+                            <!-- Payment Date -->
+                            <div>
+                                <label for="paymentDate" class="block text-sm font-medium text-gray-700">Payment Date</label>
+                                <input type="date" id="paymentDate" name="paymentDate" required class="mt-1 form-input">
+                            </div>
+
+                            <!-- Payment Description -->
+                            <div>
+                                <label for="paymentDescription" class="block text-sm font-medium text-gray-700">Payment Description</label>
+                                <input type="text" id="paymentDescription" name="paymentDescription" class="mt-1 form-input" placeholder="e.g., Partial payment">
+                            </div>
+
+                            <!-- Submit Payment Button -->
+                            <div>
+                                <button type="submit" class="w-full btn btn-success">
+                                    Add Payment
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Financial Tracking Section -->
+            <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg h-fit tab-content" id="financial-tab">
+                <h2 class="text-xl font-semibold mb-4 border-b pb-3">Financial Tracking</h2>
+
+                <!-- Date Range Filter for Financial Data -->
+                <div class="filter-section mb-6">
+                    <h3 class="text-lg font-medium mb-2">Date Range Filter</h3>
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+                            <input type="date" id="financialFromDate" class="form-input">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+                            <input type="date" id="financialToDate" class="form-input">
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button id="applyFinancialDateRange" class="btn btn-primary flex-1">Apply Filter</button>
+                        <button id="resetFinancialDateRange" class="btn btn-gray">Reset</button>
+                    </div>
+                </div>
+
+                <!-- Monthly Sales -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium mb-2">Monthly Sales</h3>
+                    <form id="salesForm" class="space-y-3">
+                        <div>
+                            <label for="salesDate" class="block text-sm font-medium text-gray-700">Date</label>
+                            <input type="date" id="salesDate" name="salesDate" required class="mt-1 form-input">
+                        </div>
+                        <div>
+                            <label for="salesAmount" class="block text-sm font-medium text-gray-700">Amount (PKR)</label>
+                            <input type="number" id="salesAmount" name="salesAmount" required step="0.01" class="mt-1 form-input">
+                        </div>
+                        <div>
+                            <label for="salesDescription" class="block text-sm font-medium text-gray-700">Description</label>
+                            <input type="text" id="salesDescription" name="salesDescription" class="mt-1 form-input">
+                        </div>
+                        <button type="submit" class="w-full btn btn-primary">Add Sales Record</button>
+                    </form>
+
+                    <div class="mt-4 max-h-60 overflow-y-auto" id="salesListContainer">
+                        <!-- Sales items will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Employee Expenses -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium mb-2">Employee Expenses</h3>
+                    <form id="employeeExpenseForm" class="space-y-3">
+                        <div>
+                            <label for="employeeDate" class="block text-sm font-medium text-gray-700">Date</label>
+                            <input type="date" id="employeeDate" name="employeeDate" required class="mt-1 form-input">
+                        </div>
+                        <div>
+                            <label for="employeeName" class="block text-sm font-medium text-gray-700">Employee Name</label>
+                            <input type="text" id="employeeName" name="employeeName" required class="mt-1 form-input">
+                        </div>
+                        <div>
+                            <label for="employeeAmount" class="block text-sm font-medium text-gray-700">Amount (PKR)</label>
+                            <input type="number" id="employeeAmount" name="employeeAmount" required step="0.01" class="mt-1 form-input">
+                        </div>
+                        <div>
+                            <label for="employeeDescription" class="block text-sm font-medium text-gray-700">Description</label>
+                            <input type="text" id="employeeDescription" name="employeeDescription" class="mt-1 form-input">
+                        </div>
+                        <button type="submit" class="w-full btn btn-primary">Add Employee Expense</button>
+                    </form>
+
+                    <div class="mt-4 max-h-60 overflow-y-auto" id="employeeExpenseListContainer">
+                        <!-- Employee expense items will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Company Expenses -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium mb-2">Company Expenses</h3>
+                    <form id="companyExpenseForm" class="space-y-3">
+                        <div>
+                            <label for="companyDate" class="block text-sm font-medium text-gray-700">Date</label>
+                            <input type="date" id="companyDate" name="companyDate" required class="mt-1 form-input">
+                        </div>
+                        <div>
+                            <label for="companyAmount" class="block text-sm font-medium text-gray-700">Amount (PKR)</label>
+                            <input type="number" id="companyAmount" name="companyAmount" required step="0.01" class="mt-1 form-input">
+                        </div>
+                        <div>
+                            <label for="companyDescription" class="block text-sm font-medium text-gray-700">Description</label>
+                            <input type="text" id="companyDescription" name="companyDescription" class="mt-1 form-input">
+                        </div>
+                        <button type="submit" class="w-full btn btn-primary">Add Company Expense</button>
+                    </form>
+
+                    <div class="mt-4 max-h-60 overflow-y-auto" id="companyExpenseListContainer">
+                        <!-- Company expense items will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Import/Export (Purchase) -->
+                <div>
+                    <h3 class="text-lg font-medium mb-2">Import/Export (Purchase)</h3>
+                    <form id="purchaseForm" class="space-y-3">
+                        <div>
+                            <label for="purchaseDate" class="block text-sm font-medium text-gray-700">Date</label>
+                            <input type="date" id="purchaseDate" name="purchaseDate" required class="mt-1 form-input">
+                        </div>
+                        <div>
+                            <label for="purchaseProduct" class="block text-sm font-medium text-gray-700">Product Name</label>
+                            <input type="text" id="purchaseProduct" name="purchaseProduct" required class="mt-1 form-input">
+                        </div>
+                        <div>
+                            <label for="purchaseQuantity" class="block text-sm font-medium text-gray-700">Quantity</label>
+                            <input type="number" id="purchaseQuantity" name="purchaseQuantity" required class="mt-1 form-input">
+                        </div>
+                        <div>
+                            <label for="purchasePrice" class="block text-sm font-medium text-gray-700">Price per Unit (PKR)</label>
+                            <input type="number" id="purchasePrice" name="purchasePrice" required step="0.01" class="mt-1 form-input">
+                        </div>
+                        <div>
+                            <label for="purchaseDescription" class="block text-sm font-medium text-gray-700">Description</label>
+                            <input type="text" id="purchaseDescription" name="purchaseDescription" class="mt-1 form-input">
+                        </div>
+                        <button type="submit" class="w-full btn btn-primary">Add Purchase Record</button>
+                    </form>
+
+                    <div class="mt-4 max-h-60 overflow-y-auto" id="purchaseListContainer">
+                        <!-- Purchase items will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Shipper List & Ledger -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Filters and Actions -->
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-xl font-semibold mb-4">Filters & Reports</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Date Range Filter -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="date-range-label">From Date</label>
+                                    <input type="date" id="fromDate" class="form-input">
+                                </div>
+                                <div>
+                                    <label class="date-range-label">To Date</label>
+                                    <input type="date" id="toDate" class="form-input">
+                                </div>
+                            </div>
+                            <button id="applyDateRange" class="mt-3 w-full btn btn-primary">
+                                Apply Date Filter
+                            </button>
+                        </div>
+
+                        <!-- Download Reports -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Download Reports</label>
+                            <div class="space-y-2">
+                                <button id="downloadInvoicePdf" class="w-full btn btn-danger">
+                                    <i class="fas fa-file-pdf mr-2"></i> Invoice Details (PDF)
+                                </button>
+                                <button id="downloadPaymentPdf" class="w-full btn btn-primary">
+                                    <i class="fas fa-file-pdf mr-2"></i> Payment Details (PDF)
+                                </button>
+                                <button id="downloadLedgerPdf" class="w-full btn btn-purple">
+                                    <i class="fas fa-file-pdf mr-2"></i> Ledger Details (PDF)
+                                </button>
+                                <button id="downloadProfitLossPdf" class="w-full btn btn-success">
+                                    <i class="fas fa-file-pdf mr-2"></i> Profit/Loss Report (PDF)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Party Selection for Ledger Download -->
+                    <div class="mt-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Download Party Ledger</label>
+                        <select id="partySelect" class="form-input mb-2">
+                            <option value="">Select a party</option>
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                        <button id="downloadPartyLedgerPdf" class="w-full btn btn-teal">
+                            <i class="fas fa-file-pdf mr-2"></i> Download Party Ledger
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Shipper List -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="flex justify-between items-center p-6 border-b">
+                        <h2 class="text-xl font-semibold">Shipper List</h2>
+                        <div class="flex items-center">
+                            <input type="text" id="shipperSearch" placeholder="Search shippers..." class="form-input mr-2">
+                            <button id="resetFilters" class="btn btn-gray">
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="shipper-table">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Shipper Name</th>
+                                    <th scope="col" class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice No.</th>
+                                    <th scope="col" class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                    <th scope="col" class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
+                                    <th scope="col" class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="shipperTableBody" class="bg-white divide-y divide-gray-200">
+                                <!-- Shipper rows will be injected here by JavaScript -->
+                                <tr><td colspan="6" class="text-center p-8 text-gray-500">Loading shippers...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Financial Summary -->
+                <div class="bg-white rounded-xl shadow-lg p-6 tab-content" id="reports-tab">
+                    <h2 class="text-xl font-semibold mb-4 border-b pb-3">Financial Summary</h2>
+
+                    <!-- Date Range Filter for Reports -->
+                    <div class="filter-section mb-6">
+                        <h3 class="text-lg font-medium mb-2">Date Range Filter</h3>
+                        <div class="grid grid-cols-2 gap-2 mb-2">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+                                <input type="date" id="reportsFromDate" class="form-input">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+                                <input type="date" id="reportsToDate" class="form-input">
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="applyReportsDateRange" class="btn btn-primary flex-1">Apply Filter</button>
+                            <button id="resetReportsDateRange" class="btn btn-gray">Reset</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <!-- Sales Summary -->
+                        <div class="financial-summary-card summary-positive">
+                            <h3 class="text-lg font-medium mb-2">Monthly Sales</h3>
+                            <p class="text-2xl font-bold" id="totalSales">PKR 0.00</p>
+                            <div class="mt-2 max-h-40 overflow-y-auto" id="salesList">
+                                <!-- Sales items will be added here -->
+                            </div>
+                        </div>
+
+                        <!-- Expenses Summary -->
+                        <div class="financial-summary-card summary-negative">
+                            <h3 class="text-lg font-medium mb-2">Total Expenses</h3>
+                            <p class="text-2xl font-bold" id="totalExpenses">PKR 0.00</p>
+                            <div class="mt-2 max-h-40 overflow-y-auto" id="expensesList">
+                                <!-- Expense items will be added here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Purchases Summary -->
+                    <div class="financial-summary-card summary-neutral mb-6">
+                        <h3 class="text-lg font-medium mb-2">Import/Export Purchases</h3>
+                        <p class="text-2xl font-bold" id="totalPurchases">PKR 0.00</p>
+                        <div class="mt-2 max-h-40 overflow-y-auto" id="purchasesList">
+                            <!-- Purchase items will be added here -->
+                        </div>
+                    </div>
+
+                    <!-- Profit/Loss Summary -->
+                    <div class="financial-summary-card">
+                        <h3 class="text-lg font-medium mb-2">Profit/Loss Calculation</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm">Total Revenue:</p>
+                                <p class="text-xl font-bold" id="totalRevenue">PKR 0.00</p>
+                            </div>
+                            <div>
+                                <p class="text-sm">Total Costs:</p>
+                                <p class="text-xl font-bold" id="totalCosts">PKR 0.00</p>
+                            </div>
+                            <div class="col-span-2 border-t pt-2">
+                                <p class="text-sm">Net Profit/Loss:</p>
+                                <p class="text-2xl font-bold" id="netProfit">PKR 0.00</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ledger Details -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex justify-between items-center border-b pb-3 mb-4">
+                        <h2 class="text-xl font-semibold">Shipper Ledger Details</h2>
+                        <span id="selectedShipperName" class="text-lg font-medium text-indigo-600">Select a shipper to view ledger</span>
+                    </div>
+
+                    <!-- Date Range Filter for Ledger -->
+                    <div class="filter-section mb-4">
+                        <h3 class="text-lg font-medium mb-2">Date Range Filter</h3>
+                        <div class="grid grid-cols-2 gap-2 mb-2">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+                                <input type="date" id="ledgerFromDate" class="form-input">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+                                <input type="date" id="ledgerToDate" class="form-input">
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="applyLedgerDateRange" class="btn btn-primary flex-1">Apply Filter</button>
+                            <button id="resetLedgerDateRange" class="btn btn-gray">Reset</button>
+                        </div>
+                    </div>
+
+                    <div id="ledgerContainer">
+                        <p class="text-sm text-gray-500">Select a shipper to view their ledger details.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Custom Message Box -->
+    <div id="messageBox" class="message-box rounded-md shadow-lg hidden">
+        <div class="flex items-center p-4 rounded-md" id="messageBoxContent">
+            <!-- Message will be injected here -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Global state
+            let allShippers = [];
+            let allPayments = [];
+            let filteredShippers = [];
+            let currentSelectedShipper = null;
+            let dateRangeFilter = { from: null, to: null };
+            let ledgerDateRange = { from: null, to: null };
+            let financialDateRange = { from: null, to: null };
+            let reportsDateRange = { from: null, to: null };
+
+            // Financial data
+            let monthlySales = [];
+            let employeeExpenses = [];
+            let companyExpenses = [];
+            let importExportPurchases = [];
+
+            // Form Elements
+            const shipperForm = document.getElementById('shipperForm');
+            const paymentForm = document.getElementById('paymentForm');
+            const submitButton = document.getElementById('submitButton');
+            const buttonText = document.getElementById('buttonText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+
+            // Financial forms
+            const salesForm = document.getElementById('salesForm');
+            const employeeExpenseForm = document.getElementById('employeeExpenseForm');
+            const companyExpenseForm = document.getElementById('companyExpenseForm');
+            const purchaseForm = document.getElementById('purchaseForm');
+
+            // Table and Display Elements
+            const shipperTableBody = document.getElementById('shipperTableBody');
+            const ledgerContainer = document.getElementById('ledgerContainer');
+            const selectedShipperName = document.getElementById('selectedShipperName');
+            const paymentShipperSelect = document.getElementById('paymentShipper');
+            const partySelect = document.getElementById('partySelect');
+
+            // Financial summary elements
+            const totalSalesEl = document.getElementById('totalSales');
+            const totalExpensesEl = document.getElementById('totalExpenses');
+            const totalPurchasesEl = document.getElementById('totalPurchases');
+            const totalRevenueEl = document.getElementById('totalRevenue');
+            const totalCostsEl = document.getElementById('totalCosts');
+            const netProfitEl = document.getElementById('netProfit');
+            const salesListEl = document.getElementById('salesList');
+            const expensesListEl = document.getElementById('expensesList');
+            const purchasesListEl = document.getElementById('purchasesList');
+
+            // Financial list containers
+            const salesListContainer = document.getElementById('salesListContainer');
+            const employeeExpenseListContainer = document.getElementById('employeeExpenseListContainer');
+            const companyExpenseListContainer = document.getElementById('companyExpenseListContainer');
+            const purchaseListContainer = document.getElementById('purchaseListContainer');
+
+            // Filter and Action Elements
+            const shipperSearch = document.getElementById('shipperSearch');
+            const fromDateInput = document.getElementById('fromDate');
+            const toDateInput = document.getElementById('toDate');
+            const applyDateRangeBtn = document.getElementById('applyDateRange');
+            const resetFiltersBtn = document.getElementById('resetFilters');
+            const downloadInvoicePdfBtn = document.getElementById('downloadInvoicePdf');
+            const downloadPaymentPdfBtn = document.getElementById('downloadPaymentPdf');
+            const downloadLedgerPdfBtn = document.getElementById('downloadLedgerPdf');
+            const downloadProfitLossPdfBtn = document.getElementById('downloadProfitLossPdf');
+            const downloadPartyLedgerPdfBtn = document.getElementById('downloadPartyLedgerPdf');
+
+            // Date range elements for ledger
+            const ledgerFromDateInput = document.getElementById('ledgerFromDate');
+            const ledgerToDateInput = document.getElementById('ledgerToDate');
+            const applyLedgerDateRangeBtn = document.getElementById('applyLedgerDateRange');
+            const resetLedgerDateRangeBtn = document.getElementById('resetLedgerDateRange');
+
+            // Date range elements for financial data
+            const financialFromDateInput = document.getElementById('financialFromDate');
+            const financialToDateInput = document.getElementById('financialToDate');
+            const applyFinancialDateRangeBtn = document.getElementById('applyFinancialDateRange');
+            const resetFinancialDateRangeBtn = document.getElementById('resetFinancialDateRange');
+
+            // Date range elements for reports
+            const reportsFromDateInput = document.getElementById('reportsFromDate');
+            const reportsToDateInput = document.getElementById('reportsToDate');
+            const applyReportsDateRangeBtn = document.getElementById('applyReportsDateRange');
+            const resetReportsDateRangeBtn = document.getElementById('resetReportsDateRange');
+
+            // Tab navigation
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            // Message Box Elements
+            const messageBox = document.getElementById('messageBox');
+            const messageBoxContent = document.getElementById('messageBoxContent');
+
+            // Set default dates
+            const today = new Date();
+            const oneMonthAgo = new Date();
+            oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+            fromDateInput.value = oneMonthAgo.toISOString().split('T')[0];
+            toDateInput.value = today.toISOString().split('T')[0];
+            dateRangeFilter.from = fromDateInput.value;
+            dateRangeFilter.to = toDateInput.value;
+
+            // Set other date inputs to default values
+            ledgerFromDateInput.value = oneMonthAgo.toISOString().split('T')[0];
+            ledgerToDateInput.value = today.toISOString().split('T')[0];
+            ledgerDateRange.from = ledgerFromDateInput.value;
+            ledgerDateRange.to = ledgerToDateInput.value;
+
+            financialFromDateInput.value = oneMonthAgo.toISOString().split('T')[0];
+            financialToDateInput.value = today.toISOString().split('T')[0];
+            financialDateRange.from = financialFromDateInput.value;
+            financialDateRange.to = financialToDateInput.value;
+
+            reportsFromDateInput.value = oneMonthAgo.toISOString().split('T')[0];
+            reportsToDateInput.value = today.toISOString().split('T')[0];
+            reportsDateRange.from = reportsFromDateInput.value;
+            reportsDateRange.to = reportsToDateInput.value;
+
+            // Set invoice date to today by default
+            document.getElementById('invoiceDate').value = today.toISOString().split('T')[0];
+            document.getElementById('paymentDate').value = today.toISOString().split('T')[0];
+            document.getElementById('salesDate').value = today.toISOString().split('T')[0];
+            document.getElementById('employeeDate').value = today.toISOString().split('T')[0];
+            document.getElementById('companyDate').value = today.toISOString().split('T')[0];
+            document.getElementById('purchaseDate').value = today.toISOString().split('T')[0];
+
+            // Helper functions
+            function showMessage(message, type) {
+                type = type || 'success';
+                let colorClass;
+                if (type === 'success') {
+                    colorClass = 'bg-green-100 text-green-800';
+                } else if (type === 'error') {
+                    colorClass = 'bg-red-100 text-red-800';
+                } else {
+                    colorClass = 'bg-gray-100 text-gray-800';
+                }
+
+                messageBox.classList.remove('hidden');
+                messageBoxContent.className = 'flex items-center p-4 rounded-md ' + colorClass;
+                messageBoxContent.innerHTML = '<p class="text-sm font-medium flex-grow">' + message + '</p><button class="ml-4 text-xs font-semibold uppercase opacity-75 hover:opacity-100" onclick="document.getElementById(\'messageBox\').classList.add(\'hidden\');">Dismiss</button>';
+
+                setTimeout(function() {
+                    messageBox.classList.add('hidden');
+                }, 5000);
+            }
+
+            function toggleLoadingState(isLoading) {
+                if (isLoading) {
+                    submitButton.disabled = true;
+                    buttonText.textContent = 'Adding...';
+                    loadingSpinner.classList.remove('hidden');
+                } else {
+                    submitButton.disabled = false;
+                    buttonText.textContent = 'Add Shipper Details';
+                    loadingSpinner.classList.add('hidden');
+                }
+            }
+
+            // Data storage functions
+            const SHIPPER_KEY = 'shipperData';
+            const PAYMENT_KEY = 'paymentData';
+            const SALES_KEY = 'salesData';
+            const EMPLOYEE_EXPENSE_KEY = 'employeeExpenseData';
+            const COMPANY_EXPENSE_KEY = 'companyExpenseData';
+            const PURCHASE_KEY = 'purchaseData';
+
+            function saveShippers() {
+                localStorage.setItem(SHIPPER_KEY, JSON.stringify(allShippers));
+            }
+
+            function savePayments() {
+                localStorage.setItem(PAYMENT_KEY, JSON.stringify(allPayments));
+            }
+
+            function saveSales() {
+                localStorage.setItem(SALES_KEY, JSON.stringify(monthlySales));
+                renderFinancialLists();
+            }
+
+            function saveEmployeeExpenses() {
+                localStorage.setItem(EMPLOYEE_EXPENSE_KEY, JSON.stringify(employeeExpenses));
+                renderFinancialLists();
+            }
+
+            function saveCompanyExpenses() {
+                localStorage.setItem(COMPANY_EXPENSE_KEY, JSON.stringify(companyExpenses));
+                renderFinancialLists();
+            }
+
+            function savePurchases() {
+                localStorage.setItem(PURCHASE_KEY, JSON.stringify(importExportPurchases));
+                renderFinancialLists();
+            }
+
+            function loadData() {
+                const storedShippers = localStorage.getItem(SHIPPER_KEY);
+                const storedPayments = localStorage.getItem(PAYMENT_KEY);
+                const storedSales = localStorage.getItem(SALES_KEY);
+                const storedEmployeeExpenses = localStorage.getItem(EMPLOYEE_EXPENSE_KEY);
+                const storedCompanyExpenses = localStorage.getItem(COMPANY_EXPENSE_KEY);
+                const storedPurchases = localStorage.getItem(PURCHASE_KEY);
+
+                if (storedShippers) {
+                    allShippers = JSON.parse(storedShippers);
+                } else {
+                    // Default sample data
+                    allShippers = [
+                        {
+                            id: 1,
+                            name: "Fast Cargo",
+                            invoiceNumber: "INV-001",
+                            invoiceDate: "2023-08-01",
+                            description: "Shipping services for July",
+                            totalAmount: 5000.00,
+                            balance: 2000.00
+                        },
+                        {
+                            id: 2,
+                            name: "Quick Ship",
+                            invoiceNumber: "INV-002",
+                            invoiceDate: "2023-08-05",
+                            description: "Express delivery services",
+                            totalAmount: 7500.00,
+                            balance: 7500.00
+                        }
+                    ];
+                }
+
+                if (storedPayments) {
+                    allPayments = JSON.parse(storedPayments);
+                } else {
+                    // Default sample payment
+                    allPayments = [
+                        {
+                            id: 1,
+                            shipperId: 1,
+                            amount: 3000.00,
+                            date: "2023-08-10",
+                            description: "Advance payment"
+                        }
+                    ];
+                }
+
+                if (storedSales) {
+                    monthlySales = JSON.parse(storedSales);
+                }
+
+                if (storedEmployeeExpenses) {
+                    employeeExpenses = JSON.parse(storedEmployeeExpenses);
+                }
+
+                if (storedCompanyExpenses) {
+                    companyExpenses = JSON.parse(storedCompanyExpenses);
+                }
+
+                if (storedPurchases) {
+                    importExportPurchases = JSON.parse(storedPurchases);
+                }
+
+                applyFilters();
+                updatePaymentShipperSelect();
+                updatePartySelect();
+                updateFinancialSummary();
+                renderFinancialLists();
+            }
+
+            // Render financial lists for deletion
+            function renderFinancialLists() {
+                // Apply date range filter to financial data
+                const filteredSales = monthlySales.filter(item => {
+                    const itemDate = new Date(item.date);
+                    const fromDate = financialDateRange.from ? new Date(financialDateRange.from) : null;
+                    const toDate = financialDateRange.to ? new Date(financialDateRange.to + 'T23:59:59') : null;
+
+                    return (!fromDate || itemDate >= fromDate) && (!toDate || itemDate <= toDate);
+                });
+
+                const filteredEmployeeExpenses = employeeExpenses.filter(item => {
+                    const itemDate = new Date(item.date);
+                    const fromDate = financialDateRange.from ? new Date(financialDateRange.from) : null;
+                    const toDate = financialDateRange.to ? new Date(financialDateRange.to + 'T23:59:59') : null;
+
+                    return (!fromDate || itemDate >= fromDate) && (!toDate || itemDate <= toDate);
+                });
+
+                const filteredCompanyExpenses = companyExpenses.filter(item => {
+                    const itemDate = new Date(item.date);
+                    const fromDate = financialDateRange.from ? new Date(financialDateRange.from) : null;
+                    const toDate = financialDateRange.to ? new Date(financialDateRange.to + 'T23:59:59') : null;
+
+                    return (!fromDate || itemDate >= fromDate) && (!toDate || itemDate <= toDate);
+                });
+
+                const filteredPurchases = importExportPurchases.filter(item => {
+                    const itemDate = new Date(item.date);
+                    const fromDate = financialDateRange.from ? new Date(financialDateRange.from) : null;
+                    const toDate = financialDateRange.to ? new Date(financialDateRange.to + 'T23:59:59') : null;
+
+                    return (!fromDate || itemDate >= fromDate) && (!toDate || itemDate <= toDate);
+                });
+
+                // Sales list
+                salesListContainer.innerHTML = '';
+                filteredSales.forEach(function(sale) {
+                    const item = document.createElement('div');
+                    item.className = 'financial-item';
+                    item.innerHTML = '<div><span class="font-medium">' + sale.date + '</span>: ' + sale.description + ' - PKR ' + sale.amount.toFixed(2) + '</div><button class="delete-financial-item text-red-600 hover:text-red-800" data-type="sales" data-id="' + sale.id + '"><i class="fas fa-trash"></i></button>';
+                    salesListContainer.appendChild(item);
+                });
+
+                // Employee expenses list
+                employeeExpenseListContainer.innerHTML = '';
+                filteredEmployeeExpenses.forEach(function(expense) {
+                    const item = document.createElement('div');
+                    item.className = 'financial-item';
+                    item.innerHTML = '<div><span class="font-medium">' + expense.date + '</span>: ' + expense.employeeName + ' - ' + expense.description + ' - PKR ' + expense.amount.toFixed(2) + '</div><button class="delete-financial-item text-red-600 hover:text-red-800" data-type="employeeExpense" data-id="' + expense.id + '"><i class="fas fa-trash"></i></button>';
+                    employeeExpenseListContainer.appendChild(item);
+                });
+
+                // Company expenses list
+                companyExpenseListContainer.innerHTML = '';
+                filteredCompanyExpenses.forEach(function(expense) {
+                    const item = document.createElement('div');
+                    item.className = 'financial-item';
+                    item.innerHTML = '<div><span class="font-medium">' + expense.date + '</span>: ' + expense.description + ' - PKR ' + expense.amount.toFixed(2) + '</div><button class="delete-financial-item text-red-600 hover:text-red-800" data-type="companyExpense" data-id="' + expense.id + '"><i class="fas fa-trash"></i></button>';
+                    companyExpenseListContainer.appendChild(item);
+                });
+
+                // Purchases list
+                purchaseListContainer.innerHTML = '';
+                filteredPurchases.forEach(function(purchase) {
+                    const total = purchase.quantity * purchase.price;
+                    const item = document.createElement('div');
+                    item.className = 'financial-item';
+                    item.innerHTML = '<div><span class="font-medium">' + purchase.date + '</span>: ' + purchase.product + ' (' + purchase.quantity + ' × ' + purchase.price.toFixed(2) + ') - PKR ' + total.toFixed(2) + '</div><button class="delete-financial-item text-red-600 hover:text-red-800" data-type="purchase" data-id="' + purchase.id + '"><i class="fas fa-trash"></i></button>';
+                    purchaseListContainer.appendChild(item);
+                });
+
+                // Add event listeners to delete buttons
+                document.querySelectorAll('.delete-financial-item').forEach(function(btn) {
+                    btn.addEventListener('click', function(e) {
+                        const type = e.target.closest('.delete-financial-item').dataset.type;
+                        const id = parseInt(e.target.closest('.delete-financial-item').dataset.id);
+                        deleteFinancialItem(type, id);
+                    });
+                });
+            }
+
+            // Delete financial item
+            function deleteFinancialItem(type, id) {
+                if (confirm('Are you sure you want to delete this item?')) {
+                    let array, saveFunction;
+
+                    switch (type) {
+                        case 'sales':
+                            array = monthlySales;
+                            saveFunction = saveSales;
+                            break;
+                        case 'employeeExpense':
+                            array = employeeExpenses;
+                            saveFunction = saveEmployeeExpenses;
+                            break;
+                        case 'companyExpense':
+                            array = companyExpenses;
+                            saveFunction = saveCompanyExpenses;
+                            break;
+                        case 'purchase':
+                            array = importExportPurchases;
+                            saveFunction = savePurchases;
+                            break;
+                    }
+
+                    const index = array.findIndex(function(item) { return item.id === id; });
+                    if (index !== -1) {
+                        array.splice(index, 1);
+                        saveFunction();
+                        updateFinancialSummary();
+                        showMessage('Item deleted successfully.', 'success');
+                    }
+                }
+            }
+
+            // Filtering functions
+            function applyFilters() {
+                const searchTerm = shipperSearch.value.toLowerCase();
+
+                filteredShippers = allShippers.filter(function(shipper) {
+                    const matchesSearch = shipper.name.toLowerCase().includes(searchTerm) ||
+                                         shipper.invoiceNumber.toLowerCase().includes(searchTerm);
+
+                    // Apply date range filter if set
+                    const invoiceDate = new Date(shipper.invoiceDate);
+                    const fromDate = dateRangeFilter.from ? new Date(dateRangeFilter.from) : null;
+                    const toDate = dateRangeFilter.to ? new Date(dateRangeFilter.to + 'T23:59:59') : null;
+
+                    const matchesDateRange = (!fromDate || invoiceDate >= fromDate) &&
+                                            (!toDate || invoiceDate <= toDate);
+
+                    return matchesSearch && matchesDateRange;
+                });
+
+                renderShipperTable(filteredShippers);
+            }
+
+            // Rendering functions
+            function renderShipperTable(shippers) {
+                shipperTableBody.innerHTML = '';
+
+                if (shippers.length === 0) {
+                    shipperTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8 text-gray-500">No shippers match the current filters.</td></tr>';
+                    return;
+                }
+
+                shippers.forEach(function(shipper) {
+                    const row = document.createElement('tr');
+
+                    // Determine status
+                    let statusClass, statusText;
+                    if (shipper.balance === 0) {
+                        statusClass = 'status-paid';
+                        statusText = 'Paid';
+                    } else if (shipper.balance < 0) {
+                        statusClass = 'status-credit';
+                        statusText = 'Credit';
+                    } else if (shipper.balance === shipper.totalAmount) {
+                        statusClass = 'status-overdue';
+                        statusText = 'Unpaid';
+                    } else {
+                        statusClass = 'status-pending';
+                        statusText = 'Partial';
+                    }
+
+                    row.innerHTML = '<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">' + shipper.name + '</td>' +
+                        '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">' + shipper.invoiceNumber + '</td>' +
+                        '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-medium">PKR ' + shipper.totalAmount.toFixed(2) + '</td>' +
+                        '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-medium">PKR ' + Math.abs(shipper.balance).toFixed(2) +
+                            (shipper.balance < 0 ? ' (Credit)' : '') + '</td>' +
+                        '<td class="px-6 py-4 whitespace-nowrap"><span class="status-pill ' + statusClass + '">' + statusText + '</span></td>' +
+                        '<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">' +
+                        '<button class="view-ledger-btn text-indigo-600 hover:text-indigo-900 mr-3" data-id="' + shipper.id + '">View Ledger</button>' +
+                        '<button class="download-ledger-btn text-green-600 hover:text-green-900 mr-3" data-id="' + shipper.id + '">Download Ledger</button>' +
+                        '<button class="delete-invoice-btn text-red-600 hover:text-red-900" data-id="' + shipper.id + '">Delete</button>' +
+                        '</td>';
+
+                    shipperTableBody.appendChild(row);
+                });
+
+                // Add event listeners
+                document.querySelectorAll('.view-ledger-btn').forEach(function(btn) {
+                    btn.addEventListener('click', function(e) {
+                        const shipperId = parseInt(e.target.dataset.id);
+                        renderLedger(shipperId);
+                    });
+                });
+
+                document.querySelectorAll('.download-ledger-btn').forEach(function(btn) {
+                    btn.addEventListener('click', function(e) {
+                        const shipperId = parseInt(e.target.dataset.id);
+                        downloadShipperLedgerPdf(shipperId);
+                    });
+                });
+
+                document.querySelectorAll('.delete-invoice-btn').forEach(function(btn) {
+                    btn.addEventListener('click', function(e) {
+                        const invoiceId = parseInt(e.target.dataset.id);
+                        deleteInvoice(invoiceId);
+                    });
+                });
+            }
+
+            function renderLedger(shipperId) {
+                const shipper = allShippers.find(function(s) { return s.id === shipperId; });
+                if (!shipper) return;
+
+                currentSelectedShipper = shipper;
+                selectedShipperName.textContent = shipper.name;
+
+                let payments = allPayments.filter(function(p) { return p.shipperId === shipperId; });
+
+                // Apply date range filter if set
+                if (ledgerDateRange.from || ledgerDateRange.to) {
+                    payments = payments.filter(function(payment) {
+                        const paymentDate = new Date(payment.date);
+                        const fromDate = ledgerDateRange.from ? new Date(ledgerDateRange.from) : null;
+                        const toDate = ledgerDateRange.to ? new Date(ledgerDateRange.to + 'T23:59:59') : null;
+
+                        return (!fromDate || paymentDate >= fromDate) && (!toDate || paymentDate <= toDate);
+                    });
+                }
+
+                let ledgerHTML = '<div class="mb-4">' +
+                    '<p><strong>Invoice Number:</strong> ' + shipper.invoiceNumber + '</p>' +
+                    '<p><strong>Invoice Date:</strong> ' + shipper.invoiceDate + '</p>' +
+                    '<p><strong>Description:</strong> ' + shipper.description + '</p>' +
+                    '<p><strong>Total Amount:</strong> PKR ' + shipper.totalAmount.toFixed(2) + '</p>';
+
+                if (shipper.balance < 0) {
+                    ledgerHTML += '<div class="credit-balance"><strong>Credit Balance:</strong> PKR ' + Math.abs(shipper.balance).toFixed(2) + '</div>';
+                } else {
+                    ledgerHTML += '<p><strong>Balance Due:</strong> PKR ' + shipper.balance.toFixed(2) + '</p>';
+                }
+
+                ledgerHTML += '</div>';
+
+                if (payments.length > 0) {
+                    ledgerHTML += '<h3 class="text-lg font-semibold mb-2">Payment History</h3>' +
+                        '<table class="w-full border-collapse border border-gray-300">' +
+                        '<thead><tr class="bg-gray-100">' +
+                        '<th class="border border-gray-300 px-4 py-2">Date</th>' +
+                        '<th class="border border-gray-300 px-4 py-2">Description</th>' +
+                        '<th class="border border-gray-300 px-4 py-2">Amount (PKR)</th>' +
+                        '<th class="border border-gray-300 px-4 py-2">Actions</th>' +
+                        '</tr></thead><tbody>';
+
+                    payments.forEach(function(payment) {
+                        ledgerHTML += '<tr>' +
+                            '<td class="border border-gray-300 px-4 py-2">' + payment.date + '</td>' +
+                            '<td class="border border-gray-300 px-4 py-2">' + payment.description + '</td>' +
+                            '<td class="border border-gray-300 px-4 py-2">' + payment.amount.toFixed(2) + '</td>' +
+                            '<td class="border border-gray-300 px-4 py-2">' +
+                            '<button class="delete-payment-btn text-red-600 hover:text-red-900" data-id="' + payment.id + '">Delete</button>' +
+                            '</td></tr>';
+                    });
+
+                    ledgerHTML += '</tbody></table>';
+                } else {
+                    ledgerHTML += '<p class="text-sm text-gray-500">No payments recorded for this shipper.</p>';
+                }
+
+                ledgerContainer.innerHTML = ledgerHTML;
+
+                // Add event listeners to delete buttons
+                document.querySelectorAll('.delete-payment-btn').forEach(function(btn) {
+                    btn.addEventListener('click', function(e) {
+                        const paymentId = parseInt(e.target.dataset.id);
+                        deletePayment(paymentId);
+                    });
+                });
+            }
+
+            function updatePaymentShipperSelect() {
+                paymentShipperSelect.innerHTML = '<option value="">Select a shipper</option>';
+
+                // Get unique shipper names
+                const shipperNames = [...new Set(allShippers.map(function(shipper) { return shipper.name; }))];
+
+                shipperNames.forEach(function(name) {
+                    const shipperInvoices = allShippers.filter(function(invoice) {
+                        return invoice.name === name;
+                    });
+
+                    const totalBalance = shipperInvoices.reduce(function(sum, invoice) {
+                        return sum + invoice.balance;
+                    }, 0);
+
+                    // Show shipper even if they have credit (negative balance)
+                    const option = document.createElement('option');
+                    option.value = name;
+
+                    if (totalBalance > 0) {
+                        option.textContent = name + ' (Balance Due: PKR ' + totalBalance.toFixed(2) + ')';
+                    } else if (totalBalance < 0) {
+                        option.textContent = name + ' (Credit: PKR ' + Math.abs(totalBalance).toFixed(2) + ')';
+                    } else {
+                        option.textContent = name + ' (Paid in Full)';
+                    }
+
+                    paymentShipperSelect.appendChild(option);
+                });
+            }
+
+            function updatePartySelect() {
+                partySelect.innerHTML = '<option value="">Select a party</option>';
+
+                // Get unique party names
+                const partyNames = [...new Set(allShippers.map(function(shipper) { return shipper.name; }))];
+
+                partyNames.forEach(function(name) {
+                    const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = name;
+                    partySelect.appendChild(option);
+                });
+            }
+
+            function updateFinancialSummary() {
+                // Apply date range filter to financial data
+                const filteredSales = monthlySales.filter(item => {
+                    const itemDate = new Date(item.date);
+                    const fromDate = reportsDateRange.from ? new Date(reportsDateRange.from) : null;
+                    const toDate = reportsDateRange.to ? new Date(reportsDateRange.to + 'T23:59:59') : null;
+
+                    return (!fromDate || itemDate >= fromDate) && (!toDate || itemDate <= toDate);
+                });
+
+                const filteredEmployeeExpenses = employeeExpenses.filter(item => {
+                    const itemDate = new Date(item.date);
+                    const fromDate = reportsDateRange.from ? new Date(reportsDateRange.from) : null;
+                    const toDate = reportsDateRange.to ? new Date(reportsDateRange.to + 'T23:59:59') : null;
+
+                    return (!fromDate || itemDate >= fromDate) && (!toDate || itemDate <= toDate);
+                });
+
+                const filteredCompanyExpenses = companyExpenses.filter(item => {
+                    const itemDate = new Date(item.date);
+                    const fromDate = reportsDateRange.from ? new Date(reportsDateRange.from) : null;
+                    const toDate = reportsDateRange.to ? new Date(reportsDateRange.to + 'T23:59:59') : null;
+
+                    return (!fromDate || itemDate >= fromDate) && (!toDate || itemDate <= toDate);
+                });
+
+                const filteredPurchases = importExportPurchases.filter(item => {
+                    const itemDate = new Date(item.date);
+                    const fromDate = reportsDateRange.from ? new Date(reportsDateRange.from) : null;
+                    const toDate = reportsDateRange.to ? new Date(reportsDateRange.to + 'T23:59:59') : null;
+
+                    return (!fromDate || itemDate >= fromDate) && (!toDate || itemDate <= toDate);
+                });
+
+                // Calculate totals
+                const totalSales = filteredSales.reduce(function(sum, sale) { return sum + sale.amount; }, 0);
+                const totalEmployeeExpenses = filteredEmployeeExpenses.reduce(function(sum, expense) { return sum + expense.amount; }, 0);
+                const totalCompanyExpenses = filteredCompanyExpenses.reduce(function(sum, expense) { return sum + expense.amount; }, 0);
+                const totalExpenses = totalEmployeeExpenses + totalCompanyExpenses;
+                const totalPurchases = filteredPurchases.reduce(function(sum, purchase) { return sum + (purchase.quantity * purchase.price); }, 0);
+
+                // Calculate profit/loss
+                const totalRevenue = totalSales;
+                const totalCosts = totalExpenses + totalPurchases;
+                const netProfit = totalRevenue - totalCosts;
+
+                // Update UI
+                totalSalesEl.textContent = 'PKR ' + totalSales.toFixed(2);
+                totalExpensesEl.textContent = 'PKR ' + totalExpenses.toFixed(2);
+                totalPurchasesEl.textContent = 'PKR ' + totalPurchases.toFixed(2);
+                totalRevenueEl.textContent = 'PKR ' + totalRevenue.toFixed(2);
+                totalCostsEl.textContent = 'PKR ' + totalCosts.toFixed(2);
+                netProfitEl.textContent = 'PKR ' + netProfit.toFixed(2);
+
+                // Color code profit/loss
+                if (netProfit > 0) {
+                    netProfitEl.classList.add('text-green-600');
+                    netProfitEl.classList.remove('text-red-600', 'text-gray-600');
+                } else if (netProfit < 0) {
+                    netProfitEl.classList.add('text-red-600');
+                    netProfitEl.classList.remove('text-green-600', 'text-gray-600');
+                } else {
+                    netProfitEl.classList.add('text-gray-600');
+                    netProfitEl.classList.remove('text-green-600', 'text-red-600');
+                }
+
+                // Update lists
+                salesListEl.innerHTML = filteredSales.map(function(sale) {
+                    return '<div class="flex justify-between text-sm py-1 border-b border-blue-100"><span>' + sale.date + ': ' + sale.description + '</span><span>PKR ' + sale.amount.toFixed(2) + '</span></div>';
+                }).join('');
+
+                expensesListEl.innerHTML = [
+                    ...filteredEmployeeExpenses.map(function(expense) {
+                        return {
+                            date: expense.date,
+                            type: 'Employee',
+                            description: expense.description,
+                            amount: expense.amount
+                        };
+                    }),
+                    ...filteredCompanyExpenses.map(function(expense) {
+                        return {
+                            date: expense.date,
+                            type: 'Company',
+                            description: expense.description,
+                            amount: expense.amount
+                        };
+                    })
+                ].sort(function(a, b) { return new Date(b.date) - new Date(a.date); })
+                .map(function(expense) {
+                    return '<div class="flex justify-between text-sm py-1 border-b border-red-100"><span>' + expense.date + ': ' + expense.type + ' - ' + expense.description + '</span><span>PKR ' + expense.amount.toFixed(2) + '</span></div>';
+                }).join('');
+
+                purchasesListEl.innerHTML = filteredPurchases.map(function(purchase) {
+                    return '<div class="flex justify-between text-sm py-1 border-b border-green-100"><span>' + purchase.date + ': ' + purchase.product + ' (' + purchase.quantity + ' × PKR ' + purchase.price.toFixed(2) + ')</span><span>PKR ' + (purchase.quantity * purchase.price).toFixed(2) + '</span></div>';
+                }).join('');
+            }
+
+            // Delete functions
+            function deleteInvoice(invoiceId) {
+                if (confirm('Are you sure you want to delete this invoice? This will also delete all associated payments.')) {
+                    // Find the invoice
+                    const invoiceIndex = allShippers.findIndex(function(invoice) { return invoice.id === invoiceId; });
+                    if (invoiceIndex === -1) return;
+
+                    // Delete associated payments
+                    allPayments = allPayments.filter(function(payment) { return payment.shipperId !== invoiceId; });
+                    savePayments();
+
+                    // Delete the invoice
+                    allShippers.splice(invoiceIndex, 1);
+                    saveShippers();
+
+                    // Update UI
+                    applyFilters();
+                    updatePaymentShipperSelect();
+                    updatePartySelect();
+
+                    if (currentSelectedShipper && currentSelectedShipper.id === invoiceId) {
+                        ledgerContainer.innerHTML = '<p class="text-sm text-gray-500">Select a shipper to view their ledger details.</p>';
+                        selectedShipperName.textContent = 'Select a shipper to view ledger';
+                        currentSelectedShipper = null;
+                    }
+
+                    showMessage('Invoice deleted successfully.', 'success');
+                }
+            }
+
+            function deletePayment(paymentId) {
+                if (confirm('Are you sure you want to delete this payment?')) {
+                    // Find the payment
+                    const paymentIndex = allPayments.findIndex(function(payment) { return payment.id === paymentId; });
+                    if (paymentIndex === -1) return;
+
+                    const payment = allPayments[paymentIndex];
+                    const shipper = allShippers.find(function(s) { return s.id === payment.shipperId; });
+
+                    if (shipper) {
+                        // Restore the payment amount to the invoice balance
+                        shipper.balance += payment.amount;
+                        saveShippers();
+                    }
+
+                    // Delete the payment
+                    allPayments.splice(paymentIndex, 1);
+                    savePayments();
+
+                    // Update UI
+                    if (currentSelectedShipper && currentSelectedShipper.id === payment.shipperId) {
+                        renderLedger(payment.shipperId);
+                    }
+
+                    updatePaymentShipperSelect();
+                    showMessage('Payment deleted successfully.', 'success');
+                }
+            }
+
+            // PDF generation functions
+            function formatCurrency(amount) {
+                return new Intl.NumberFormat('en-PK', { style: 'currency', currency: 'PKR' }).format(amount);
+            }
+
+            function downloadShipperLedgerPdf(shipperId) {
+                const shipper = allShippers.find(function(s) { return s.id === shipperId; });
+                if (!shipper) return;
+
+                let payments = allPayments.filter(function(p) { return p.shipperId === shipperId; });
+
+                // Apply date range filter if set
+                if (ledgerDateRange.from || ledgerDateRange.to) {
+                    payments = payments.filter(function(payment) {
+                        const paymentDate = new Date(payment.date);
+                        const fromDate = ledgerDateRange.from ? new Date(ledgerDateRange.from) : null;
+                        const toDate = ledgerDateRange.to ? new Date(ledgerDateRange.to + 'T23:59:59') : null;
+
+                        return (!fromDate || paymentDate >= fromDate) && (!toDate || paymentDate <= toDate);
+                    });
+                }
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Add title with styling
+                doc.setFontSize(20);
+                doc.setTextColor(40, 40, 40);
+                doc.setFont(undefined, 'bold');
+                doc.text('LEDGER: ' + shipper.name.toUpperCase(), 105, 20, { align: 'center' });
+
+                // Add date range info if applied
+                doc.setFontSize(10);
+                doc.setTextColor(100, 100, 100);
+                doc.setFont(undefined, 'normal');
+                if (ledgerDateRange.from && ledgerDateRange.to) {
+                    doc.text('Date Range: ' + ledgerDateRange.from + ' to ' + ledgerDateRange.to, 105, 28, { align: 'center' });
+                }
+
+                // Add generated date
+                doc.text('Generated on: ' + new Date().toLocaleDateString(), 105, 35, { align: 'center' });
+
+                // Add invoice details
+                doc.setFontSize(12);
+                doc.setTextColor(40, 40, 40);
+
+                let yPosition = 45;
+
+                doc.setFont(undefined, 'bold');
+                doc.text('Invoice Details:', 20, yPosition);
+                yPosition += 8;
+                doc.setFont(undefined, 'normal');
+                doc.text('Invoice Number: ' + shipper.invoiceNumber, 20, yPosition);
+                yPosition += 8;
+                doc.text('Invoice Date: ' + shipper.invoiceDate, 20, yPosition);
+                yPosition += 8;
+                doc.text('Description: ' + shipper.description, 20, yPosition);
+                yPosition += 8;
+                doc.text('Total Amount: ' + formatCurrency(shipper.totalAmount), 20, yPosition);
+                yPosition += 8;
+
+                if (shipper.balance < 0) {
+                    doc.setTextColor(30, 64, 175);
+                    doc.text('Credit Balance: ' + formatCurrency(Math.abs(shipper.balance)), 20, yPosition);
+                    doc.setTextColor(40, 40, 40);
+                } else {
+                    doc.text('Balance Due: ' + formatCurrency(shipper.balance), 20, yPosition);
+                }
+
+                yPosition += 15;
+
+                // Add payments table if available
+                if (payments.length > 0) {
+                    doc.setFont(undefined, 'bold');
+                    doc.text('Payment History:', 20, yPosition);
+                    yPosition += 8;
+
+                    const tableData = payments.map(function(payment) {
+                        return [
+                            payment.date,
+                            payment.description,
+                            formatCurrency(payment.amount)
+                        ];
+                    });
+
+                    doc.autoTable({
+                        head: [['Date', 'Description', 'Amount']],
+                        body: tableData,
+                        startY: yPosition,
+                        theme: 'grid',
+                        styles: {
+                            fontSize: 9,
+                            cellPadding: 3,
+                            lineColor: [50, 50, 50],
+                            lineWidth: 0.1
+                        },
+                        headStyles: {
+                            fillColor: [61, 101, 155],
+                            textColor: [255, 255, 255],
+                            fontStyle: 'bold'
+                        },
+                        alternateRowStyles: {
+                            fillColor: [240, 240, 240]
+                        }
+                    });
+                }
+
+                // Add page numbers
+                const pageCount = doc.internal.getNumberOfPages();
+                for(let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.setTextColor(100, 100, 100);
+                    doc.text('Page ' + i + ' of ' + pageCount, doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+                }
+
+                doc.save('ledger_' + shipper.name + '_' + new Date().toISOString().split('T')[0] + '.pdf');
+                showMessage('Ledger PDF downloaded successfully!', 'success');
+            }
+
+            function downloadPartyLedgerPdf(partyName) {
+                const partyInvoices = allShippers.filter(function(shipper) { return shipper.name === partyName; });
+                const partyInvoiceIds = partyInvoices.map(function(inv) { return inv.id; });
+                let partyPayments = allPayments.filter(function(payment) { return partyInvoiceIds.includes(payment.shipperId); });
+
+                // Apply date range filter if set
+                if (ledgerDateRange.from || ledgerDateRange.to) {
+                    partyPayments = partyPayments.filter(function(payment) {
+                        const paymentDate = new Date(payment.date);
+                        const fromDate = ledgerDateRange.from ? new Date(ledgerDateRange.from) : null;
+                        const toDate = ledgerDateRange.to ? new Date(ledgerDateRange.to + 'T23:59:59') : null;
+
+                        return (!fromDate || paymentDate >= fromDate) && (!toDate || paymentDate <= toDate);
+                    });
+                }
+
+                // Calculate totals
+                const totalAmount = partyInvoices.reduce(function(sum, inv) { return sum + inv.totalAmount; }, 0);
+                const totalPaid = partyPayments.reduce(function(sum, payment) { return sum + payment.amount; }, 0);
+                const totalBalance = totalAmount - totalPaid;
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Add title
+                doc.setFontSize(20);
+                doc.setTextColor(40, 40, 40);
+                doc.setFont(undefined, 'bold');
+                doc.text('PARTY LEDGER: ' + partyName, 105, 20, { align: 'center' });
+
+                // Add date range info if applied
+                doc.setFontSize(10);
+                doc.setTextColor(100, 100, 100);
+                doc.setFont(undefined, 'normal');
+                if (ledgerDateRange.from && ledgerDateRange.to) {
+                    doc.text('Date Range: ' + ledgerDateRange.from + ' to ' + ledgerDateRange.to, 105, 28, { align: 'center' });
+                }
+
+                // Add generated date
+                doc.text('Generated on: ' + new Date().toLocaleDateString(), 105, 35, { align: 'center' });
+
+                // Add summary
+                doc.setFontSize(12);
+                doc.setTextColor(40, 40, 40);
+                doc.text('Total Invoices Amount: ' + formatCurrency(totalAmount), 20, 45);
+                doc.text('Total Paid: ' + formatCurrency(totalPaid), 20, 55);
+
+                if (totalBalance < 0) {
+                    doc.setTextColor(30, 64, 175);
+                    doc.text('Total Credit: ' + formatCurrency(Math.abs(totalBalance)), 20, 65);
+                    doc.setTextColor(40, 40, 40);
+                } else {
+                    doc.text('Total Balance: ' + formatCurrency(totalBalance), 20, 65);
+                }
+
+                let yPosition = 75;
+
+                // Add invoices table
+                if (partyInvoices.length > 0) {
+                    doc.setFont(undefined, 'bold');
+                    doc.text('Invoices:', 20, yPosition);
+                    yPosition += 10;
+
+                    const invoiceTableData = partyInvoices.map(function(inv) {
+                        return [
+                            inv.invoiceNumber,
+                            inv.invoiceDate,
+                            inv.description,
+                            formatCurrency(inv.totalAmount),
+                            formatCurrency(inv.balance)
+                        ];
+                    });
+
+                    doc.autoTable({
+                        head: [['Invoice No.', 'Date', 'Description', 'Total Amount', 'Balance']],
+                        body: invoiceTableData,
+                        startY: yPosition,
+                        theme: 'grid',
+                        styles: {
+                            fontSize: 9,
+                            cellPadding: 3,
+                            lineColor: [50, 50, 50],
+                            lineWidth: 0.1
+                        },
+                        headStyles: {
+                            fillColor: [61, 101, 155],
+                            textColor: [255, 255, 255],
+                            fontStyle: 'bold'
+                        },
+                        alternateRowStyles: {
+                            fillColor: [240, 240, 240]
+                        }
+                    });
+
+                    yPosition = doc.lastAutoTable.finalY + 10;
+                }
+
+                // Add payments table
+                if (partyPayments.length > 0) {
+                    doc.setFont(undefined, 'bold');
+                    doc.text('Payments:', 20, yPosition);
+                    yPosition += 10;
+
+                    const paymentTableData = partyPayments.map(function(payment) {
+                        const invoice = partyInvoices.find(function(inv) { return inv.id === payment.shipperId; });
+                        return [
+                            payment.date,
+                            payment.description,
+                            invoice ? invoice.invoiceNumber : 'N/A',
+                            formatCurrency(payment.amount)
+                        ];
+                    });
+
+                    doc.autoTable({
+                        head: [['Date', 'Description', 'Invoice No.', 'Amount']],
+                        body: paymentTableData,
+                        startY: yPosition,
+                        theme: 'grid',
+                        styles: {
+                            fontSize: 9,
+                            cellPadding: 3,
+                            lineColor: [50, 50, 50],
+                            lineWidth: 0.1
+                        },
+                        headStyles: {
+                            fillColor: [75, 129, 59],
+                            textColor: [255, 255, 255],
+                            fontStyle: 'bold'
+                        },
+                        alternateRowStyles: {
+                            fillColor: [240, 240, 240]
+                        }
+                    });
+                }
+
+                // Add page numbers
+                const pageCount = doc.internal.getNumberOfPages();
+                for(let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.setTextColor(100, 100, 100);
+                    doc.text('Page ' + i + ' of ' + pageCount, doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+                }
+
+                doc.save('party_ledger_' + partyName + '_' + new Date().toISOString().split('T')[0] + '.pdf');
+                showMessage('Party ledger PDF downloaded successfully!', 'success');
+            }
+
+            // Event handlers
+            shipperForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                toggleLoadingState(true);
+
+                const formData = new FormData(shipperForm);
+                const shipperData = {
+                    id: allShippers.length > 0 ? Math.max.apply(null, allShippers.map(function(s) { return s.id; })) + 1 : 1,
+                    name: formData.get('shipperName'),
+                    invoiceNumber: formData.get('invoiceNumber'),
+                    invoiceDate: formData.get('invoiceDate'),
+                    description: formData.get('description'),
+                    totalAmount: parseFloat(formData.get('totalAmount')),
+                    balance: parseFloat(formData.get('totalAmount'))
+                };
+
+                allShippers.push(shipperData);
+                saveShippers();
+                shipperForm.reset();
+                document.getElementById('invoiceDate').value = new Date().toISOString().split('T')[0];
+                applyFilters();
+                updatePaymentShipperSelect();
+                updatePartySelect();
+                showMessage('Shipper details added successfully.', 'success');
+                toggleLoadingState(false);
+            });
+
+            paymentForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const formData = new FormData(paymentForm);
+                const shipperName = formData.get('paymentShipper');
+                const paymentAmount = parseFloat(formData.get('paymentAmount'));
+                const paymentDate = formData.get('paymentDate');
+                const paymentDescription = formData.get('paymentDescription') || 'Payment';
+
+                // Find all unpaid invoices for this shipper, sorted by invoice date (oldest first)
+                const unpaidInvoices = allShippers.filter(function(invoice) {
+                    return invoice.name === shipperName;
+                }).sort(function(a, b) {
+                    return new Date(a.invoiceDate) - new Date(b.invoiceDate);
+                });
+
+                if (unpaidInvoices.length === 0) {
+                    showMessage('No invoices found for ' + shipperName, 'error');
+                    return;
+                }
+
+                if (paymentAmount <= 0) {
+                    showMessage('Payment amount must be greater than zero.', 'error');
+                    return;
+                }
+
+                // MODIFIED: Allow payment amount to exceed invoice balance
+                let remainingPayment = paymentAmount;
+
+                // Apply payment to invoices starting from the oldest
+                for (let i = 0; i < unpaidInvoices.length && remainingPayment > 0; i++) {
+                    const invoice = unpaidInvoices[i];
+                    const paymentForThisInvoice = Math.min(remainingPayment, invoice.balance > 0 ? invoice.balance : 0);
+
+                    if (paymentForThisInvoice > 0) {
+                        // Add payment record
+                        const paymentData = {
+                            id: allPayments.length > 0 ? Math.max.apply(null, allPayments.map(function(p) { return p.id; })) + 1 : 1,
+                            shipperId: invoice.id,
+                            amount: paymentForThisInvoice,
+                            date: paymentDate,
+                            description: paymentDescription + (unpaidInvoices.length > 1 ? ` (Partial for INV-${invoice.invoiceNumber})` : '')
+                        };
+
+                        allPayments.push(paymentData);
+
+                        // Update invoice balance
+                        invoice.balance -= paymentForThisInvoice;
+                        remainingPayment -= paymentForThisInvoice;
+                    }
+                }
+
+                // If there's still remaining payment after paying all invoices, create a credit entry
+                if (remainingPayment > 0) {
+                    // Create a credit entry for the shipper
+                    const creditInvoice = {
+                        id: allShippers.length > 0 ? Math.max.apply(null, allShippers.map(function(s) { return s.id; })) + 1 : 1,
+                        name: shipperName,
+                        invoiceNumber: "CREDIT-" + new Date().getTime(),
+                        invoiceDate: paymentDate,
+                        description: "Credit from overpayment",
+                        totalAmount: 0,
+                        balance: -remainingPayment, // Negative balance indicates credit
+                        isCredit: true
+                    };
+
+                    allShippers.push(creditInvoice);
+                    saveShippers();
+
+                    showMessage('Payment processed. A credit of PKR ' + remainingPayment.toFixed(2) + ' has been created for future invoices.', 'success');
+                } else {
+                    showMessage('Payment added successfully.', 'success');
+                }
+
+                savePayments();
+                saveShippers();
+
+                paymentForm.reset();
+                document.getElementById('paymentDate').value = new Date().toISOString().split('T')[0];
+
+                applyFilters();
+                updatePaymentShipperSelect();
+
+                if (currentSelectedShipper && currentSelectedShipper.name === shipperName) {
+                    const shipper = allShippers.find(function(s) { return s.id === currentSelectedShipper.id; });
+                    if (shipper) {
+                        renderLedger(shipper.id);
+                    }
+                }
+
+                // Update the payment shipper dropdown to reflect new balances
+                updatePaymentShipperSelect();
+            });
+
+            // Financial form handlers
+            salesForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(salesForm);
+
+                const saleData = {
+                    id: monthlySales.length > 0 ? Math.max.apply(null, monthlySales.map(function(s) { return s.id; })) + 1 : 1,
+                    date: formData.get('salesDate'),
+                    amount: parseFloat(formData.get('salesAmount')),
+                    description: formData.get('salesDescription') || 'Sales'
+                };
+
+                monthlySales.push(saleData);
+                saveSales();
+                salesForm.reset();
+                document.getElementById('salesDate').value = new Date().toISOString().split('T')[0];
+                updateFinancialSummary();
+                showMessage('Sales record added successfully.', 'success');
+            });
+
+            employeeExpenseForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(employeeExpenseForm);
+
+                const expenseData = {
+                    id: employeeExpenses.length > 0 ? Math.max.apply(null, employeeExpenses.map(function(e) { return e.id; })) + 1 : 1,
+                    date: formData.get('employeeDate'),
+                    employeeName: formData.get('employeeName'),
+                    amount: parseFloat(formData.get('employeeAmount')),
+                    description: formData.get('employeeDescription') || 'Employee expense'
+                };
+
+                employeeExpenses.push(expenseData);
+                saveEmployeeExpenses();
+                employeeExpenseForm.reset();
+                document.getElementById('employeeDate').value = new Date().toISOString().split('T')[0];
+                updateFinancialSummary();
+                showMessage('Employee expense added successfully.', 'success');
+            });
+
+            companyExpenseForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(companyExpenseForm);
+
+                const expenseData = {
+                    id: companyExpenses.length > 0 ? Math.max.apply(null, companyExpenses.map(function(e) { return e.id; })) + 1 : 1,
+                    date: formData.get('companyDate'),
+                    amount: parseFloat(formData.get('companyAmount')),
+                    description: formData.get('companyDescription') || 'Company expense'
+                };
+
+                companyExpenses.push(expenseData);
+                saveCompanyExpenses();
+                companyExpenseForm.reset();
+                document.getElementById('companyDate').value = new Date().toISOString().split('T')[0];
+                updateFinancialSummary();
+                showMessage('Company expense added successfully.', 'success');
+            });
+
+            purchaseForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(purchaseForm);
+
+                const purchaseData = {
+                    id: importExportPurchases.length > 0 ? Math.max.apply(null, importExportPurchases.map(function(p) { return p.id; })) + 1 : 1,
+                    date: formData.get('purchaseDate'),
+                    product: formData.get('purchaseProduct'),
+                    quantity: parseInt(formData.get('purchaseQuantity')),
+                    price: parseFloat(formData.get('purchasePrice')),
+                    description: formData.get('purchaseDescription') || 'Purchase'
+                };
+
+                importExportPurchases.push(purchaseData);
+                savePurchases();
+                purchaseForm.reset();
+                document.getElementById('purchaseDate').value = new Date().toISOString().split('T')[0];
+                updateFinancialSummary();
+                showMessage('Purchase record added successfully.', 'success');
+            });
+
+            // Filter event listeners
+            shipperSearch.addEventListener('keyup', applyFilters);
+
+            applyDateRangeBtn.addEventListener('click', function() {
+                dateRangeFilter.from = fromDateInput.value;
+                dateRangeFilter.to = toDateInput.value;
+                applyFilters();
+            });
+
+            resetFiltersBtn.addEventListener('click', function() {
+                shipperSearch.value = '';
+                const today = new Date();
+                const oneMonthAgo = new Date();
+                oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+                fromDateInput.value = oneMonthAgo.toISOString().split('T')[0];
+                toDateInput.value = today.toISOString().split('T')[0];
+                dateRangeFilter.from = fromDateInput.value;
+                dateRangeFilter.to = toDateInput.value;
+                applyFilters();
+            });
+
+            // Ledger date range filter
+            applyLedgerDateRangeBtn.addEventListener('click', function() {
+                ledgerDateRange.from = ledgerFromDateInput.value;
+                ledgerDateRange.to = ledgerToDateInput.value;
+
+                if (currentSelectedShipper) {
+                    renderLedger(currentSelectedShipper.id);
+                }
+            });
+
+            resetLedgerDateRangeBtn.addEventListener('click', function() {
+                const today = new Date();
+                const oneMonthAgo = new Date();
+                oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+                ledgerFromDateInput.value = oneMonthAgo.toISOString().split('T')[0];
+                ledgerToDateInput.value = today.toISOString().split('T')[0];
+                ledgerDateRange.from = ledgerFromDateInput.value;
+                ledgerDateRange.to = ledgerToDateInput.value;
+
+                if (currentSelectedShipper) {
+                    renderLedger(currentSelectedShipper.id);
+                }
+            });
+
+            // Financial date range filter
+            applyFinancialDateRangeBtn.addEventListener('click', function() {
+                financialDateRange.from = financialFromDateInput.value;
+                financialDateRange.to = financialToDateInput.value;
+                renderFinancialLists();
+            });
+
+            resetFinancialDateRangeBtn.addEventListener('click', function() {
+                const today = new Date();
+                const oneMonthAgo = new Date();
+                oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+                financialFromDateInput.value = oneMonthAgo.toISOString().split('T')[0];
+                financialToDateInput.value = today.toISOString().split('T')[0];
+                financialDateRange.from = financialFromDateInput.value;
+                financialDateRange.to = financialToDateInput.value;
+                renderFinancialLists();
+            });
+
+            // Reports date range filter
+            applyReportsDateRangeBtn.addEventListener('click', function() {
+                reportsDateRange.from = reportsFromDateInput.value;
+                reportsDateRange.to = reportsToDateInput.value;
+                updateFinancialSummary();
+            });
+
+            resetReportsDateRangeBtn.addEventListener('click', function() {
+                const today = new Date();
+                const oneMonthAgo = new Date();
+                oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+                reportsFromDateInput.value = oneMonthAgo.toISOString().split('T')[0];
+                reportsToDateInput.value = today.toISOString().split('T')[0];
+                reportsDateRange.from = reportsFromDateInput.value;
+                reportsDateRange.to = reportsToDateInput.value;
+                updateFinancialSummary();
+            });
+
+            // Tab navigation
+            tabButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const tabId = button.dataset.tab;
+
+                    // Update active tab button
+                    tabButtons.forEach(function(btn) { btn.classList.remove('active'); });
+                    button.classList.add('active');
+
+                    // Show corresponding tab content
+                    tabContents.forEach(function(content) { content.classList.remove('active'); });
+                    document.getElementById(tabId + '-tab').classList.add('active');
+
+                    // Update financial summary when reports tab is opened
+                    if (tabId === 'reports') {
+                        updateFinancialSummary();
+                    }
+
+                    // Render financial lists when financial tab is opened
+                    if (tabId === 'financial') {
+                        renderFinancialLists();
+                    }
+                });
+            });
+
+            // PDF download handlers
+            downloadInvoicePdfBtn.addEventListener('click', function() {
+                if (filteredShippers.length === 0) {
+                    showMessage('No invoice data to download.', 'info');
+                    return;
+                }
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Add title with styling
+                doc.setFontSize(20);
+                doc.setTextColor(40, 40, 40);
+                doc.setFont(undefined, 'bold');
+                doc.text('SHIPPER INVOICE DETAILS', 105, 20, { align: 'center' });
+
+                // Add date range info if applied
+                doc.setFontSize(10);
+                doc.setTextColor(100, 100, 100);
+                doc.setFont(undefined, 'normal');
+                if (dateRangeFilter.from && dateRangeFilter.to) {
+                    doc.text('Date Range: ' + dateRangeFilter.from + ' to ' + dateRangeFilter.to, 105, 28, { align: 'center' });
+                }
+
+                // Add generated date
+                doc.text('Generated on: ' + new Date().toLocaleDateString(), 105, 35, { align: 'center' });
+
+                // Create table data
+                const tableData = filteredShippers.map(function(shipper) {
+                    return [
+                        shipper.name,
+                        shipper.invoiceNumber,
+                        shipper.invoiceDate,
+                        formatCurrency(shipper.totalAmount),
+                        formatCurrency(shipper.balance)
+                    ];
+                });
+
+                // Generate table
+                doc.autoTable({
+                    head: [['Shipper', 'Invoice No.', 'Date', 'Total Amount', 'Balance']],
+                    body: tableData,
+                    startY: 40,
+                    theme: 'grid',
+                    styles: {
+                        fontSize: 9,
+                        cellPadding: 3,
+                        lineColor: [50, 50, 50],
+                        lineWidth: 0.1
+                    },
+                    headStyles: {
+                        fillColor: [61, 101, 155],
+                        textColor: [255, 255, 255],
+                        fontStyle: 'bold'
+                    },
+                    alternateRowStyles: {
+                        fillColor: [240, 240, 240]
+                    },
+                    margin: { top: 40 }
+                });
+
+                // Add page numbers
+                const pageCount = doc.internal.getNumberOfPages();
+                for(let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.setTextColor(100, 100, 100);
+                    doc.text('Page ' + i + ' of ' + pageCount, doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+                }
+
+                doc.save('shipper_invoices_' + new Date().toISOString().split('T')[0] + '.pdf');
+                showMessage('Invoice PDF downloaded successfully!', 'success');
+            });
+
+            downloadPaymentPdfBtn.addEventListener('click', function() {
+                if (allPayments.length === 0) {
+                    showMessage('No payment data to download.', 'info');
+                    return;
+                }
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Add title with styling
+                doc.setFontSize(20);
+                doc.setTextColor(40, 40, 40);
+                doc.setFont(undefined, 'bold');
+                doc.text('PAYMENT DETAILS', 105, 20, { align: 'center' });
+
+                // Add date range info if applied
+                doc.setFontSize(10);
+                doc.setTextColor(100, 100, 100);
+                doc.setFont(undefined, 'normal');
+                if (ledgerDateRange.from && ledgerDateRange.to) {
+                    doc.text('Date Range: ' + ledgerDateRange.from + ' to ' + ledgerDateRange.to, 105, 28, { align: 'center' });
+                }
+
+                // Add generated date
+                doc.text('Generated on: ' + new Date().toLocaleDateString(), 105, 35, { align: 'center' });
+
+                // Apply date range filter if set
+                let filteredPayments = allPayments;
+                if (ledgerDateRange.from || ledgerDateRange.to) {
+                    filteredPayments = allPayments.filter(function(payment) {
+                        const paymentDate = new Date(payment.date);
+                        const fromDate = ledgerDateRange.from ? new Date(ledgerDateRange.from) : null;
+                        const toDate = ledgerDateRange.to ? new Date(ledgerDateRange.to + 'T23:59:59') : null;
+
+                        return (!fromDate || paymentDate >= fromDate) && (!toDate || paymentDate <= toDate);
+                    });
+                }
+
+                // Create table data with shipper names
+                const tableData = filteredPayments.map(function(payment) {
+                    const shipper = allShippers.find(function(s) { return s.id === payment.shipperId; });
+                    return [
+                        shipper ? shipper.name : 'Unknown',
+                        payment.date,
+                        payment.description,
+                        formatCurrency(payment.amount)
+                    ];
+                });
+
+                // Generate table
+                doc.autoTable({
+                    head: [['Shipper', 'Date', 'Description', 'Amount']],
+                    body: tableData,
+                    startY: 40,
+                    theme: 'grid',
+                    styles: {
+                        fontSize: 9,
+                        cellPadding: 3,
+                        lineColor: [50, 50, 50],
+                        lineWidth: 0.1
+                    },
+                    headStyles: {
+                        fillColor: [61, 101, 155],
+                        textColor: [255, 255, 255],
+                        fontStyle: 'bold'
+                    },
+                    alternateRowStyles: {
+                        fillColor: [240, 240, 240]
+                    }
+                });
+
+                // Add page numbers
+                const pageCount = doc.internal.getNumberOfPages();
+                for(let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.setTextColor(100, 100, 100);
+                    doc.text('Page ' + i + ' of ' + pageCount, doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+                }
+
+                doc.save('payment_details_' + new Date().toISOString().split('T')[0] + '.pdf');
+                showMessage('Payment PDF downloaded successfully!', 'success');
+            });
+
+            downloadLedgerPdfBtn.addEventListener('click', function() {
+                if (allShippers.length === 0) {
+                    showMessage('No ledger data to download.', 'info');
+                    return;
+                }
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Add title with styling
+                doc.setFontSize(20);
+                doc.setTextColor(40, 40, 40);
+                doc.setFont(undefined, 'bold');
+                doc.text('COMPLETE LEDGER DETAILS', 105, 20, { align: 'center' });
+
+                // Add date range info if applied
+                doc.setFontSize(10);
+                doc.setTextColor(100, 100, 100);
+                doc.setFont(undefined, 'normal');
+                if (dateRangeFilter.from && dateRangeFilter.to) {
+                    doc.text('Date Range: ' + dateRangeFilter.from + ' to ' + dateRangeFilter.to, 105, 28, { align: 'center' });
+                }
+
+                // Add generated date
+                doc.text('Generated on: ' + new Date().toLocaleDateString(), 105, 35, { align: 'center' });
+
+                // Create table data
+                const tableData = allShippers.map(function(shipper) {
+                    const payments = allPayments.filter(function(p) { return p.shipperId === shipper.id; });
+                    const totalPaid = payments.reduce(function(sum, payment) { return sum + payment.amount; }, 0);
+
+                    return [
+                        shipper.name,
+                        shipper.invoiceNumber,
+                        shipper.invoiceDate,
+                        formatCurrency(shipper.totalAmount),
+                        formatCurrency(totalPaid),
+                        formatCurrency(shipper.balance)
+                    ];
+                });
+
+                // Generate table
+                doc.autoTable({
+                    head: [['Shipper', 'Invoice No.', 'Date', 'Total Amount', 'Paid', 'Balance']],
+                    body: tableData,
+                    startY: 40,
+                    theme: 'grid',
+                    styles: {
+                        fontSize: 9,
+                        cellPadding: 3,
+                        lineColor: [50, 50, 50],
+                        lineWidth: 0.1
+                    },
+                    headStyles: {
+                        fillColor: [61, 101, 155],
+                        textColor: [255, 255, 255],
+                        fontStyle: 'bold'
+                    },
+                    alternateRowStyles: {
+                        fillColor: [240, 240, 240]
+                    }
+                });
+
+                // Add page numbers
+                const pageCount = doc.internal.getNumberOfPages();
+                for(let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.setTextColor(100, 100, 100);
+                    doc.text('Page ' + i + ' of ' + pageCount, doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+                }
+
+                doc.save('complete_ledger_' + new Date().toISOString().split('T')[0] + '.pdf');
+                showMessage('Ledger PDF downloaded successfully!', 'success');
+            });
+
+            downloadProfitLossPdfBtn.addEventListener('click', function() {
+                if (monthlySales.length === 0 && employeeExpenses.length === 0 &&
+                    companyExpenses.length === 0 && importExportPurchases.length === 0) {
+                    showMessage('No financial data to generate report.', 'info');
+                    return;
+                }
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Add title with styling
+                doc.setFontSize(20);
+                doc.setTextColor(40, 40, 40);
+                doc.setFont(undefined, 'bold');
+                doc.text('PROFIT/LOSS REPORT', 105, 20, { align: 'center' });
+
+                // Add date range info if applied
+                doc.setFontSize(10);
+                doc.setTextColor(100, 100, 100);
+                doc.setFont(undefined, 'normal');
+                if (reportsDateRange.from && reportsDateRange.to) {
+                    doc.text('Date Range: ' + reportsDateRange.from + ' to ' + reportsDateRange.to, 105, 28, { align: 'center' });
+                }
+
+                // Add generated date
+                doc.text('Generated on: ' + new Date().toLocaleDateString(), 105, 35, { align: 'center' });
+
+                // Apply date range filter
+                const filteredSales = monthlySales.filter(item => {
+                    const itemDate = new Date(item.date);
+                    const fromDate = reportsDateRange.from ? new Date(reportsDateRange.from) : null;
+                    const toDate = reportsDateRange.to ? new Date(reportsDateRange.to + 'T23:59:59') : null;
+
+                    return (!fromDate || itemDate >= fromDate) && (!toDate || itemDate <= toDate);
+                });
+
+                const filteredEmployeeExpenses = employeeExpenses.filter(item => {
+                    const itemDate = new Date(item.date);
+                    const fromDate = reportsDateRange.from ? new Date(reportsDateRange.from) : null;
+                    const toDate = reportsDateRange.to ? new Date(reportsDateRange.to + 'T23:59:59') : null;
+
+                    return (!fromDate || itemDate >= fromDate) && (!toDate || itemDate <= toDate);
+                });
+
+                const filteredCompanyExpenses = companyExpenses.filter(item => {
+                    const itemDate = new Date(item.date);
+                    const fromDate = reportsDateRange.from ? new Date(reportsDateRange.from) : null;
+                    const toDate = reportsDateRange.to ? new Date(reportsDateRange.to + 'T23:59:59') : null;
+
+                    return (!fromDate || itemDate >= fromDate) && (!toDate || itemDate <= toDate);
+                });
+
+                const filteredPurchases = importExportPurchases.filter(item => {
+                    const itemDate = new Date(item.date);
+                    const fromDate = reportsDateRange.from ? new Date(reportsDateRange.from) : null;
+                    const toDate = reportsDateRange.to ? new Date(reportsDateRange.to + 'T23:59:59') : null;
+
+                    return (!fromDate || itemDate >= fromDate) && (!toDate || itemDate <= toDate);
+                });
+
+                // Calculate totals
+                const totalSales = filteredSales.reduce(function(sum, sale) { return sum + sale.amount; }, 0);
+                const totalEmployeeExpenses = filteredEmployeeExpenses.reduce(function(sum, expense) { return sum + expense.amount; }, 0);
+                const totalCompanyExpenses = filteredCompanyExpenses.reduce(function(sum, expense) { return sum + expense.amount; }, 0);
+                const totalExpenses = totalEmployeeExpenses + totalCompanyExpenses;
+                const totalPurchases = filteredPurchases.reduce(function(sum, purchase) { return sum + (purchase.quantity * purchase.price); }, 0);
+                const totalRevenue = totalSales;
+                const totalCosts = totalExpenses + totalPurchases;
+                const netProfit = totalRevenue - totalCosts;
+
+                let yPosition = 45;
+
+                // Add summary
+                doc.setFontSize(12);
+                doc.setTextColor(40, 40, 40);
+
+                doc.setFont(undefined, 'bold');
+                doc.text('Financial Summary', 20, yPosition);
+                yPosition += 10;
+
+                doc.setFont(undefined, 'normal');
+                doc.text('Total Sales: ' + formatCurrency(totalSales), 20, yPosition);
+                yPosition += 8;
+                doc.text('Total Expenses: ' + formatCurrency(totalExpenses), 20, yPosition);
+                yPosition += 8;
+                doc.text('Total Purchases: ' + formatCurrency(totalPurchases), 20, yPosition);
+                yPosition += 8;
+                doc.text('Total Revenue: ' + formatCurrency(totalRevenue), 20, yPosition);
+                yPosition += 8;
+                doc.text('Total Costs: ' + formatCurrency(totalCosts), 20, yPosition);
+                yPosition += 8;
+
+                doc.setFont(undefined, 'bold');
+                doc.text('Net Profit/Loss: ' + formatCurrency(netProfit), 20, yPosition);
+                yPosition += 15;
+
+                // Add sales details if available
+                if (filteredSales.length > 0) {
+                    doc.setFont(undefined, 'bold');
+                    doc.text('Sales Details', 20, yPosition);
+                    yPosition += 8;
+
+                    const tableData = filteredSales.map(function(sale) {
+                        return [
+                            sale.date,
+                            sale.description,
+                            formatCurrency(sale.amount)
+                        ];
+                    });
+
+                    doc.autoTable({
+                        head: [['Date', 'Description', 'Amount']],
+                        body: tableData,
+                        startY: yPosition,
+                        theme: 'grid',
+                        styles: {
+                            fontSize: 9,
+                            cellPadding: 3,
+                            lineColor: [50, 50, 50],
+                            lineWidth: 0.1
+                        },
+                        headStyles: {
+                            fillColor: [61, 101, 155],
+                            textColor: [255, 255, 255],
+                            fontStyle: 'bold'
+                        },
+                        alternateRowStyles: {
+                            fillColor: [240, 240, 240]
+                        }
+                    });
+
+                    yPosition = doc.lastAutoTable.finalY + 10;
+                }
+
+                // Add expense details if available
+                if (filteredEmployeeExpenses.length > 0 || filteredCompanyExpenses.length > 0) {
+                    doc.setFont(undefined, 'bold');
+                    doc.text('Expense Details', 20, yPosition);
+                    yPosition += 8;
+
+                    const tableData = [
+                        ...filteredEmployeeExpenses.map(function(expense) {
+                            return [
+                                expense.date,
+                                'Employee: ' + expense.employeeName,
+                                expense.description,
+                                formatCurrency(expense.amount)
+                            ];
+                        }),
+                        ...filteredCompanyExpenses.map(function(expense) {
+                            return [
+                                expense.date,
+                                'Company',
+                                expense.description,
+                                formatCurrency(expense.amount)
+                            ];
+                        })
+                    ];
+
+                    doc.autoTable({
+                        head: [['Date', 'Type', 'Description', 'Amount']],
+                        body: tableData,
+                        startY: yPosition,
+                        theme: 'grid',
+                        styles: {
+                            fontSize: 9,
+                            cellPadding: 3,
+                            lineColor: [50, 50, 50],
+                            lineWidth: 0.1
+                        },
+                        headStyles: {
+                            fillColor: [75, 129, 59],
+                            textColor: [255, 255, 255],
+                            fontStyle: 'bold'
+                        },
+                        alternateRowStyles: {
+                            fillColor: [240, 240, 240]
+                        }
+                    });
+
+                    yPosition = doc.lastAutoTable.finalY + 10;
+                }
+
+                // Add purchase details if available
+                if (filteredPurchases.length > 0) {
+                    doc.setFont(undefined, 'bold');
+                    doc.text('Purchase Details', 20, yPosition);
+                    yPosition += 8;
+
+                    const tableData = filteredPurchases.map(function(purchase) {
+                        return [
+                            purchase.date,
+                            purchase.product,
+                            purchase.quantity,
+                            formatCurrency(purchase.price),
+                            formatCurrency(purchase.quantity * purchase.price),
+                            purchase.description
+                        ];
+                    });
+
+                    doc.autoTable({
+                        head: [['Date', 'Product', 'Qty', 'Unit Price', 'Total', 'Description']],
+                        body: tableData,
+                        startY: yPosition,
+                        theme: 'grid',
+                        styles: {
+                            fontSize: 9,
+                            cellPadding: 3,
+                            lineColor: [50, 50, 50],
+                            lineWidth: 0.1
+                        },
+                        headStyles: {
+                            fillColor: [159, 88, 194],
+                            textColor: [255, 255, 255],
+                            fontStyle: 'bold'
+                        },
+                        alternateRowStyles: {
+                            fillColor: [240, 240, 240]
+                        }
+                    });
+                }
+
+                // Add page numbers
+                const pageCount = doc.internal.getNumberOfPages();
+                for(let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.setTextColor(100, 100, 100);
+                    doc.text('Page ' + i + ' of ' + pageCount, doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+                }
+
+                doc.save('profit_loss_report_' + new Date().toISOString().split('T')[0] + '.pdf');
+                showMessage('Profit/Loss PDF downloaded successfully!', 'success');
+            });
+
+            downloadPartyLedgerPdfBtn.addEventListener('click', function() {
+                const partyName = partySelect.value;
+                if (!partyName) {
+                    showMessage('Please select a party.', 'error');
+                    return;
+                }
+                downloadPartyLedgerPdf(partyName);
+            });
+
+            // Initialize the application
+            loadData();
+        });
+    </script>
+</body>
+</html>

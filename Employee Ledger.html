@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Page</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #fff7f0;
+      padding: 50px;
+    }
+    h1 {
+      color: #444;
+    }
+    .btn {
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 24px;
+      background: #28a745;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+    .btn:hover {
+      background: #1e7e34;
+    }
+  </style>
+</head>
+<body>
+  <a href="Expense.html" class="btn">Back to Expense</a>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Ledger System - NUTRION</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- jsPDF + AutoTable -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    .ledger-row:hover { background-color: #f9fafb; }
+    .positive-balance { color: #10b981; }
+    .negative-balance { color: #ef4444; }
+    .delete-btn {
+      transition: all 0.2s ease;
+    }
+    .delete-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+    }
+    .pagination-btn {
+      transition: all 0.2s ease;
+    }
+    .pagination-btn:hover:not(.disabled) {
+      background-color: #e5e7eb;
+    }
+    .pagination-btn.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <header class="mb-8 text-center">
+      <h1 class="text-4xl font-extrabold text-gray-900">NUTRION</h1>
+      <p class="text-lg text-gray-600 mt-1">Employee Ledger System</p>
+      <p class="text-gray-500">Track expenses, payments, and balances for all employees</p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left Column: Employee Actions -->
+      <div class="lg:col-span-1 space-y-6">
+        <!-- Add Employee Form -->
+        <div class="bg-white p-6 rounded-xl shadow">
+          <h2 class="text-xl font-semibold mb-4">Add New Employee</h2>
+          <form id="employeeForm">
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Employee Name</label>
+                <input type="text" id="employeeName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Initial Balance (PKR)</label>
+                <input type="number" id="initialBalance" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value="0">
+              </div>
+              <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
+                Add Employee
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Record Transaction -->
+        <div class="bg-white p-6 rounded-xl shadow">
+          <h2 class="text-xl font-semibold mb-4">Record Transaction</h2>
+          <form id="transactionForm">
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Employee</label>
+                <select id="transactionEmployee" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option value="">Select Employee</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Transaction Type</label>
+                <select id="transactionType" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option value="expense">Expense (Debit)</option>
+                  <option value="payment">Payment (Credit)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Amount (PKR)</label>
+                <input type="number" id="transactionAmount" required step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <input type="text" id="transactionDescription" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                <input type="date" id="transactionDate" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              </div>
+              <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors">
+                Record Transaction
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- Right Column: Employee Ledger -->
+      <div class="lg:col-span-2">
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+          <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <h2 class="text-xl font-semibold">Employee Ledger</h2>
+            <div class="flex space-x-2">
+              <input type="text" id="searchEmployee" placeholder="Search employee..." class="px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <button id="exportLedger" class="bg-purple-600 text-white py-1 px-3 rounded-md hover:bg-purple-700 transition-colors text-sm">
+                Export CSV
+              </button>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Expenses</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Payments</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ledgerTableBody" class="bg-white divide-y divide-gray-200">
+                <!-- Ledger data will be populated here -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination for Employee Ledger -->
+          <div id="ledgerPagination" class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="text-sm text-gray-700">Rows per page:</span>
+              <select id="ledgerRowsPerPage" class="border border-gray-300 rounded-md px-2 py-1 text-sm">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+              </select>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span id="ledgerPageInfo" class="text-sm text-gray-700">Page 1 of 1</span>
+              <div class="flex space-x-1">
+                <button id="ledgerPrevPage" class="pagination-btn p-1 rounded disabled">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                  </svg>
+                </button>
+                <button id="ledgerNextPage" class="pagination-btn p-1 rounded disabled">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment and Expense Management Section -->
+        <div class="bg-white rounded-xl shadow overflow-hidden mt-8">
+          <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <h2 class="text-xl font-semibold">Payment and Expense Management</h2>
+            <div class="flex space-x-2">
+              <input type="text" id="transactionSearch" placeholder="Search transactions..." class="px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <select id="transactionFilter" class="px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="all">All Types</option>
+                <option value="expense">Expenses</option>
+                <option value="payment">Payments</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount (PKR)</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="transactionTableBody" class="bg-white divide-y divide-gray-200">
+                <!-- Transaction data will be populated here -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination for Transactions -->
+          <div id="transactionPagination" class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="text-sm text-gray-700">Rows per page:</span>
+              <select id="transactionRowsPerPage" class="border border-gray-300 rounded-md px-2 py-1 text-sm">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+              </select>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span id="transactionPageInfo" class="text-sm text-gray-700">Page 1 of 1</span>
+              <div class="flex space-x-1">
+                <button id="transactionPrevPage" class="pagination-btn p-1 rounded disabled">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                  </svg>
+                </button>
+                <button id="transactionNextPage" class="pagination-btn p-1 rounded disabled">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Employee Detail Modal -->
+        <div id="employeeDetailModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+          <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-4xl max-h-[90vh] overflow-auto">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-xl font-semibold" id="modalEmployeeName">Employee Details</h3>
+              <button id="closeModal" class="text-gray-500 hover:text-gray-700">
+                ✕
+              </button>
+            </div>
+
+            <div class="mb-6 grid grid-cols-3 gap-4">
+              <div class="bg-blue-50 p-4 rounded-lg text-center">
+                <p class="text-sm text-blue-600">Total Expenses</p>
+                <p class="text-2xl font-bold" id="modalTotalExpenses">PKR 0.00</p>
+              </div>
+              <div class="bg-green-50 p-4 rounded-lg text-center">
+                <p class="text-sm text-green-600">Total Payments</p>
+                <p class="text-2xl font-bold" id="modalTotalPayments">PKR 0.00</p>
+              </div>
+              <div class="bg-purple-50 p-4 rounded-lg text-center">
+                <p class="text-sm text-purple-600">Current Balance</p>
+                <p class="text-2xl font-bold" id="modalBalance">PKR 0.00</p>
+              </div>
+            </div>
+
+            <div class="flex justify-between items-center mb-3">
+              <h4 class="text-lg font-medium">Transaction History</h4>
+              <div class="flex space-x-2">
+                <input type="date" id="pdfStartDate" class="border px-2 py-1 rounded-md text-sm">
+                <input type="date" id="pdfEndDate" class="border px-2 py-1 rounded-md text-sm">
+                <button id="exportPDF" class="bg-red-600 text-white py-1 px-3 rounded-md hover:bg-red-700 text-sm">
+                  Export PDF
+                </button>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Amount (PKR)</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Balance</th>
+                  </tr>
+                </thead>
+                <tbody id="modalTransactionBody" class="bg-white divide-y divide-gray-200">
+                  <!-- Transaction details -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+              <button id="closeModalBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+          <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-xl font-semibold">Confirm Deletion</h3>
+              <button id="closeDeleteModal" class="text-gray-500 hover:text-gray-700">
+                ✕
+              </button>
+            </div>
+            <p class="mb-4">Are you sure you want to delete this transaction? This action cannot be undone.</p>
+            <div class="flex justify-end space-x-3">
+              <button id="cancelDelete" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
+                Cancel
+              </button>
+              <button id="confirmDelete" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  let employees = JSON.parse(localStorage.getItem('employees')) || [];
+  let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+  // Pagination variables
+  let ledgerCurrentPage = 1;
+  let ledgerRowsPerPage = 10;
+  let transactionCurrentPage = 1;
+  let transactionRowsPerPage = 10;
+
+  const employeeForm = document.getElementById('employeeForm');
+  const transactionForm = document.getElementById('transactionForm');
+  const ledgerTableBody = document.getElementById('ledgerTableBody');
+  const transactionTableBody = document.getElementById('transactionTableBody');
+  const transactionEmployeeSelect = document.getElementById('transactionEmployee');
+  const searchEmployeeInput = document.getElementById('searchEmployee');
+  const transactionSearchInput = document.getElementById('transactionSearch');
+  const transactionFilterSelect = document.getElementById('transactionFilter');
+  const exportLedgerBtn = document.getElementById('exportLedger');
+  const employeeDetailModal = document.getElementById('employeeDetailModal');
+  const deleteModal = document.getElementById('deleteModal');
+  const closeModalBtn = document.getElementById('closeModal');
+  const closeModalBtn2 = document.getElementById('closeModalBtn');
+  const closeDeleteModalBtn = document.getElementById('closeDeleteModal');
+  const cancelDeleteBtn = document.getElementById('cancelDelete');
+  const confirmDeleteBtn = document.getElementById('confirmDelete');
+
+  // Pagination elements
+  const ledgerRowsPerPageSelect = document.getElementById('ledgerRowsPerPage');
+  const ledgerPageInfo = document.getElementById('ledgerPageInfo');
+  const ledgerPrevPageBtn = document.getElementById('ledgerPrevPage');
+  const ledgerNextPageBtn = document.getElementById('ledgerNextPage');
+
+  const transactionRowsPerPageSelect = document.getElementById('transactionRowsPerPage');
+  const transactionPageInfo = document.getElementById('transactionPageInfo');
+  const transactionPrevPageBtn = document.getElementById('transactionPrevPage');
+  const transactionNextPageBtn = document.getElementById('transactionNextPage');
+
+  let currentEmployee = null;
+  let transactionToDelete = null;
+
+  document.getElementById('transactionDate').valueAsDate = new Date();
+
+  function initApp() {
+    updateEmployeeSelect();
+    renderLedgerTable();
+    renderTransactionTable();
+
+    // Set up pagination event listeners
+    ledgerRowsPerPageSelect.addEventListener('change', function() {
+      ledgerRowsPerPage = parseInt(this.value);
+      ledgerCurrentPage = 1;
+      renderLedgerTable();
+    });
+
+    transactionRowsPerPageSelect.addEventListener('change', function() {
+      transactionRowsPerPage = parseInt(this.value);
+      transactionCurrentPage = 1;
+      renderTransactionTable();
+    });
+
+    ledgerPrevPageBtn.addEventListener('click', function() {
+      if (ledgerCurrentPage > 1) {
+        ledgerCurrentPage--;
+        renderLedgerTable();
+      }
+    });
+
+    ledgerNextPageBtn.addEventListener('click', function() {
+      const totalPages = Math.ceil(getFilteredEmployees().length / ledgerRowsPerPage);
+      if (ledgerCurrentPage < totalPages) {
+        ledgerCurrentPage++;
+        renderLedgerTable();
+      }
+    });
+
+    transactionPrevPageBtn.addEventListener('click', function() {
+      if (transactionCurrentPage > 1) {
+        transactionCurrentPage--;
+        renderTransactionTable();
+      }
+    });
+
+    transactionNextPageBtn.addEventListener('click', function() {
+      const totalPages = Math.ceil(getFilteredTransactions().length / transactionRowsPerPage);
+      if (transactionCurrentPage < totalPages) {
+        transactionCurrentPage++;
+        renderTransactionTable();
+      }
+    });
+  }
+
+  function getFilteredEmployees() {
+    const filter = searchEmployeeInput.value.toLowerCase();
+    return employees.filter(e => e.name.toLowerCase().includes(filter));
+  }
+
+  function getFilteredTransactions() {
+    const searchText = transactionSearchInput.value.toLowerCase();
+    const filterType = transactionFilterSelect.value;
+
+    return transactions.filter(t => {
+      const employee = employees.find(e => e.id === t.employeeId);
+      const employeeName = employee ? employee.name.toLowerCase() : '';
+      const matchesSearch = employeeName.includes(searchText) ||
+                            t.description.toLowerCase().includes(searchText);
+      const matchesType = filterType === 'all' || t.type === filterType;
+
+      return matchesSearch && matchesType;
+    });
+  }
+
+  function updateEmployeeSelect() {
+    transactionEmployeeSelect.innerHTML = '<option value="">Select Employee</option>';
+    employees.forEach(employee => {
+      const option = document.createElement('option');
+      option.value = employee.id;
+      option.textContent = employee.name;
+      transactionEmployeeSelect.appendChild(option);
+    });
+  }
+
+  function renderLedgerTable() {
+    ledgerTableBody.innerHTML = '';
+    const filteredEmployees = getFilteredEmployees();
+
+    if (!filteredEmployees.length) {
+      ledgerTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No employees found</td></tr>`;
+      updateLedgerPagination(0);
+      return;
+    }
+
+    // Calculate pagination
+    const startIndex = (ledgerCurrentPage - 1) * ledgerRowsPerPage;
+    const endIndex = Math.min(startIndex + ledgerRowsPerPage, filteredEmployees.length);
+    const paginatedEmployees = filteredEmployees.slice(startIndex, endIndex);
+
+    paginatedEmployees.forEach(employee => {
+      const empTxns = transactions.filter(t => t.employeeId === employee.id);
+      const totalExpenses = empTxns.filter(t => t.type === 'expense').reduce((s,t)=>s+t.amount,0);
+      const totalPayments = empTxns.filter(t => t.type === 'payment').reduce((s,t)=>s+t.amount,0);
+      const balance = totalExpenses - totalPayments;
+      const balanceClass = balance>0?'negative-balance':balance<0?'positive-balance':'';
+
+      const row = document.createElement('tr');
+      row.className = 'ledger-row';
+      row.innerHTML = `
+        <td class="px-6 py-4">${employee.name}</td>
+        <td class="px-6 py-4">PKR ${totalExpenses.toFixed(2)}</td>
+        <td class="px-6 py-4">PKR ${totalPayments.toFixed(2)}</td>
+        <td class="px-6 py-4 ${balanceClass}">PKR ${Math.abs(balance).toFixed(2)} ${balance>0?'(Due)':balance<0?'(Advance)':''}</td>
+        <td class="px-6 py-4">
+          <button class="text-blue-600 view-ledger mr-3" data-id="${employee.id}">View Ledger</button>
+          <button class="text-red-600 delete-employee" data-id="${employee.id}">Delete</button>
+        </td>`;
+      ledgerTableBody.appendChild(row);
+    });
+
+    // Update pagination controls
+    updateLedgerPagination(filteredEmployees.length);
+
+    document.querySelectorAll('.view-ledger').forEach(btn => btn.onclick = ()=>showEmployeeDetails(btn.dataset.id));
+    document.querySelectorAll('.delete-employee').forEach(btn => btn.onclick = ()=>deleteEmployee(btn.dataset.id));
+  }
+
+  function updateLedgerPagination(totalItems) {
+    const totalPages = Math.ceil(totalItems / ledgerRowsPerPage);
+
+    // Update page info
+    ledgerPageInfo.textContent = `Page ${ledgerCurrentPage} of ${totalPages || 1}`;
+
+    // Update button states
+    ledgerPrevPageBtn.disabled = ledgerCurrentPage <= 1;
+    ledgerNextPageBtn.disabled = ledgerCurrentPage >= totalPages;
+
+    // Update CSS classes for disabled state
+    if (ledgerPrevPageBtn.disabled) {
+      ledgerPrevPageBtn.classList.add('disabled');
+    } else {
+      ledgerPrevPageBtn.classList.remove('disabled');
+    }
+
+    if (ledgerNextPageBtn.disabled) {
+      ledgerNextPageBtn.classList.add('disabled');
+    } else {
+      ledgerNextPageBtn.classList.remove('disabled');
+    }
+  }
+
+  function renderTransactionTable() {
+    const filteredTransactions = getFilteredTransactions();
+
+    transactionTableBody.innerHTML = '';
+
+    if (!filteredTransactions.length) {
+      transactionTableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">No transactions found</td></tr>`;
+      updateTransactionPagination(0);
+      return;
+    }
+
+    // Sort by date (newest first)
+    filteredTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    // Calculate pagination
+    const startIndex = (transactionCurrentPage - 1) * transactionRowsPerPage;
+    const endIndex = Math.min(startIndex + transactionRowsPerPage, filteredTransactions.length);
+    const paginatedTransactions = filteredTransactions.slice(startIndex, endIndex);
+
+    paginatedTransactions.forEach(transaction => {
+      const employee = employees.find(e => e.id === transaction.employeeId);
+      const row = document.createElement('tr');
+      row.className = 'ledger-row';
+      row.innerHTML = `
+        <td class="px-6 py-4">${new Date(transaction.date).toLocaleDateString()}</td>
+        <td class="px-6 py-4">${employee ? employee.name : 'Unknown'}</td>
+        <td class="px-6 py-4">
+          <span class="px-2 py-1 rounded-full text-xs ${transaction.type === 'expense' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}">
+            ${transaction.type === 'expense' ? 'Expense' : 'Payment'}
+          </span>
+        </td>
+        <td class="px-6 py-4">${transaction.description}</td>
+        <td class="px-6 py-4 ${transaction.type === 'expense' ? 'text-red-600' : 'text-green-600'}">
+          PKR ${transaction.amount.toFixed(2)}
+        </td>
+        <td class="px-6 py-4">
+          <button class="delete-btn bg-red-600 text-white py-1 px-3 rounded-md text-sm hover:bg-red-700 transition-colors" data-id="${transaction.id}">
+            Delete
+          </button>
+        </td>`;
+      transactionTableBody.appendChild(row);
+    });
+
+    // Update pagination controls
+    updateTransactionPagination(filteredTransactions.length);
+
+    // Add event listeners to delete buttons
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.onclick = () => confirmDeleteTransaction(btn.dataset.id);
+    });
+  }
+
+  function updateTransactionPagination(totalItems) {
+    const totalPages = Math.ceil(totalItems / transactionRowsPerPage);
+
+    // Update page info
+    transactionPageInfo.textContent = `Page ${transactionCurrentPage} of ${totalPages || 1}`;
+
+    // Update button states
+    transactionPrevPageBtn.disabled = transactionCurrentPage <= 1;
+    transactionNextPageBtn.disabled = transactionCurrentPage >= totalPages;
+
+    // Update CSS classes for disabled state
+    if (transactionPrevPageBtn.disabled) {
+      transactionPrevPageBtn.classList.add('disabled');
+    } else {
+      transactionPrevPageBtn.classList.remove('disabled');
+    }
+
+    if (transactionNextPageBtn.disabled) {
+      transactionNextPageBtn.classList.add('disabled');
+    } else {
+      transactionNextPageBtn.classList.remove('disabled');
+    }
+  }
+
+  function confirmDeleteTransaction(transactionId) {
+    transactionToDelete = transactionId;
+    deleteModal.classList.remove('hidden');
+  }
+
+  function deleteTransaction() {
+    if (!transactionToDelete) return;
+
+    transactions = transactions.filter(t => t.id !== transactionToDelete);
+    localStorage.setItem('transactions', JSON.stringify(transactions));
+
+    // Update both tables
+    renderLedgerTable();
+    renderTransactionTable();
+
+    // Close the modal
+    deleteModal.classList.add('hidden');
+    transactionToDelete = null;
+
+    // Show success message
+    alert('Transaction deleted successfully!');
+  }
+
+  function showEmployeeDetails(employeeId) {
+    const employee = employees.find(e => e.id === employeeId);
+    if (!employee) return;
+    currentEmployee = employee;
+    const empTxns = transactions.filter(t => t.employeeId === employeeId).sort((a,b)=>new Date(a.date)-new Date(b.date));
+
+    let runningBalance=0;
+    const withBalance = empTxns.map(t=>{
+      if(t.type==='expense') runningBalance+=t.amount; else runningBalance-=t.amount;
+      return {...t,balance:runningBalance};
+    });
+
+    document.getElementById('modalEmployeeName').textContent = employee.name+" - Ledger";
+    const totalExpenses = empTxns.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+    const totalPayments = empTxns.filter(t=>t.type==='payment').reduce((s,t)=>s+t.amount,0);
+    document.getElementById('modalTotalExpenses').textContent = `PKR ${totalExpenses.toFixed(2)}`;
+    document.getElementById('modalTotalPayments').textContent = `PKR ${totalPayments.toFixed(2)}`;
+    document.getElementById('modalBalance').textContent = `PKR ${Math.abs(totalExpenses-totalPayments).toFixed(2)} ${totalExpenses>totalPayments?'(Due)':totalExpenses<totalPayments?'(Advance)':''}`;
+
+    const body = document.getElementById('modalTransactionBody');
+    body.innerHTML='';
+    if(!withBalance.length) {
+      body.innerHTML=`<tr><td colspan="5" class="px-4 py-4 text-center text-gray-500">No transactions</td></tr>`;
+    } else {
+      withBalance.forEach(t=>{
+        const row=document.createElement('tr');
+        const balClass=t.balance>0?'negative-balance':t.balance<0?'positive-balance':'';
+        row.innerHTML=`
+          <td class="px-4 py-2">${new Date(t.date).toLocaleDateString()}</td>
+          <td class="px-4 py-2">${t.type==='expense'?'Expense':'Payment'}</td>
+          <td class="px-4 py-2">${t.description}</td>
+          <td class="px-4 py-2">PKR ${t.amount.toFixed(2)}</td>
+          <td class="px-4 py-2 ${balClass}">PKR ${Math.abs(t.balance).toFixed(2)} ${t.balance>0?'(Due)':t.balance<0?'(Advance)':''}</td>`;
+        body.appendChild(row);
+      });
+    }
+    employeeDetailModal.classList.remove('hidden');
+  }
+
+  function deleteEmployee(id) {
+    if(!confirm("Delete employee and all transactions?")) return;
+    employees = employees.filter(e=>e.id!==id);
+    transactions = transactions.filter(t=>t.employeeId!==id);
+    localStorage.setItem('employees', JSON.stringify(employees));
+    localStorage.setItem('transactions', JSON.stringify(transactions));
+    updateEmployeeSelect();
+    renderLedgerTable();
+    renderTransactionTable();
+  }
+
+  employeeForm.onsubmit = e=>{
+    e.preventDefault();
+    const name=document.getElementById('employeeName').value.trim();
+    const initBal=parseFloat(document.getElementById('initialBalance').value)||0;
+    if(!name) return;
+    const emp={id:Date.now().toString(),name};
+    employees.push(emp);
+    if(initBal!==0){
+      transactions.push({
+        id:Date.now().toString(),employeeId:emp.id,
+        type:initBal>0?'payment':'expense',
+        amount:Math.abs(initBal),description:"Initial balance",
+        date:new Date().toISOString().split('T')[0]
+      });
+    }
+    localStorage.setItem('employees',JSON.stringify(employees));
+    localStorage.setItem('transactions',JSON.stringify(transactions));
+    employeeForm.reset();
+    updateEmployeeSelect();
+    renderLedgerTable();
+    renderTransactionTable();
+    alert("Employee added!");
+  };
+
+  transactionForm.onsubmit = e=>{
+    e.preventDefault();
+    const empId=document.getElementById('transactionEmployee').value;
+    const type=document.getElementById('transactionType').value;
+    const amt=parseFloat(document.getElementById('transactionAmount').value);
+    const desc=document.getElementById('transactionDescription').value.trim();
+    const date=document.getElementById('transactionDate').value;
+    if(!empId||!amt||!desc||!date) return;
+    transactions.push({id:Date.now().toString(),employeeId:empId,type,amount:amt,description:desc,date});
+    localStorage.setItem('transactions',JSON.stringify(transactions));
+    transactionForm.reset();
+    document.getElementById('transactionDate').valueAsDate = new Date();
+    renderLedgerTable();
+    renderTransactionTable();
+    alert("Transaction recorded!");
+  };
+
+  searchEmployeeInput.oninput=()=>{
+    ledgerCurrentPage = 1;
+    renderLedgerTable();
+  };
+
+  transactionSearchInput.oninput=()=>{
+    transactionCurrentPage = 1;
+    renderTransactionTable();
+  };
+
+  transactionFilterSelect.onchange=()=>{
+    transactionCurrentPage = 1;
+    renderTransactionTable();
+  };
+
+  exportLedgerBtn.onclick=()=>{
+    let csv="Employee,Total Expenses,Total Payments,Balance\n";
+    employees.forEach(emp=>{
+      const txns=transactions.filter(t=>t.employeeId===emp.id);
+      const exp=txns.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+      const pay=txns.filter(t=>t.type==='payment').reduce((s,t)=>s+t.amount,0);
+      const bal=exp-pay;
+      csv+=`${emp.name},${exp},${pay},${bal}\n`;
+    });
+    const blob=new Blob([csv],{type:'text/csv'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url;a.download="employee_ledger.csv";a.click();
+  };
+
+  // PDF Export - Fixed to ensure all data is included
+  document.getElementById('exportPDF').onclick=()=>{
+    if(!currentEmployee) return;
+    const start=document.getElementById('pdfStartDate').value;
+    const end=document.getElementById('pdfEndDate').value;
+    let txns=transactions.filter(t=>t.employeeId===currentEmployee.id);
+    if(start) txns=txns.filter(t=>new Date(t.date)>=new Date(start));
+    if(end) txns=txns.filter(t=>new Date(t.date)<=new Date(end));
+    txns.sort((a,b)=>new Date(a.date)-new Date(b.date));
+    let runBal=0;
+    const rows=txns.map(t=>{
+      if(t.type==='expense') runBal+=t.amount; else runBal-=t.amount;
+      return [new Date(t.date).toLocaleDateString(),t.type==='expense'?'Expense':'Payment',t.description,"PKR "+t.amount.toFixed(2),"PKR "+Math.abs(runBal).toFixed(2)+(runBal>0?' (Due)':runBal<0?' (Advance)':'')];
+    });
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF();
+
+    // Set document properties
+    doc.setProperties({
+      title: `Ledger Report - ${currentEmployee.name}`,
+      subject: 'Employee Ledger',
+      author: 'NUTRION Ledger System',
+      keywords: 'ledger, expenses, payments',
+      creator: 'NUTRION'
+    });
+
+    doc.setFontSize(16);
+    doc.text("NUTRION",105,15,null,null,'center');
+    doc.setFontSize(12);
+    doc.text("Employee Ledger Report",105,25,null,null,'center');
+    doc.text(`Employee: ${currentEmployee.name}`,14,35);
+    if(start||end) doc.text(`Period: ${start||'--'} to ${end||'--'}`,14,42);
+
+    // Calculate totals
+    const exp=txns.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+    const pay=txns.filter(t=>t.type==='payment').reduce((s,t)=>s+t.amount,0);
+    const bal=exp-pay;
+
+    // AutoTable with proper margins to ensure all content fits
+    doc.autoTable({
+      startY: 50,
+      head:[["Date","Type","Description","Amount (PKR)","Balance (PKR)"]],
+      body:rows,
+      theme:'grid',
+      headStyles:{fillColor:[41,128,185]},
+      styles:{fontSize:9, cellPadding:2},
+      margin: { top: 50, right: 10, bottom: 30, left: 10 },
+      pageBreak: 'auto',
+      didDrawPage: function(data) {
+        // Footer on each page
+        doc.setFontSize(8);
+        doc.text("Generated by Nutrion Ledger System", data.settings.margin.left, doc.internal.pageSize.height - 10);
+      }
+    });
+
+    // Add summary after the table
+    let finalY = doc.lastAutoTable.finalY + 10;
+
+    // Check if we need a new page for the summary
+    if (finalY > 250) {
+      doc.addPage();
+      finalY = 20;
+    }
+
+    doc.setFontSize(11);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont(undefined, 'bold');
+    doc.text(`Total Expenses: PKR ${exp.toFixed(2)}`, 14, finalY);
+    doc.text(`Total Payments: PKR ${pay.toFixed(2)}`, 14, finalY + 7);
+    doc.text(`Balance: PKR ${Math.abs(bal).toFixed(2)} ${bal>0?'(Due)':bal<0?'(Advance)':''}`, 14, finalY + 14);
+
+    doc.save(`ledger_${currentEmployee.name.replace(/\s+/g, '_')}.pdf`);
+  };
+
+  [closeModalBtn,closeModalBtn2].forEach(btn=>btn.onclick=()=>employeeDetailModal.classList.add('hidden'));
+  [closeDeleteModalBtn, cancelDeleteBtn].forEach(btn=>btn.onclick=()=>deleteModal.classList.add('hidden'));
+  confirmDeleteBtn.onclick = () => deleteTransaction();
+
+  initApp();
+});
+</script>
+</body>
+</html>

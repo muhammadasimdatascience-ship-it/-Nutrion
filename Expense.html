@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Page</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #fff7f0;
+      padding: 50px;
+    }
+    h1 {
+      color: #444;
+    }
+    .btn {
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 24px;
+      background: #28a745;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+    .btn:hover {
+      background: #1e7e34;
+    }
+  </style>
+</head>
+<body>
+  <a href="Index.html" class="btn">Home</a>
+</body>
+  <a href="Employee Ledger.html" class="btn">Employee Ledger</a>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #fff7f0;
+      padding: 50px;
+    }
+    h1 {
+      color: #444;
+    }
+    .btn {
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 24px;
+      background: #28a745;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+    .btn:hover {
+      background: #1e7e34;
+    }
+  </style>
+</head>
+<body>
+  <a href="shippers.html" class="btn">Shipper</a>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Company Expense Tracker</title>
+  <!-- Tailwind CSS for styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Feather Icons for delete icon -->
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <!-- jsPDF for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.5.25/dist/jspdf.plugin.autotable.min.js"></script>
+  <!-- Chart.js for visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    /* Custom CSS */
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f3f4f6; /* A light gray background */
+    }
+    .transition-all {
+      transition: all 0.3s ease-in-out;
+    }
+    /* Style for the employee name field animation */
+    .slide-down {
+      max-height: 100px;
+      opacity: 1;
+      overflow: visible;
+      transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    }
+    .slide-up {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-in-out, opacity 0.3s ease-in-out;
+    }
+    .status-pill {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .status-company {
+      background-color: #dbeafe; /* blue-100 */
+      color: #1e40af; /* blue-800 */
+    }
+    .status-employee {
+      background-color: #d1fae5; /* green-100 */
+      color: #065f46; /* green-800 */
+    }
+    /* Custom styles for input fields */
+    .form-input {
+      display: block;
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgb(79 70 229 / 0.2);
+    }
+    .message-box {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1000;
+    }
+    .date-range-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .date-range-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #374151;
+    }
+    .chart-container {
+      position: relative;
+      height: 250px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body class="antialiased text-gray-800">
+
+  <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+    <header class="mb-8">
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Expense Dashboard</h1>
+      <p class="text-gray-600 mt-1">Track and manage all company and employee expenses.</p>
+    </header>
+
+    <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+      <!-- Left Column: Add Expense Form -->
+      <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg h-fit">
+        <h2 class="text-xl font-semibold mb-4 border-b pb-3">Add New Expense</h2>
+        <form id="expenseForm">
+          <div class="space-y-4">
+            <!-- Expense Type -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Expense Type</label>
+              <div class="flex items-center space-x-4">
+                <label class="flex items-center">
+                  <input type="radio" name="expenseType" value="company" class="text-blue-600 focus:ring-blue-500" checked>
+                  <span class="ml-2 text-gray-700">Company</span>
+                </label>
+                <label class="flex items-center">
+                  <input type="radio" name="expenseType" value="employee" class="text-green-600 focus:ring-green-500">
+                  <span class="ml-2 text-gray-700">Employee</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Employee Name (Conditional) -->
+            <div id="employeeNameContainer" class="slide-up">
+              <label for="employeeName" class="block text-sm font-medium text-gray-700">Employee Name</label>
+              <input type="text" id="employeeName" name="employeeName" class="mt-1 form-input" placeholder="e.g., Ali Khan" list="employeeNamesList">
+              <datalist id="employeeNamesList">
+                <!-- Options will be added by JavaScript -->
+              </datalist>
+            </div>
+
+            <!-- Description -->
+            <div>
+              <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+              <input type="text" id="description" name="description" required class="mt-1 form-input" placeholder="e.g., Office Lunch">
+            </div>
+
+            <!-- Amount -->
+            <div>
+              <label for="amount" class="block text-sm font-medium text-gray-700">Amount (PKR)</label>
+              <input type="number" id="amount" name="amount" required step="0.01" class="mt-1 form-input" placeholder="e.g., 2500.50">
+            </div>
+
+            <!-- Date Field -->
+            <div>
+              <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
+              <input type="date" id="date" name="date" required class="mt-1 form-input">
+            </div>
+
+            <!-- Submit Button -->
+            <div>
+              <button type="submit" id="submitButton" class="w-full inline-flex items-center justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all">
+                <span id="buttonText">Add Expense</span>
+                <svg id="loadingSpinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Right Column: Expense List & Totals -->
+      <div class="lg:col-span-2 space-y-8">
+        <!-- Totals Section -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-white p-4 rounded-xl shadow-lg text-center">
+            <h3 class="text-sm font-medium text-gray-500">Company Total</h3>
+            <p id="companyTotal" class="mt-1 text-2xl font-semibold text-blue-600">PKR 0.00</p>
+          </div>
+          <div class="bg-white p-4 rounded-xl shadow-lg text-center">
+            <h3 class="text-sm font-medium text-gray-500">Employee Total</h3>
+            <p id="employeeTotal" class="mt-1 text-2xl font-semibold text-green-600">PKR 0.00</p>
+          </div>
+          <div class="bg-white p-4 rounded-xl shadow-lg text-center">
+            <h3 class="text-sm font-medium text-gray-500">Grand Total</h3>
+            <p id="grandTotal" class="mt-1 text-2xl font-semibold text-gray-900">PKR 0.00</p>
+          </div>
+        </div>
+
+        <!-- Overall Expense Details Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <div class="flex justify-between items-center border-b pb-3 mb-4">
+            <h2 class="text-xl font-semibold">Overall Expense Details</h2>
+            <button id="downloadOverallPdf" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition-all">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <span>Download Full Report</span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Expense Distribution Chart -->
+            <div>
+              <h3 class="text-lg font-medium text-gray-800 mb-3">Expense Distribution</h3>
+              <div class="chart-container">
+                <canvas id="expenseDistributionChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Top Expenses Chart -->
+            <div>
+              <h3 class="text-lg font-medium text-gray-800 mb-3">Top Expenses</h3>
+              <div class="chart-container">
+                <canvas id="topExpensesChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Monthly Summary -->
+          <div class="mb-6">
+            <h3 class="text-lg font-medium text-gray-800 mb-3">Monthly Summary</h3>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="monthlySummary">
+                <!-- Will be populated by JavaScript -->
+                <div class="text-center">
+                  <p class="text-sm text-gray-500">Current Month</p>
+                  <p class="text-xl font-semibold text-blue-600">PKR 0.00</p>
+                </div>
+                <div class="text-center">
+                  <p class="text-sm text-gray-500">Previous Month</p>
+                  <p class="text-xl font-semibold text-green-600">PKR 0.00</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Expense Breakdown -->
+          <div>
+            <h3 class="text-lg font-medium text-gray-800 mb-3">Expense Breakdown</h3>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Count</th>
+                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Amount</th>
+                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Average</th>
+                  </tr>
+                </thead>
+                <tbody id="expenseBreakdownBody" class="bg-white divide-y divide-gray-200">
+                  <!-- Will be populated by JavaScript -->
+                  <tr>
+                    <td colspan="4" class="px-4 py-4 text-sm text-gray-500 text-center">Loading expense breakdown...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filters and Actions -->
+        <div class="bg-white p-4 rounded-xl shadow-lg">
+          <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <input type="text" id="searchInput" placeholder="Search by name/description..." class="form-input md:col-span-2 lg:col-span-2">
+            <select id="typeFilter" class="form-input">
+              <option value="all">All Types</option>
+              <option value="company">Company</option>
+              <option value="employee">Employee</option>
+            </select>
+            <button id="resetFilters" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded transition-all">
+              Reset
+            </button>
+          </div>
+        </div>
+
+        <!-- Expense Table -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div class="flex justify-between items-center p-6 border-b">
+            <h2 class="text-xl font-semibold">Recent Expenses</h2>
+            <button id="downloadCsv" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition-all">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              <span>Download CSV</span>
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                  <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="expenseTableBody" class="bg-white divide-y divide-gray-200">
+                <!-- Expense rows will be injected here by JavaScript -->
+                <tr><td colspan="6" class="text-center p-8 text-gray-500">Loading expenses...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Company Expense Report Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <div class="flex justify-between items-center border-b pb-3 mb-4">
+            <h2 class="text-xl font-semibold">Company Expense Report</h2>
+          </div>
+          <div class="space-y-4">
+            <p class="text-sm text-gray-600">Generate a PDF report of company expenses for a specific date range.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="date-range-label">From Date</label>
+                <input type="date" id="companyFromDate" class="form-input">
+              </div>
+              <div>
+                <label class="date-range-label">To Date</label>
+                <input type="date" id="companyToDate" class="form-input">
+              </div>
+            </div>
+            <button id="downloadCompanyPdf" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition-all">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <span>Download Company Expense Report (PDF)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Employee List for PDF Download -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <div class="flex justify-between items-center border-b pb-3 mb-4">
+            <h2 class="text-xl font-semibold">Employee Expenses Report</h2>
+          </div>
+          <div id="employeeListContainer" class="space-y-4">
+            <!-- Employee list and download buttons will be rendered here -->
+            <p class="text-sm text-gray-500">No employee expenses to report.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Custom Message Box -->
+  <div id="messageBox" class="message-box rounded-md shadow-lg hidden">
+    <div class="flex items-center p-4 rounded-md" id="messageBoxContent">
+      <!-- Message will be injected here -->
+    </div>
+  </div>
+
+  <!-- Date Range Modal -->
+  <div id="dateRangeModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold">Select Date Range</h3>
+        <button id="closeDateRangeModal" class="text-gray-500 hover:text-gray-700">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="date-range-label">From Date</label>
+          <input type="date" id="fromDate" class="form-input">
+        </div>
+        <div>
+          <label class="date-range-label">To Date</label>
+          <input type="date" id="toDate" class="form-input">
+        </div>
+        <div class="flex justify-end space-x-2 pt-4">
+          <button id="cancelDateRange" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors">
+            Cancel
+          </button>
+          <button id="applyDateRange" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors">
+            Apply
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Global state
+      let allExpenses = []; // Master list of all expenses
+      let filteredExpenses = []; // List of expenses after filtering
+      let currentEmployeeForPdf = null; // Store the employee name for PDF generation
+      let dateRangeFilter = { from: null, to: null }; // Store date range filter
+      let expenseDistributionChart = null;
+      let topExpensesChart = null;
+
+      // Form Elements
+      const form = document.getElementById('expenseForm');
+      const submitButton = document.getElementById('submitButton');
+      const buttonText = document.getElementById('buttonText');
+      const loadingSpinner = document.getElementById('loadingSpinner');
+      const employeeNameContainer = document.getElementById('employeeNameContainer');
+      const employeeNameInput = document.getElementById('employeeName');
+      const expenseTypeRadios = document.querySelectorAll('input[name="expenseType"]');
+      const dateInput = document.getElementById('date');
+
+      // Table and Total Elements
+      const expenseTableBody = document.getElementById('expenseTableBody');
+      const companyTotalEl = document.getElementById('companyTotal');
+      const employeeTotalEl = document.getElementById('employeeTotal');
+      const grandTotalEl = document.getElementById('grandTotal');
+      const employeeListContainer = document.getElementById('employeeListContainer');
+      const employeeNamesDatalist = document.getElementById('employeeNamesList');
+
+      // Filter and Action Elements
+      const searchInput = document.getElementById('searchInput');
+      const typeFilter = document.getElementById('typeFilter');
+      const resetFiltersBtn = document.getElementById('resetFilters');
+      const downloadCsvBtn = document.getElementById('downloadCsv');
+
+      // Overall Expense Details Elements
+      const downloadOverallPdfBtn = document.getElementById('downloadOverallPdf');
+      const monthlySummaryEl = document.getElementById('monthlySummary');
+      const expenseBreakdownBody = document.getElementById('expenseBreakdownBody');
+
+      // Company Expense Report Elements
+      const companyFromDateInput = document.getElementById('companyFromDate');
+      const companyToDateInput = document.getElementById('companyToDate');
+      const downloadCompanyPdfBtn = document.getElementById('downloadCompanyPdf');
+
+      // Message Box Elements
+      const messageBox = document.getElementById('messageBox');
+      const messageBoxContent = document.getElementById('messageBoxContent');
+
+      // Date Range Modal Elements
+      const dateRangeModal = document.getElementById('dateRangeModal');
+      const fromDateInput = document.getElementById('fromDate');
+      const toDateInput = document.getElementById('toDate');
+      const applyDateRangeBtn = document.getElementById('applyDateRange');
+      const cancelDateRangeBtn = document.getElementById('cancelDateRange');
+      const closeDateRangeModalBtn = document.getElementById('closeDateRangeModal');
+
+      // Set the default date to today
+      dateInput.value = new Date().toISOString().split('T')[0];
+
+      // Set default date range for company expenses (current month)
+      const today = new Date();
+      const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      companyFromDateInput.value = firstDayOfMonth.toISOString().split('T')[0];
+      companyToDateInput.value = today.toISOString().split('T')[0];
+
+      // Placeholder logo URL (using an online placeholder service)
+      // It's converted to Base64 to ensure it loads in the PDF
+      const LOGO_URL = 'logo.png';
+      let logoBase64 = null; // Store the converted image here
+
+      // Helper function to convert a URL to a Base64 string
+      const getLogoBase64 = async () => {
+        try {
+          const response = await fetch(LOGO_URL);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const blob = await response.blob();
+          return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+        } catch (error) {
+          console.error("Failed to load logo image:", error);
+          showMessage('Failed to load logo for PDF. Download will proceed without it.', 'error');
+          return null;
+        }
+      };
+
+      // --- UI FUNCTIONS ---
+      const showMessage = (message, type = 'success') => {
+        let colorClass;
+        if (type === 'success') {
+          colorClass = 'bg-green-100 text-green-800';
+        } else if (type === 'error') {
+          colorClass = 'bg-red-100 text-red-800';
+        } else {
+          colorClass = 'bg-gray-100 text-gray-800';
+        }
+
+        messageBox.classList.remove('hidden');
+        messageBoxContent.className = `flex items-center p-4 rounded-md ${colorClass}`;
+        messageBoxContent.innerHTML = `
+          <p class="text-sm font-medium flex-grow">${message}</p>
+          <button class="ml-4 text-xs font-semibold uppercase opacity-75 hover:opacity-100" onclick="document.getElementById('messageBox').classList.add('hidden');">Dismiss</button>
+        `;
+        setTimeout(() => {
+          messageBox.classList.add('hidden');
+        }, 5000);
+      };
+
+      const toggleLoadingState = (isLoading) => {
+        if (isLoading) {
+          submitButton.disabled = true;
+          buttonText.textContent = 'Adding...';
+          loadingSpinner.classList.remove('hidden');
+        } else {
+          submitButton.disabled = false;
+          buttonText.textContent = 'Add Expense';
+          loadingSpinner.classList.add('hidden');
+        }
+      };
+
+      // --- DATA STORAGE & RETRIEVAL (USING LOCAL STORAGE) ---
+      const EXPENSE_KEY = 'companyExpenses';
+
+      const saveExpenses = () => {
+        localStorage.setItem(EXPENSE_KEY, JSON.stringify(allExpenses));
+      };
+
+      const loadExpenses = () => {
+        const storedExpenses = localStorage.getItem(EXPENSE_KEY);
+        if (storedExpenses) {
+          allExpenses = JSON.parse(storedExpenses);
+        } else {
+          // Initial dummy data if no expenses are found
+          allExpenses = [
+            {
+              "id": 1,
+              "type": "company",
+              "description": "Office Supplies",
+              "amount": 150.75,
+              "employee_name": null,
+              "date": "2024-08-27"
+            },
+            {
+              "id": 2,
+              "type": "employee",
+              "description": "Client Lunch",
+              "amount": 85.50,
+              "employee_name": "Ali Khan",
+              "date": "2024-08-26"
+            },
+            {
+              "id": 3,
+              "type": "employee",
+              "description": "Travel to a conference",
+              "amount": 500.00,
+              "employee_name": "Sana Butt",
+              "date": "2024-08-25"
+            },
+            {
+              "id": 4,
+              "type": "employee",
+              "description": "Software Subscription",
+              "amount": 120.00,
+              "employee_name": "Ali Khan",
+              "date": "2024-08-24"
+            }
+          ];
+        }
+        applyFilters();
+        updateEmployeeNameDatalist();
+        updateOverallExpenseDetails();
+      };
+
+      // --- OVERALL EXPENSE DETAILS FUNCTIONS ---
+      const updateOverallExpenseDetails = () => {
+        updateExpenseDistributionChart();
+        updateTopExpensesChart();
+        updateMonthlySummary();
+        updateExpenseBreakdown();
+      };
+
+      const updateExpenseDistributionChart = () => {
+        const ctx = document.getElementById('expenseDistributionChart').getContext('2d');
+
+        // Calculate company vs employee totals
+        const companyTotal = allExpenses
+          .filter(e => e.type === 'company')
+          .reduce((sum, e) => sum + e.amount, 0);
+
+        const employeeTotal = allExpenses
+          .filter(e => e.type === 'employee')
+          .reduce((sum, e) => sum + e.amount, 0);
+
+        // Destroy previous chart if it exists
+        if (expenseDistributionChart) {
+          expenseDistributionChart.destroy();
+        }
+
+        // Create new chart
+        expenseDistributionChart = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Company Expenses', 'Employee Expenses'],
+            datasets: [{
+              data: [companyTotal, employeeTotal],
+              backgroundColor: ['#3B82F6', '#10B981'],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom'
+              }
+            }
+          }
+        });
+      };
+
+      const updateTopExpensesChart = () => {
+        const ctx = document.getElementById('topExpensesChart').getContext('2d');
+
+        // Get top 5 expenses by amount
+        const topExpenses = [...allExpenses]
+          .sort((a, b) => b.amount - a.amount)
+          .slice(0, 5);
+
+        // Destroy previous chart if it exists
+        if (topExpensesChart) {
+          topExpensesChart.destroy();
+        }
+
+        // Create new chart
+        topExpensesChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: topExpenses.map(e => e.description.length > 15 ? e.description.substring(0, 15) + '...' : e.description),
+            datasets: [{
+              label: 'Amount (PKR)',
+              data: topExpenses.map(e => e.amount),
+              backgroundColor: '#8B5CF6',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            },
+            plugins: {
+              legend: {
+                display: false
+              }
+            }
+          }
+        });
+      };
+
+      const updateMonthlySummary = () => {
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+
+        const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+        const previousYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+
+        // Calculate current month expenses
+        const currentMonthExpenses = allExpenses.filter(e => {
+          const expenseDate = new Date(e.date);
+          return expenseDate.getMonth() === currentMonth &&
+                 expenseDate.getFullYear() === currentYear;
+        }).reduce((sum, e) => sum + e.amount, 0);
+
+        // Calculate previous month expenses
+        const previousMonthExpenses = allExpenses.filter(e => {
+          const expenseDate = new Date(e.date);
+          return expenseDate.getMonth() === previousMonth &&
+                 expenseDate.getFullYear() === previousYear;
+        }).reduce((sum, e) => sum + e.amount, 0);
+
+        // Update the UI
+        monthlySummaryEl.innerHTML = `
+          <div class="text-center">
+            <p class="text-sm text-gray-500">Current Month</p>
+            <p class="text-xl font-semibold text-blue-600">PKR ${currentMonthExpenses.toFixed(2)}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-sm text-gray-500">Previous Month</p>
+            <p class="text-xl font-semibold text-green-600">PKR ${previousMonthExpenses.toFixed(2)}</p>
+          </div>
+        `;
+      };
+
+      const updateExpenseBreakdown = () => {
+        // Categorize expenses by description (in a real app, you might have proper categories)
+        const categories = {};
+
+        allExpenses.forEach(expense => {
+          // Simple categorization by first word of description
+          const category = expense.description.split(' ')[0];
+
+          if (!categories[category]) {
+            categories[category] = {
+              count: 0,
+              total: 0,
+              min: Infinity,
+              max: -Infinity
+            };
+          }
+
+          categories[category].count++;
+          categories[category].total += expense.amount;
+
+          if (expense.amount < categories[category].min) {
+            categories[category].min = expense.amount;
+          }
+
+          if (expense.amount > categories[category].max) {
+            categories[category].max = expense.amount;
+          }
+        });
+
+        // Convert to array and sort by total amount
+        const categoryArray = Object.entries(categories)
+          .map(([name, data]) => ({
+            name,
+            count: data.count,
+            total: data.total,
+            average: data.total / data.count
+          }))
+          .sort((a, b) => b.total - a.total);
+
+        // Update the table
+        expenseBreakdownBody.innerHTML = '';
+
+        if (categoryArray.length === 0) {
+          expenseBreakdownBody.innerHTML = `
+            <tr>
+              <td colspan="4" class="px-4 py-4 text-sm text-gray-500 text-center">No expenses to display</td>
+            </tr>
+          `;
+          return;
+        }
+
+        categoryArray.forEach(category => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td class="px-4 py-4 text-sm font-medium text-gray-900">${category.name}</td>
+            <td class="px-4 py-4 text-sm text-gray-500">${category.count}</td>
+            <td class="px-4 py-4 text-sm text-gray-500">PKR ${category.total.toFixed(2)}</td>
+            <td class="px-4 py-4 text-sm text-gray-500">PKR ${category.average.toFixed(2)}</td>
+          `;
+          expenseBreakdownBody.appendChild(row);
+        });
+      };
+
+      // --- FILTERING LOGIC ---
+      const applyFilters = () => {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedType = typeFilter.value;
+
+        filteredExpenses = allExpenses.filter(expense => {
+          const matchesSearch = expense.description.toLowerCase().includes(searchTerm) ||
+                                (expense.employee_name && expense.employee_name.toLowerCase().includes(searchTerm));
+          const matchesType = selectedType === 'all' || expense.type === selectedType;
+
+          // Apply date range filter if set
+          const expenseDate = new Date(expense.date);
+          const matchesDateRange =
+            (!dateRangeFilter.from || expenseDate >= new Date(dateRangeFilter.from)) &&
+            (!dateRangeFilter.to || expenseDate <= new Date(dateRangeFilter.to + 'T23:59:59')); // Include entire end date
+
+          return matchesSearch && matchesType && matchesDateRange;
+        });
+
+        // Sort the filtered expenses by date
+        filteredExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        renderTable(filteredExpenses);
+        calculateTotals(filteredExpenses);
+        renderEmployeeListForDownload();
+        updateOverallExpenseDetails();
+      };
+
+      // --- RENDERING LOGIC ---
+      const renderTable = (expenses) => {
+        expenseTableBody.innerHTML = ''; // Clear existing rows
+
+        if (expenses.length === 0) {
+          expenseTableBody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-gray-500">No expenses match the current filters.</td></tr>`;
+          return;
+        }
+
+        expenses.forEach(expense => {
+          const row = document.createElement('tr');
+          const typePillClass = expense.type === 'company' ? 'status-company' : 'status-employee';
+
+          row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="status-pill ${typePillClass}">${expense.type}</span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${expense.employee_name || 'N/A'}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${expense.description}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-medium">PKR ${expense.amount.toFixed(2)}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${expense.date}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+              <button class="delete-btn text-red-600 hover:text-red-900 transition-all" title="Delete Expense" data-id="${expense.id}">
+                <i data-feather="trash-2" class="w-5 h-5"></i>
+              </button>
+            </td>
+          `;
+          expenseTableBody.appendChild(row);
+        });
+        feather.replace(); // Re-initialize icons
+      };
+
+      const calculateTotals = (expenses) => {
+        const totals = expenses.reduce((acc, expense) => {
+          if (expense.type === 'company') {
+            acc.company += expense.amount;
+          } else {
+            acc.employee += expense.amount;
+          }
+          return acc;
+        }, { company: 0, employee: 0 });
+
+        companyTotalEl.textContent = `PKR ${totals.company.toFixed(2)}`;
+        employeeTotalEl.textContent = `PKR ${totals.employee.toFixed(2)}`;
+        grandTotalEl.textContent = `PKR ${(totals.company + totals.employee).toFixed(2)}`;
+      };
+
+      const renderEmployeeListForDownload = () => {
+        // Get unique employee names who have expenses
+        const employeeNames = [...new Set(allExpenses
+          .filter(e => e.type === 'employee' && e.employee_name)
+          .map(e => e.employee_name.trim()))];
+
+        employeeListContainer.innerHTML = '';
+
+        if (employeeNames.length === 0) {
+          employeeListContainer.innerHTML = `<p class="text-sm text-gray-500">No employee expenses to report.</p>`;
+          return;
+        }
+
+        employeeNames.forEach(name => {
+          const employeeRow = document.createElement('div');
+          employeeRow.className = "flex justify-between items-center bg-gray-50 p-3 rounded-md";
+          employeeRow.innerHTML = `
+            <span class="font-medium text-gray-700">${name}</span>
+            <button class="download-pdf-btn bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded inline-flex items-center text-sm transition-all" data-employee-name="${name}">
+               <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10.5V16m0 0l-3-3m3 3l3-3m5-3V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2h7m4 0h2a2 2 0 002-2v-7a2 2 0 00-2-2h-2m-4-2h-3v-3a3 3 0 013-3h3"></path></svg>
+               PDF
+            </button>
+          `;
+          employeeListContainer.appendChild(employeeRow);
+        });
+        feather.replace();
+      };
+
+      const updateEmployeeNameDatalist = () => {
+        const uniqueEmployeeNames = [...new Set(allExpenses
+          .filter(e => e.employee_name)
+          .map(e => e.employee_name.trim()))];
+
+        employeeNamesDatalist.innerHTML = '';
+        uniqueEmployeeNames.forEach(name => {
+          const option = document.createElement('option');
+          option.value = name;
+          employeeNamesDatalist.appendChild(option);
+        });
+      };
+
+      // --- EVENT HANDLERS ---
+      expenseTableBody.addEventListener('click', (event) => {
+        const deleteButton = event.target.closest('.delete-btn');
+        if (deleteButton) {
+          const expenseId = parseInt(deleteButton.dataset.id, 10);
+          // Instead of window.confirm, use a custom modal or message
+          showMessage('Expense deleted successfully.', 'success');
+          allExpenses = allExpenses.filter(e => e.id !== expenseId);
+          saveExpenses();
+          applyFilters(); // Re-render the list
+          updateEmployeeNameDatalist();
+          updateOverallExpenseDetails();
+        }
+      });
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        toggleLoadingState(true);
+
+        const formData = new FormData(form);
+        const expenseData = {
+          type: formData.get('expenseType'),
+          description: formData.get('description'),
+          amount: parseFloat(formData.get('amount')),
+          date: formData.get('date') // Get the date from the new input field
+        };
+
+        if (expenseData.type === 'employee') {
+          expenseData.employee_name = formData.get('employeeName');
+          if(!expenseData.employee_name || !expenseData.employee_name.trim()){
+            showMessage('Please enter an employee name.', 'error');
+            toggleLoadingState(false);
+            return;
+          }
+        } else {
+          expenseData.employee_name = null;
+        }
+
+        // Simple ID generation (in a real app, use a more robust method)
+        const newId = allExpenses.length > 0 ? Math.max(...allExpenses.map(e => e.id)) + 1 : 1;
+        expenseData.id = newId;
+
+        allExpenses.push(expenseData);
+        saveExpenses();
+        form.reset();
+        dateInput.value = new Date().toISOString().split('T')[0]; // Reset date to today's date
+        employeeNameContainer.classList.add('slide-up');
+        employeeNameContainer.classList.remove('slide-down');
+        applyFilters(); // Re-render the list
+        updateEmployeeNameDatalist();
+        updateOverallExpenseDetails();
+        showMessage('Expense added successfully.', 'success');
+        toggleLoadingState(false);
+      });
+
+      expenseTypeRadios.forEach(radio => {
+        radio.addEventListener('change', (event) => {
+          if (event.target.value === 'employee') {
+            employeeNameContainer.classList.add('slide-down');
+            employeeNameContainer.classList.remove('slide-up');
+            employeeNameInput.required = true;
+          } else {
+            employeeNameContainer.classList.remove('slide-down');
+            employeeNameContainer.classList.add('slide-up');
+            employeeNameInput.required = false;
+            employeeNameInput.value = '';
+          }
+        });
+      });
+
+      // --- Filter Event Listeners ---
+      searchInput.addEventListener('keyup', applyFilters);
+      typeFilter.addEventListener('change', applyFilters);
+      resetFiltersBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        typeFilter.value = 'all';
+        dateRangeFilter = { from: null, to: null };
+        fromDateInput.value = '';
+        toDateInput.value = '';
+        applyFilters();
+      });
+
+      // --- DOWNLOAD CSV ---
+      downloadCsvBtn.addEventListener('click', () => {
+        if (filteredExpenses.length === 0) {
+          showMessage("No data to download.", 'info');
+          return;
+        }
+        const headers = ["ID", "Type", "Employee Name", "Description", "Amount (PKR)", "Date"];
+        const rows = filteredExpenses.map(e => [
+          e.id,
+          e.type,
+          e.employee_name || "",
+          e.description,
+          e.amount,
+          e.date
+        ]);
+
+        let csvContent = "data:text/csv;charset=utf-8,"
+          + headers.join(",") + "\n"
+          + rows.map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `expenses_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+
+      // --- DOWNLOAD OVERALL PDF REPORT ---
+      downloadOverallPdfBtn.addEventListener('click', async () => {
+        // Get the logo as Base64 before proceeding
+        if (!logoBase64) {
+          logoBase64 = await getLogoBase64();
+        }
+
+        generateOverallExpensePdf();
+      });
+
+      const generateOverallExpensePdf = () => {
+        const companyName = "Nutrion";
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Add header content and logo
+        if (logoBase64) {
+          doc.addImage(logoBase64, 'PNG', 14, 14, 20, 20);
+        }
+        doc.setFontSize(22);
+        doc.text(companyName + " - Overall Expense Report", 40, 28);
+
+        doc.setFontSize(12);
+        doc.text(`Report Date: ${new Date().toLocaleDateString()}`, 14, 38);
+        doc.text(`Total Expenses: ${allExpenses.length} items`, 14, 45);
+
+        // Calculate totals
+        const companyTotal = allExpenses
+          .filter(e => e.type === 'company')
+          .reduce((sum, e) => sum + e.amount, 0);
+
+        const employeeTotal = allExpenses
+          .filter(e => e.type === 'employee')
+          .reduce((sum, e) => sum + e.amount, 0);
+
+        const grandTotal = companyTotal + employeeTotal;
+
+        // Add summary section
+        doc.setFontSize(16);
+        doc.text("Expense Summary", 14, 60);
+
+        doc.setFontSize(12);
+        doc.text(`Company Expenses: PKR ${companyTotal.toFixed(2)}`, 20, 70);
+        doc.text(`Employee Expenses: PKR ${employeeTotal.toFixed(2)}`, 20, 78);
+        doc.text(`Grand Total: PKR ${grandTotal.toFixed(2)}`, 20, 86);
+
+        // Add expense breakdown table
+        const startY = 100;
+
+        // Prepare table data
+        const tableData = allExpenses.map(expense => [
+          expense.id,
+          expense.type,
+          expense.employee_name || 'N/A',
+          expense.description,
+          `PKR ${expense.amount.toFixed(2)}`,
+          expense.date
+        ]);
+
+        doc.autoTable({
+          head: [['ID', 'Type', 'Employee', 'Description', 'Amount', 'Date']],
+          body: tableData,
+          startY: startY,
+          theme: 'grid',
+          styles: {
+            fontSize: 8,
+            cellPadding: 2,
+          },
+          headStyles: {
+            fillColor: [52, 58, 64],
+            textColor: 255
+          },
+          margin: { top: 10 },
+          // Add watermark to each page
+          didDrawPage: (data) => {
+            if (logoBase64) {
+              doc.setGState(new window.jspdf.GState({ opacity: 0.4 }));
+              const imgWidth = 100;
+              const imgHeight = 100;
+              const x = (doc.internal.pageSize.getWidth() / 2) - (imgWidth / 2);
+              const y = (doc.internal.pageSize.getHeight() / 2) - (imgHeight / 2);
+              doc.addImage(logoBase64, 'PNG', x, y, imgWidth, imgHeight);
+              doc.setGState(new window.jspdf.GState({ opacity: 1 }));
+            }
+          }
+        });
+
+        // Save the PDF
+        doc.save(`nutrion_overall_expenses_${new Date().toISOString().split('T')[0]}.pdf`);
+        showMessage(`Overall expense report downloaded successfully!`, 'success');
+      };
+
+      // --- DOWNLOAD PDF FOR COMPANY EXPENSES ---
+      downloadCompanyPdfBtn.addEventListener('click', () => {
+        const fromDate = companyFromDateInput.value;
+        const toDate = companyToDateInput.value;
+
+        if (!fromDate || !toDate) {
+          showMessage('Please select both from and to dates.', 'error');
+          return;
+        }
+
+        if (new Date(fromDate) > new Date(toDate)) {
+          showMessage('From date cannot be after to date.', 'error');
+          return;
+        }
+
+        generateCompanyExpensePdf(fromDate, toDate);
+      });
+
+      const generateCompanyExpensePdf = async (fromDate, toDate) => {
+        // Filter company expenses by date range
+        const companyExpenses = allExpenses.filter(expense => {
+          if (expense.type !== 'company') return false;
+
+          const expenseDate = new Date(expense.date);
+          const startDate = new Date(fromDate);
+          const endDate = new Date(toDate + 'T23:59:59'); // Include entire end date
+
+          return expenseDate >= startDate && expenseDate <= endDate;
+        });
+
+        if (companyExpenses.length === 0) {
+          showMessage('No company expenses found for the selected date range.', 'info');
+          return;
+        }
+
+        // Get the logo as Base64 before proceeding
+        if (!logoBase64) {
+          logoBase64 = await getLogoBase64();
+        }
+
+        const companyName = "Nutrion";
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Prepare table data
+        const tableData = companyExpenses.map(expense => [
+          expense.id,
+          expense.description,
+          `PKR ${expense.amount.toFixed(2)}`,
+          expense.date
+        ]);
+
+        // Calculate totals
+        const totalAmount = companyExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+
+        // Add header content and logo
+        if (logoBase64) {
+          doc.addImage(logoBase64, 'PNG', 14, 14, 20, 20);
+        }
+        doc.setFontSize(22);
+        doc.text(companyName + " - Company Expense Report", 40, 28);
+
+        doc.setFontSize(12);
+        doc.text(`Report Period: ${fromDate} to ${toDate}`, 14, 38);
+        doc.text(`Report Date: ${new Date().toLocaleDateString()}`, 14, 45);
+
+        const startY = 55;
+
+        // Create the table
+        doc.autoTable({
+          head: [['ID', 'Description', 'Amount (PKR)', 'Date']],
+          body: tableData,
+          startY: startY,
+          theme: 'striped',
+          styles: {
+            fontSize: 8,
+            cellPadding: 2,
+          },
+          headStyles: {
+            fillColor: [52, 58, 64],
+            textColor: 255
+          },
+          margin: { top: 10 },
+          // Add watermark to each page
+          didDrawPage: (data) => {
+            if (logoBase64) {
+              doc.setGState(new window.jspdf.GState({ opacity: 0.4 }));
+              const imgWidth = 100;
+              const imgHeight = 100;
+              const x = (doc.internal.pageSize.getWidth() / 2) - (imgWidth / 2);
+              const y = (doc.internal.pageSize.getHeight() / 2) - (imgHeight / 2);
+              doc.addImage(logoBase64, 'PNG', x, y, imgWidth, imgHeight);
+              doc.setGState(new window.jspdf.GState({ opacity: 1 }));
+            }
+          }
+        });
+
+        // Get the final Y position of the table
+        const finalY = doc.autoTable.previous.finalY;
+
+        // Add totals to the PDF
+        doc.setFontSize(12);
+        doc.text(`Total Company Expenses: PKR ${totalAmount.toFixed(2)}`, 14, finalY + 10);
+
+        // Add signature lines
+        const signatureY = finalY + 30;
+
+        doc.setFontSize(10);
+        doc.text("________________________", 14, signatureY);
+        doc.text("Signature of Manager", 14, signatureY + 5);
+
+        doc.text("________________________", 120, signatureY);
+        doc.text("Signature of Accountant", 120, signatureY + 5);
+
+        // Save the PDF
+        doc.save(`nutrion_company_expenses_${fromDate}_to_${toDate}.pdf`);
+        showMessage(`Company expense report downloaded successfully!`, 'success');
+      };
+
+      // --- DOWNLOAD PDF FOR INDIVIDUAL EMPLOYEE ---
+      employeeListContainer.addEventListener('click', (event) => {
+        const downloadBtn = event.target.closest('.download-pdf-btn');
+        if (downloadBtn) {
+          const employeeName = downloadBtn.dataset.employeeName;
+          currentEmployeeForPdf = employeeName;
+
+          // Show the date range modal
+          dateRangeModal.classList.remove('hidden');
+        }
+      });
+
+      // Date Range Modal Event Listeners
+      applyDateRangeBtn.addEventListener('click', () => {
+        const fromDate = fromDateInput.value;
+        const toDate = toDateInput.value;
+
+        if (fromDate && toDate && new Date(fromDate) > new Date(toDate)) {
+          showMessage('From date cannot be after to date.', 'error');
+          return;
+        }
+
+        dateRangeFilter = {
+          from: fromDate,
+          to: toDate
+        };
+
+        dateRangeModal.classList.add('hidden');
+
+        // Generate the PDF with the selected date range
+        generateEmployeePdf(currentEmployeeForPdf, dateRangeFilter);
+      });
+
+      cancelDateRangeBtn.addEventListener('click', () => {
+        dateRangeModal.classList.add('hidden');
+        fromDateInput.value = '';
+        toDateInput.value = '';
+      });
+
+      closeDateRangeModalBtn.addEventListener('click', () => {
+        dateRangeModal.classList.add('hidden');
+        fromDateInput.value = '';
+        toDateInput.value = '';
+      });
+
+      const generateEmployeePdf = async (employeeName, dateRange = null) => {
+        let employeeExpenses = allExpenses.filter(e => e.employee_name === employeeName);
+
+        // Apply date range filter if provided
+        if (dateRange && (dateRange.from || dateRange.to)) {
+          employeeExpenses = employeeExpenses.filter(expense => {
+            const expenseDate = new Date(expense.date);
+            const fromDate = dateRange.from ? new Date(dateRange.from) : null;
+            const toDate = dateRange.to ? new Date(dateRange.to + 'T23:59:59') : null; // Include entire end date
+
+            return (
+              (!fromDate || expenseDate >= fromDate) &&
+              (!toDate || expenseDate <= toDate)
+            );
+          });
+        }
+
+        if (employeeExpenses.length === 0) {
+          showMessage(`No expenses found for ${employeeName} in the selected date range.`, 'info');
+          return;
+        }
+
+        // Get the logo as Base64 before proceeding
+        if (!logoBase64) {
+          logoBase64 = await getLogoBase64();
+        }
+
+        const companyName = "Nutrion";
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        const tableData = employeeExpenses.map(expense => [
+          expense.id,
+          expense.type,
+          expense.description,
+          `PKR ${expense.amount.toFixed(2)}`,
+          expense.date
+        ]);
+
+        const totalAmount = employeeExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+
+        // Add header content and logo
+        if (logoBase64) {
+          doc.addImage(logoBase64, 'PNG', 14, 14, 20, 20);
+        }
+        doc.setFontSize(22);
+        doc.text(companyName + " - Employee Expense Report", 40, 28);
+
+        doc.setFontSize(12);
+        doc.text(`Employee Name: ${employeeName}`, 14, 38);
+        doc.text(`Report Date: ${new Date().toLocaleDateString()}`, 14, 45);
+
+        const startY = 55;
+
+        doc.autoTable({
+          head: [['ID', 'Type', 'Description', 'Amount (PKR)', 'Date']],
+          body: tableData,
+          startY: startY,
+          theme: 'striped',
+          styles: {
+            fontSize: 8,
+            cellPadding: 2,
+          },
+          headStyles: {
+            fillColor: [52, 58, 64],
+            textColor: 255
+          },
+          margin: { top: 10 },
+          // Add watermark to each page
+          didDrawPage: (data) => {
+            if (logoBase64) {
+              doc.setGState(new window.jspdf.GState({ opacity: 0.4 }));
+              const imgWidth = 100;
+              const imgHeight = 100;
+              const x = (doc.internal.pageSize.getWidth() / 2) - (imgWidth / 2);
+              const y = (doc.internal.pageSize.getHeight() / 2) - (imgHeight / 2);
+              doc.addImage(logoBase64, 'PNG', x, y, imgWidth, imgHeight);
+              doc.setGState(new window.jspdf.GState({ opacity: 1 }));
+            }
+          }
+        });
+
+        // Get the final Y position of the table
+        const finalY = doc.autoTable.previous.finalY;
+
+        // Add totals to the PDF
+        doc.setFontSize(12);
+        doc.text(`Total Expenses: PKR ${totalAmount.toFixed(2)}`, 14, finalY + 10);
+
+        // Add signature lines
+        const signatureY = finalY + 30;
+
+        doc.setFontSize(10);
+        doc.text("________________________", 14, signatureY);
+        doc.text("Signature of Employee", 14, signatureY + 5);
+
+        doc.text("________________________", 120, signatureY);
+        doc.text("Signature of Accountant", 120, signatureY + 5);
+
+        doc.save(`nutrion_report_${employeeName.replace(/\s/g, '_')}.pdf`);
+        showMessage(`PDF for ${employeeName} downloaded successfully!`, 'success');
+      };
+
+      // --- INITIALIZATION ---
+      loadExpenses();
+      // Pre-load logo image when the page loads
+      getLogoBase64().then(base64 => {
+        logoBase64 = base64;
+      });
+    });
+  </script>
+</body>
+</html>

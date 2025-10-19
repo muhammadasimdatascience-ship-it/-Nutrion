@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Page</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #fff7f0;
+      padding: 50px;
+    }
+    h1 {
+      color: #444;
+    }
+    .btn {
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 24px;
+      background: #28a745;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+    .btn:hover {
+      background: #1e7e34;
+    }
+  </style>
+</head>
+<body>
+  <a href="Index.html" class="btn">Home</a>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body {
+        font-family: 'Inter', sans-serif;
+    }
+    .tab-active {
+        border-color: #4f46e5;
+        color: #4f46e5;
+        background-color: #eef2ff;
+    }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+    .description-input {
+        min-width: 300px;
+        max-width: 400px;
+    }
+    .description-textarea {
+        min-height: 60px;
+        resize: vertical;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 p-4 sm:p-6 lg:p-8">
+
+    <div class="max-w-7xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 pb-6 border-b">
+            <div class="flex items-center">
+                <img src="logo.png" alt="Company Logo" class="h-12 w-12 mr-4 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/100x100/e0e0e0/333?text=Logo';">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Invoice Generator</h1>
+                    <p id="invoice-type-title" class="text-indigo-600 font-semibold mt-1">Sale Invoice</p>
+                </div>
+            </div>
+            <div class="mt-4 sm:mt-0">
+                <div class="flex items-center">
+                    <label for="invoice-number" class="font-semibold text-gray-600 mr-2">Invoice #:</label>
+                    <input type="number" id="invoice-number" value="1001" class="w-32 rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+                <div class="flex items-center mt-2">
+                    <label for="fbr-invoice-number" class="font-semibold text-gray-600 mr-2">FBR Inv #:</label>
+                    <input type="text" id="fbr-invoice-number" placeholder="Optional" class="w-32 rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+                <div class="flex items-center mt-2">
+                    <label for="date" class="font-semibold text-gray-600 mr-2">Date:</label>
+                    <input type="date" id="date" class="w-40 rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+                <div class="flex items-center mt-2">
+                    <label for="due-date" class="font-semibold text-gray-600 mr-2">Due Date:</label>
+                    <input type="date" id="due-date" class="w-40 rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+            </div>
+        </div>
+
+        <!-- Bill To Section -->
+        <div class="mb-6">
+            <label for="party-name" class="block text-lg font-semibold text-gray-700 mb-2">Bill To:</label>
+            <input type="text" id="party-name" placeholder="Enter Party Name"
+                class="w-full max-w-lg rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+        </div>
+
+        <!-- NTN Section -->
+        <div class="mb-6">
+            <label for="party-ntn" class="block text-lg font-semibold text-gray-700 mb-2">NTN:</label>
+            <input type="text" id="party-ntn" placeholder="Enter NTN Number"
+                class="w-full max-w-lg rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+        </div>
+
+        <!-- Tab Controls -->
+        <div class="mb-6">
+            <div class="border-b border-gray-200">
+                <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                    <button id="tab-without-gst" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm tab-active">
+                        Without GST (Sale Invoice)
+                    </button>
+                    <button id="tab-with-gst" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        With GST (Sale Tax Invoice)
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Invoice Content Area -->
+        <div id="invoice-content">
+            <!-- "Without GST" Table -->
+            <div id="without-gst-view">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Product Name</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Description</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Qty</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Packing</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Unit Price</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Amount</th>
+                                <th scope="col" class="relative px-4 py-3">
+                                    <span class="sr-only">Remove</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="invoice-items-without-gst" class="bg-white divide-y divide-gray-200">
+                            <!-- JS will add rows here -->
+                        </tbody>
+                    </table>
+                </div>
+                <button id="add-row-without-gst" class="mt-4 bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all">
+                    + Add Item
+                </button>
+            </div>
+
+            <!-- "With GST" Table -->
+            <div id="with-gst-view" class="hidden">
+                 <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Product Name</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Description</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Qty</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Packing</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Unit Price (Incl. GST)</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Base Amount</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">GST (18%)</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Total Amount</th>
+                                <th scope="col" class="relative px-4 py-3">
+                                    <span class="sr-only">Remove</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="invoice-items-with-gst" class="bg-white divide-y divide-gray-200">
+                           <!-- JS will add rows here -->
+                        </tbody>
+                    </table>
+                </div>
+                <button id="add-row-with-gst" class="mt-4 bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all">
+                    + Add Item
+                </button>
+            </div>
+        </div>
+
+        <!-- Totals Section -->
+        <div class="mt-8 flex justify-end">
+            <div class="w-full max-w-sm space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600 font-semibold">Subtotal:</span>
+                    <span id="subtotal" class="font-bold text-gray-800 text-lg">0.00</span>
+                </div>
+                <div id="gst-total-row" class="hidden flex justify-between items-center">
+                    <span class="text-gray-600 font-semibold">GST (18%):</span>
+                    <span id="gst-total" class="font-bold text-gray-800 text-lg">0.00</span>
+                </div>
+                <div class="border-t pt-3 mt-3">
+                     <div class="flex justify-between items-center text-xl">
+                        <span class="font-bold text-gray-900">Grand Total:</span>
+                        <span id="grand-total" class="font-extrabold text-indigo-600">0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="mt-10 pt-6 border-t flex flex-col sm:flex-row justify-center items-center gap-4">
+            <button id="save-invoice" class="bg-blue-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all text-lg w-full sm:w-auto">
+                Save Invoice
+            </button>
+            <button id="download-pdf" class="bg-green-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all text-lg w-full sm:w-auto">
+                Download PDF
+            </button>
+            <button id="clear-form" class="bg-gray-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all text-lg w-full sm:w-auto">
+                New Invoice
+            </button>
+        </div>
+
+        <!-- Search and Manage Invoices Section -->
+        <div class="mt-10 pt-6 border-t">
+            <h2 class="text-xl font-bold text-gray-800 text-center mb-4">Search & Manage Invoices</h2>
+
+            <!-- Search Form -->
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-6">
+                <div class="w-full max-w-md">
+                    <input type="text" id="search-term" placeholder="Search by invoice number, party name, or FBR number..." class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+                <button id="search-invoice" class="bg-purple-500 text-white font-bold py-2 px-6 rounded-lg shadow-lg hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all">
+                    Search
+                </button>
+            </div>
+
+            <!-- Search Results -->
+            <div id="search-results" class="hidden">
+                <h3 class="text-lg font-semibold text-gray-700 mb-3">Search Results</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Invoice #</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Party Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Date</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Type</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Total</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="search-results-body" class="bg-white divide-y divide-gray-200">
+                            <!-- Results will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bulk Download Section -->
+        <div class="mt-10 pt-6 border-t">
+            <h2 class="text-xl font-bold text-gray-800 text-center mb-4">Download Invoices by Date Range</h2>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-4">
+                 <div>
+                    <label for="start-date" class="font-semibold text-gray-600 mr-2">From:</label>
+                    <input type="date" id="start-date" class="rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label for="end-date" class="font-semibold text-gray-600 mr-2">To:</label>
+                    <input type="date" id="end-date" class="rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <button id="download-tax-pdf" class="bg-red-500 text-white font-bold py-2 px-6 rounded-lg shadow-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all">
+                    Download All Tax Invoices (Single PDF)
+                </button>
+                <button id="download-non-tax-pdf" class="bg-blue-500 text-white font-bold py-2 px-6 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">
+                    Download All Non-Tax Invoices (Single PDF)
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Custom Modal -->
+    <div id="custom-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Alert</h3>
+                <div class="mt-2 px-7 py-3">
+                    <p class="text-sm text-gray-500" id="modal-message"></p>
+                </div>
+                <div class="items-center px-4 py-3">
+                    <button id="modal-close" class="px-4 py-2 bg-indigo-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { jsPDF } = window.jspdf;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Element References
+            const dateInput = document.getElementById('date');
+            const dueDateInput = document.getElementById('due-date');
+            const invoiceNumberInput = document.getElementById('invoice-number');
+            const fbrInvoiceNumberInput = document.getElementById('fbr-invoice-number');
+            const partyInput = document.getElementById('party-name');
+            const partyNtnInput = document.getElementById('party-ntn');
+
+            const subtotalSpan = document.getElementById('subtotal');
+            const gstTotalSpan = document.getElementById('gst-total');
+            const grandTotalSpan = document.getElementById('grand-total');
+
+            const tabWithoutGst = document.getElementById('tab-without-gst');
+            const tabWithGst = document.getElementById('tab-with-gst');
+            const withoutGstView = document.getElementById('without-gst-view');
+            const withGstView = document.getElementById('with-gst-view');
+            const invoiceTypeTitle = document.getElementById('invoice-type-title');
+            const gstTotalRow = document.getElementById('gst-total-row');
+
+            const itemsWithoutGst = document.getElementById('invoice-items-without-gst');
+            const itemsWithGst = document.getElementById('invoice-items-with-gst');
+
+            // Modal Elements
+            const modal = document.getElementById('custom-modal');
+            const modalMessage = document.getElementById('modal-message');
+            const modalClose = document.getElementById('modal-close');
+
+            // Date Range Elements
+            const startDateInput = document.getElementById('start-date');
+            const endDateInput = document.getElementById('end-date');
+
+            // Search Elements
+            const searchTermInput = document.getElementById('search-term');
+            const searchButton = document.getElementById('search-invoice');
+            const searchResults = document.getElementById('search-results');
+            const searchResultsBody = document.getElementById('search-results-body');
+
+            // Set default date
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.value = today;
+            dueDateInput.value = today;
+            startDateInput.value = today;
+            endDateInput.value = today;
+
+            // State
+            let activeTab = 'without-gst';
+            let currentInvoiceId = null;
+
+            // Packing options
+            const packingOptions = ['kg', 'Ltr', 'Can', '25 Ltr'];
+
+            // Product options
+            const productOptions = [
+                "Antioxdant",
+                "InduceAcid Buty",
+                "InduceAcid Plus",
+                "Linco Magic",
+                "Monica",
+                "SP300",
+                "SP300 Advance",
+                "Strophase G",
+                "Strophase P",
+                "Strozyme NSP",
+                "Strozyme XYL",
+                "Super Ener Emusifier",
+                "Toxin Binder Weilituo",
+                "Toxin Clean"
+            ];
+
+            // --- Modal Functions ---
+            function showModal(message) {
+                modalMessage.textContent = message;
+                modal.classList.remove('hidden');
+            }
+
+            modalClose.addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+
+            // --- Tab Switching Logic ---
+            function switchTab(tab) {
+                activeTab = tab;
+                if (tab === 'without-gst') {
+                    tabWithoutGst.classList.add('tab-active');
+                    tabWithGst.classList.remove('tab-active');
+                    tabWithoutGst.classList.remove('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                    tabWithGst.classList.add('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                    withoutGstView.classList.remove('hidden');
+                    withGstView.classList.add('hidden');
+                    invoiceTypeTitle.textContent = 'Sale Invoice';
+                    gstTotalRow.classList.add('hidden');
+                } else {
+                    tabWithoutGst.classList.remove('tab-active');
+                    tabWithGst.classList.add('tab-active');
+                    tabWithoutGst.classList.add('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                    tabWithGst.classList.remove('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                    withoutGstView.classList.add('hidden');
+                    withGstView.classList.remove('hidden');
+                    invoiceTypeTitle.textContent = 'Sale Tax Invoice';
+                    gstTotalRow.classList.remove('hidden');
+                }
+                updateTotals();
+            }
+
+            tabWithoutGst.addEventListener('click', () => switchTab('without-gst'));
+            tabWithGst.addEventListener('click', () => switchTab('with-gst'));
+
+            // --- Row Management ---
+            function createWithoutGstRow(productName = '', description = '', qty = 1, packing = '', unitPrice = 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-4 py-2">
+                        <select class="product-name w-full rounded-md border-gray-300">
+                            <option value="">Select Product</option>
+                            ${productOptions.map(option =>
+                                `<option value="${option}" ${productName === option ? 'selected' : ''}>${option}</option>`
+                            ).join('')}
+                        </select>
+                    </td>
+                    <td class="px-4 py-2">
+                        <textarea placeholder="Description" class="description description-input description-textarea w-full rounded-md border-gray-300" maxlength="200">${description}</textarea>
+                        <div class="text-xs text-gray-500 text-right mt-1"><span class="char-count">0</span>/200 characters</div>
+                    </td>
+                    <td class="px-4 py-2"><input type="number" value="${qty}" min="0" class="qty w-20 text-center rounded-md border-gray-300"></td>
+                    <td class="px-4 py-2">
+                        <select class="packing w-full rounded-md border-gray-300">
+                            <option value="">Select Packing</option>
+                            ${packingOptions.map(option =>
+                                `<option value="${option}" ${packing === option ? 'selected' : ''}>${option}</option>`
+                            ).join('')}
+                        </select>
+                    </td>
+                    <td class="px-4 py-2"><input type="number" value="${unitPrice}" min="0" step="0.01" class="unit-price w-24 text-right rounded-md border-gray-300"></td>
+                    <td class="px-4 py-2"><span class="amount font-semibold text-gray-700">${(qty * unitPrice).toFixed(2)}</span></td>
+                    <td class="px-4 py-2 text-center"><button class="remove-row text-red-500 hover:text-red-700">&times;</button></td>
+                `;
+                itemsWithoutGst.appendChild(row);
+                addEventListenersToRow(row, 'without-gst');
+
+                // Update character count
+                const textarea = row.querySelector('.description');
+                const charCount = row.querySelector('.char-count');
+                charCount.textContent = textarea.value.length;
+
+                return row;
+            }
+
+            function createWithGstRow(productName = '', description = '', qty = 1, packing = '', unitPriceInclGst = 0) {
+                const row = document.createElement('tr');
+                const totalAmount = qty * unitPriceInclGst;
+                const baseAmount = totalAmount / 1.18;
+                const gstAmount = totalAmount - baseAmount;
+
+                row.innerHTML = `
+                    <td class="px-4 py-2">
+                        <select class="product-name w-full rounded-md border-gray-300">
+                            <option value="">Select Product</option>
+                            ${productOptions.map(option =>
+                                `<option value="${option}" ${productName === option ? 'selected' : ''}>${option}</option>`
+                            ).join('')}
+                        </select>
+                    </td>
+                    <td class="px-4 py-2">
+                        <textarea placeholder="Description" class="description description-input description-textarea w-full rounded-md border-gray-300" maxlength="200">${description}</textarea>
+                        <div class="text-xs text-gray-500 text-right mt-1"><span class="char-count">0</span>/200 characters</div>
+                    </td>
+                    <td class="px-4 py-2"><input type="number" value="${qty}" min="0" class="qty w-20 text-center rounded-md border-gray-300"></td>
+                    <td class="px-4 py-2">
+                        <select class="packing w-full rounded-md border-gray-300">
+                            <option value="">Select Packing</option>
+                            ${packingOptions.map(option =>
+                                `<option value="${option}" ${packing === option ? 'selected' : ''}>${option}</option>`
+                            ).join('')}
+                        </select>
+                    </td>
+                    <td class="px-4 py-2"><input type="number" value="${unitPriceInclGst}" min="0" step="0.01" class="unit-price-incl-gst w-32 text-right rounded-md border-gray-300"></td>
+                    <td class="px-4 py-2"><span class="base-amount font-semibold text-gray-700">${baseAmount.toFixed(2)}</span></td>
+                    <td class="px-4 py-2"><span class="gst-amount font-semibold text-gray-700">${gstAmount.toFixed(2)}</span></td>
+                    <td class="px-4 py-2"><span class="total-amount font-semibold text-gray-700">${totalAmount.toFixed(2)}</span></td>
+                    <td class="px-4 py-2 text-center"><button class="remove-row text-red-500 hover:text-red-700">&times;</button></td>
+                `;
+                itemsWithGst.appendChild(row);
+                addEventListenersToRow(row, 'with-gst');
+
+                // Update character count
+                const textarea = row.querySelector('.description');
+                const charCount = row.querySelector('.char-count');
+                charCount.textContent = textarea.value.length;
+
+                return row;
+            }
+
+            document.getElementById('add-row-without-gst').addEventListener('click', () => createWithoutGstRow());
+            document.getElementById('add-row-with-gst').addEventListener('click', () => createWithGstRow());
+
+            function addEventListenersToRow(row, type) {
+                const removeBtn = row.querySelector('.remove-row');
+                removeBtn.addEventListener('click', () => {
+                    row.remove();
+                    updateTotals();
+                });
+
+                // Character count for description
+                const textarea = row.querySelector('.description');
+                const charCount = row.querySelector('.char-count');
+
+                textarea.addEventListener('input', function() {
+                    charCount.textContent = this.value.length;
+                    updateRowAmount({ target: this });
+                });
+
+                if (type === 'without-gst') {
+                    const qtyInput = row.querySelector('.qty');
+                    const unitPriceInput = row.querySelector('.unit-price');
+
+                    qtyInput.addEventListener('input', updateRowAmount);
+                    unitPriceInput.addEventListener('input', updateRowAmount);
+
+                    // Store reference to row for the event handler
+                    qtyInput.dataset.rowType = 'without-gst';
+                    unitPriceInput.dataset.rowType = 'without-gst';
+                } else { // 'with-gst'
+                    const qtyInput = row.querySelector('.qty');
+                    const unitPriceInput = row.querySelector('.unit-price-incl-gst');
+
+                    qtyInput.addEventListener('input', updateRowAmount);
+                    unitPriceInput.addEventListener('input', updateRowAmount);
+
+                    // Store reference to row for the event handler
+                    qtyInput.dataset.rowType = 'with-gst';
+                    unitPriceInput.dataset.rowType = 'with-gst';
+                }
+            }
+
+            function updateRowAmount(event) {
+                const row = event.target.closest('tr');
+                const type = event.target.dataset ? event.target.dataset.rowType : 'without-gst';
+
+                if (type === 'without-gst') {
+                    const qty = parseFloat(row.querySelector('.qty').value) || 0;
+                    const unitPrice = parseFloat(row.querySelector('.unit-price').value) || 0;
+                    const amount = qty * unitPrice;
+                    row.querySelector('.amount').textContent = amount.toFixed(2);
+                } else { // 'with-gst'
+                    const qty = parseFloat(row.querySelector('.qty').value) || 0;
+                    const unitPriceInclGst = parseFloat(row.querySelector('.unit-price-incl-gst').value) || 0;
+
+                    const totalAmount = qty * unitPriceInclGst;
+                    const baseAmount = totalAmount / 1.18;
+                    const gstAmount = totalAmount - baseAmount;
+
+                    row.querySelector('.base-amount').textContent = baseAmount.toFixed(2);
+                    row.querySelector('.gst-amount').textContent = gstAmount.toFixed(2);
+                    row.querySelector('.total-amount').textContent = totalAmount.toFixed(2);
+                }
+
+                updateTotals();
+            }
+
+            // --- Calculation Logic ---
+            function updateTotals() {
+                let subtotal = 0;
+                let gstTotal = 0;
+
+                if (activeTab === 'without-gst') {
+                    itemsWithoutGst.querySelectorAll('tr').forEach(row => {
+                        const amount = parseFloat(row.querySelector('.amount').textContent) || 0;
+                        subtotal += amount;
+                    });
+                } else { // 'with-gst'
+                    itemsWithGst.querySelectorAll('tr').forEach(row => {
+                        const baseAmount = parseFloat(row.querySelector('.base-amount').textContent) || 0;
+                        const gstAmount = parseFloat(row.querySelector('.gst-amount').textContent) || 0;
+
+                        subtotal += baseAmount;
+                        gstTotal += gstAmount;
+                    });
+                }
+
+                const grandTotal = subtotal + gstTotal;
+
+                subtotalSpan.textContent = subtotal.toFixed(2);
+                gstTotalSpan.textContent = gstTotal.toFixed(2);
+                grandTotalSpan.textContent = grandTotal.toFixed(2);
+            }
+
+            // --- Number to Words Helper ---
+            function numberToWords(num) {
+                const a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ', 'seven ', 'eight ', 'nine ', 'ten ', 'eleven ', 'twelve ', 'thirteen ', 'fourteen ', 'fifteen ', 'sixteen ', 'seventeen ', 'eighteen ', 'nineteen '];
+                const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+
+                if ((num = num.toString()).length > 9) return 'overflow';
+                const n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+                if (!n) return '';
+                let str = '';
+                str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'crore ' : '';
+                str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'lac ' : '';
+                str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'thousand ' : '';
+                str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred ' : '';
+                str += (n[5] != 0) ? ((str != '') ? '' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
+                return str.trim().replace(/\s+/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.substr(1)).join(' ') + ' Only.';
+            }
+
+            // --- PDF Generation Logic ---
+            function generateInvoicePdf(invoiceData) {
+                try {
+                    const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+                    addInvoiceToDoc(doc, invoiceData);
+                    return doc;
+                } catch (error) {
+                    console.error('PDF Generation Error:', error);
+                    throw new Error(`Failed to generate PDF: ${error.message}`);
+                }
+            }
+
+            function addInvoiceToDoc(doc, invoiceData) {
+                try {
+                    const pageWidth = doc.internal.pageSize.getWidth();
+                    const margin = 15;
+                    const title = invoiceData.invoice_type === 'tax' ? "Sale Tax Invoice" : "Sale Invoice";
+
+                    // --- Logo and Company Address ---
+                    try {
+                        doc.addImage('logo.png', 'PNG', 10, 3, 80, 40);
+                    } catch(e) {
+                        console.log("Logo not loaded, using placeholder");
+                        doc.setFillColor(200, 200, 200);
+                        doc.rect(10, 3, 150, 65, 'F');
+                        doc.setFontSize(12);
+                        doc.text('LOGO', 85, 33, { align: 'center' });
+                    }
+
+                    // Company Address (Right aligned)
+                    doc.setFontSize(9);
+                    doc.setFont("helvetica", "bold");
+                    const companyAddress = "Office # 34, Lower Ground, Pearl\nCity Towers, Sargodha Road,\nFaisalabad\nEmail: info@nutrion.pk";
+                    doc.text(companyAddress, pageWidth - margin, 15, { align: 'right' });
+
+                    // --- Invoice Title (Centered) ---
+                    doc.setFontSize(16);
+                    doc.setFont("helvetica", "bold");
+                    doc.text(title, pageWidth / 2, 50, { align: 'center' });
+
+                    // --- Invoice Details Box with Professional Coloring ---
+                    let currentY = 60;
+
+                    // Draw box with white background
+                    doc.setFillColor(255, 255, 255);
+                    doc.rect(margin, currentY, pageWidth - (2 * margin), 20, 'F');
+
+                    // Column 1: Labels (black)
+                    doc.setFontSize(10);
+                    doc.setFont("helvetica", "bold");
+                    doc.setTextColor(0, 0, 0);
+                    doc.text("Invoice Number:", margin + 8, currentY + 8);
+                    doc.text("Invoice Date:", margin + 8, currentY + 14);
+                    doc.text("Due Date:", margin + 8, currentY + 20);
+
+                    // Column 2: Values (centered in box)
+                    doc.setFont("helvetica", "normal");
+                    doc.setTextColor(0, 0, 0);
+
+                    let boxCenterX = margin + (pageWidth - (2 * margin)) / 2; // center of the box
+                    doc.text(invoiceData.invoice_number.toString(), boxCenterX, currentY + 8, { align: "center" });
+                    doc.text(new Date(invoiceData.date).toLocaleDateString('en-GB'), boxCenterX, currentY + 14, { align: "center" });
+                    doc.text(new Date(invoiceData.due_date).toLocaleDateString('en-GB'), boxCenterX, currentY + 20, { align: "center" });
+
+                    // --- Bill To ---
+                    currentY += 30;
+                    doc.setFont("helvetica", "bold");
+                    doc.text("Bill To:", margin, currentY);
+                    doc.setFont("helvetica", "normal");
+                    doc.text(invoiceData.party_name, margin + 20, currentY);
+
+                    // --- NTN ---
+                    currentY += 6;
+                    doc.setFont("helvetica", "bold");
+                    doc.text("NTN:", margin, currentY);
+                    doc.setFont("helvetica", "normal");
+                    doc.text(invoiceData.party_ntn || "-", margin + 20, currentY);
+
+                currentY += 10;
+// Table Headers with light gray background
+doc.setFontSize(9);
+doc.setFont("helvetica", "bold");
+doc.setFillColor(240, 240, 240);
+doc.rect(margin, currentY, pageWidth - margin, 6, 'F'); // width increased
+
+const headers = ["Sr", "Product Name", "Description", "Qty", "Packing", "Unit Price", "Amount"];
+const colWidths = [10, 35, 65, 15, 20, 20, 25]; // Increased description width to 65
+
+let xPos = margin;
+
+
+                    // Draw headers
+                    headers.forEach((header, index) => {
+                        let textX = xPos + 1; // Default left padding
+                        let align = "left";
+
+                        // Align numerical column headers to the right (index 3, 5, 6)
+                        if (index >= 3) {
+                            align = "right";
+                            textX = xPos + colWidths[index] - 2; // Right padding
+                        }
+
+                        doc.text(header, textX, currentY + 4, { align: align });
+                        xPos += colWidths[index];
+                    });
+
+                    // Table Rows
+                    currentY += 6; // move below header row
+                    doc.setFont("helvetica", "normal");
+
+                    invoiceData.items.forEach((item, index) => {
+                        xPos = margin;
+
+                        // Handle long descriptions with text wrapping
+                        const description = item.description || '-';
+                        const descriptionLines = doc.splitTextToSize(description, colWidths[2] - 2); // 2mm padding
+
+                        const rowData = [
+                            (index + 1).toString(),
+                            item.productName || '-',
+                            descriptionLines, // This will be an array of lines
+                            (item.qty || 0).toString(),
+                            item.packing || '-',
+                            (item.unitPrice || 0).toFixed(2),
+                            (item.amount || 0).toFixed(2)
+                        ];
+
+                        // Calculate row height based on description lines
+                        const lineHeight = 4;
+                        const rowHeight = Math.max(6, descriptionLines.length * lineHeight);
+
+                        rowData.forEach((cell, cellIndex) => {
+                            let align = "left";
+                            let textX = xPos + 1; // Default left padding
+
+                            // Align numerical data to the right (cellIndex 3, 5, 6)
+                            if (cellIndex >= 3) {
+                                align = "right";
+                                textX = xPos + colWidths[cellIndex] - 2; // Right padding
+                            }
+
+                            if (cellIndex === 2 && Array.isArray(cell)) {
+                                // Handle multi-line description
+                                cell.forEach((line, lineIndex) => {
+                                    doc.text(line, textX, currentY + 4 + (lineIndex * lineHeight), { align: align });
+                                });
+                            } else {
+                                doc.text(cell, textX, currentY + 4, { align: align });
+                            }
+                            xPos += colWidths[cellIndex];
+                        });
+
+                        currentY += rowHeight; // dynamic row height based on content
+                    });
+
+                    // --- Totals Section ---
+                    currentY += 10;
+                    const totalsX = pageWidth - margin - 50;
+
+                    doc.setFontSize(10);
+                    doc.setFont("helvetica", "normal");
+
+                    doc.text("Subtotal:", totalsX, currentY, { align: 'right' });
+                    doc.text("Rs " + (invoiceData.subtotal || 0).toLocaleString('en-US'), pageWidth - margin, currentY, { align: 'right' });
+                    currentY += 5;
+
+                    if (invoiceData.invoice_type === 'tax') {
+                        doc.setFont("helvetica", "bold");
+                        doc.text("GST (18%):", totalsX, currentY, { align: 'right' });
+                        doc.text("Rs " + (invoiceData.gst_total || 0).toLocaleString('en-US'), pageWidth - margin, currentY, { align: 'right' });
+                        currentY += 5;
+                    }
+
+                    doc.setFont("helvetica", "bold");
+                    doc.setFontSize(11);
+                    doc.setTextColor(220, 0, 0);
+                    doc.text("Grand Total:", totalsX, currentY, { align: 'right' });
+                    doc.text("Rs " + (invoiceData.grand_total || 0).toLocaleString('en-US'), pageWidth - margin, currentY, { align: 'right' });
+
+                    // --- Amount in Words ---
+                    currentY += 10;
+                    doc.setFontSize(9);
+                    doc.setFont("helvetica", "bold");
+                    doc.setTextColor(0, 0, 0);
+                    doc.text("Amount in words:", margin, currentY);
+                    doc.setFont("helvetica", "normal");
+
+                    try {
+                        const grandTotalInWords = numberToWords(Math.round(invoiceData.grand_total));
+                        doc.text(grandTotalInWords, margin + 35, currentY);
+                    } catch (wordsError) {
+                        console.error('Number to words error:', wordsError);
+                        doc.text("Amount in words conversion failed", margin + 35, currentY);
+                    }
+
+                    // --- Note with Red Color ---
+                    currentY += 15;
+
+                    // Note
+                    doc.setFontSize(8);
+
+                    // "Note:" in red
+                    doc.setFont("helvetica", "bold");
+                    doc.setTextColor(220, 0, 0);
+                    doc.text("Note:", margin, currentY);
+
+                    // Bullets in black
+                    doc.setFont("helvetica", "normal");
+                    doc.setTextColor(0, 0, 0);
+                    const note = [
+                        "• All products are supplied as per agreed quality standards and specifications.",
+                        "• For any inquiries or issues related to this invoice, please contact info@nutrion.pk.",
+                        "• Thank you for choosing NUTRION."
+                    ];
+
+                    note.forEach((note, index) => {
+                        doc.text(note, margin, currentY + 5 + (index * 4));
+                    });
+
+                    // Signature
+                    try {
+                        doc.addImage('Asim Siganture.jpg', 'JPEG', pageWidth - margin - 40, currentY, 40, 15);
+                    } catch(e) {
+                        console.log("Signature not loaded, using placeholder");
+                        doc.setFillColor(200, 200, 200);
+                        doc.rect(pageWidth - margin - 40, currentY, 40, 15, 'F');
+                        doc.setFontSize(8);
+                        doc.text('SIGNATURE', pageWidth - margin - 20, currentY + 8, { align: 'center' });
+                    }
+
+                    // Prepared By
+                    doc.setFont("helvetica", "bold");
+                    doc.setFontSize(9);
+                    doc.setTextColor(0, 0, 0);
+                    doc.text("Prepared By", pageWidth - margin, currentY + 20, { align: 'right' });
+
+                    // --- System Generated Invoice in Micro Words ---
+                    const systemText = `System Generated Invoice ${invoiceData.invoice_number} - ${invoiceData.date}`;
+                    doc.setFontSize(6);
+                    doc.setTextColor(150, 150, 150);
+                    doc.text(systemText, margin, doc.internal.pageSize.getHeight() - 5);
+
+                } catch (error) {
+                    console.error('Error in addInvoiceToDoc:', error);
+                    throw error;
+                }
+            }
+
+            // --- Combined PDF Generation for Multiple Invoices ---
+            function generateAllInvoicesInOnePdf(invoices, invoiceType, startDate, endDate) {
+                try {
+                    const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+
+                    // Calculate totals
+                    let totalInvoices = invoices.length;
+                    let totalSubtotal = 0;
+                    let totalGST = 0;
+                    let totalGrandTotal = 0;
+
+                    invoices.forEach(invoice => {
+                        totalSubtotal += invoice.subtotal;
+                        totalGST += invoice.gst_total || 0;
+                        totalGrandTotal += invoice.grand_total;
+                    });
+
+                    // Add all invoices first using the template
+                    invoices.forEach((invoice, index) => {
+                        // Add new page for each invoice (except first one)
+                        if (index > 0) {
+                            doc.addPage();
+                        }
+
+                        // Add the invoice using the template
+                        addInvoiceToDoc(doc, invoice);
+                    });
+
+                    // Add summary page at the END
+                    doc.addPage();
+                    addSummaryPageAtEnd(doc, invoiceType, startDate, endDate, totalInvoices, totalSubtotal, totalGST, totalGrandTotal);
+
+                    return doc;
+                } catch (error) {
+                    console.error('PDF Generation Error:', error);
+                    throw new Error(`Failed to generate combined PDF: ${error.message}`);
+                }
+            }
+
+            function addSummaryPageAtEnd(doc, invoiceType, startDate, endDate, totalInvoices, totalSubtotal, totalGST, totalGrandTotal) {
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const margin = 20;
+                let currentY = 30;
+
+                // Title
+                doc.setFontSize(18);
+                doc.setFont("helvetica", "bold");
+                doc.setTextColor(0, 0, 0);
+                doc.text("INVOICE SUMMARY REPORT", pageWidth / 2, currentY, { align: 'center' });
+                currentY += 15;
+
+                // Date Range
+                doc.setFontSize(12);
+                doc.setFont("helvetica", "normal");
+                doc.text(`Period: ${formatDate(startDate)} to ${formatDate(endDate)}`, pageWidth / 2, currentY, { align: 'center' });
+                currentY += 20;
+
+                // Summary Box
+                doc.setFillColor(240, 240, 240);
+                doc.rect(margin, currentY, pageWidth - (2 * margin), 100, 'F');
+                doc.setDrawColor(0, 0, 0);
+                doc.setLineWidth(0.5);
+                doc.rect(margin, currentY, pageWidth - (2 * margin), 100);
+
+                // Summary Content - SIMPLE TEXT FORMAT
+                currentY += 15;
+                doc.setFontSize(14);
+                doc.setFont("helvetica", "bold");
+                doc.text("SUMMARY DETAILS", pageWidth / 2, currentY, { align: 'center' });
+                currentY += 15;
+
+                doc.setFontSize(11);
+                doc.setFont("helvetica", "normal");
+
+                // Summary items in simple text format
+                const summaryItems = [
+                    { label: "Total Number of Invoices:", value: totalInvoices.toString() },
+                    { label: "Cumulative Subtotal:", value: `Rs ${totalSubtotal.toFixed(2)}` },
+                ];
+
+                if (invoiceType === 'tax') {
+                    summaryItems.push(
+                        { label: "Total GST Collected (18%):", value: `Rs ${totalGST.toFixed(2)}` }
+                    );
+                }
+
+                summaryItems.push(
+                    { label: "TOTAL GRAND TOTAL:", value: `Rs ${totalGrandTotal.toFixed(2)}` }
+                );
+
+                // Add summary items
+                summaryItems.forEach(item => {
+                    doc.setFont("helvetica", "bold");
+                    doc.text(item.label, margin + 10, currentY);
+                    doc.setFont("helvetica", "normal");
+                    doc.text(item.value, pageWidth - margin - 10, currentY, { align: 'right' });
+                    currentY += 8;
+                });
+
+                currentY += 10;
+
+                // Amount in words
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "bold");
+                doc.text("Total Amount in Words:", margin + 10, currentY);
+                doc.setFont("helvetica", "normal");
+
+                try {
+                    const totalInWords = numberToWords(Math.round(totalGrandTotal));
+                    // Split long text into multiple lines if needed
+                    const wordsLines = doc.splitTextToSize(totalInWords, pageWidth - (2 * margin) - 20);
+                    doc.text(wordsLines, margin + 10, currentY + 5);
+                } catch (wordsError) {
+                    console.error('Number to words error:', wordsError);
+                    doc.text("Amount in words conversion failed", margin + 10, currentY + 5);
+                }
+
+                currentY += 20;
+
+                // Additional Statistics
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "bold");
+                doc.text("Additional Statistics:", margin + 10, currentY);
+                currentY += 8;
+
+                doc.setFontSize(9);
+                doc.setFont("helvetica", "normal");
+
+                const avgInvoice = totalGrandTotal / totalInvoices;
+                doc.text(`Average Invoice Value: Rs ${avgInvoice.toFixed(2)}`, margin + 10, currentY);
+                currentY += 6;
+
+                if (invoiceType === 'tax') {
+                    const gstPercentage = (totalGST / totalSubtotal * 100).toFixed(1);
+                    doc.text(`Average GST Rate: ${gstPercentage}%`, margin + 10, currentY);
+                    currentY += 6;
+                }
+
+                // Footer
+                currentY += 15;
+                doc.setFontSize(8);
+                doc.setTextColor(100, 100, 100);
+                doc.text("NUTRION", pageWidth / 2, currentY, { align: 'center' });
+                currentY += 5;
+                doc.text(`Report generated on: ${new Date().toLocaleDateString('en-GB')} at ${new Date().toLocaleTimeString('en-GB')}`, pageWidth / 2, currentY, { align: 'center' });
+            }
+
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-GB');
+            }
+
+            // --- Flask API Functions ---
+            async function saveInvoiceToBackend(invoiceData) {
+                try {
+                    const response = await fetch('http://localhost:5001/save_invoice', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(invoiceData)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    console.log('Save invoice response:', result);
+                    return result;
+                } catch (error) {
+                    console.error('Error saving invoice:', error);
+                    return { success: false, error: error.message };
+                }
+            }
+
+            async function searchInvoices(searchTerm) {
+                try {
+                    const response = await fetch('http://localhost:5001/search_invoice', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ search_term: searchTerm })
+                    });
+
+                    const result = await response.json();
+                    return result;
+                } catch (error) {
+                    console.error('Error searching invoices:', error);
+                    return { success: false, error: error.message };
+                }
+            }
+
+            async function getInvoiceById(invoiceId) {
+                try {
+                    const response = await fetch(`http://localhost:5001/get_invoice/${invoiceId}`);
+                    const result = await response.json();
+                    return result;
+                } catch (error) {
+                    console.error('Error fetching invoice:', error);
+                    return { success: false, error: error.message };
+                }
+            }
+
+            async function deleteInvoice(invoiceId) {
+                try {
+                    const response = await fetch(`http://localhost:5001/delete_invoice/${invoiceId}`, {
+                        method: 'DELETE'
+                    });
+
+                    const result = await response.json();
+                    return result;
+                } catch (error) {
+                    console.error('Error deleting invoice:', error);
+                    return { success: false, error: error.message };
+                }
+            }
+
+            async function getInvoicesByDateRange(startDate, endDate, invoiceType) {
+                try {
+                    const response = await fetch('http://localhost:5001/get_invoices_by_date', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            start_date: startDate,
+                            end_date: endDate,
+                            invoice_type: invoiceType
+                        })
+                    });
+
+                    const result = await response.json();
+                    return result;
+                } catch (error) {
+                    console.error('Error fetching invoices:', error);
+                    return { success: false, error: error.message };
+                }
+            }
+
+            // --- Form Functions ---
+            function getInvoiceData() {
+                const partyName = partyInput.value.trim();
+                const partyNtn = partyNtnInput.value.trim(); // Get NTN value
+
+                if (!partyName) {
+                    return null;
+                }
+
+                let items, subtotal, gstTotal;
+                if (activeTab === 'without-gst') {
+                    subtotal = parseFloat(subtotalSpan.textContent) || 0;
+                    gstTotal = 0;
+                    items = Array.from(itemsWithoutGst.querySelectorAll('tr'))
+                        .filter(row => {
+                            const productName = row.querySelector('.product-name').value;
+                            const qty = parseFloat(row.querySelector('.qty').value) || 0;
+                            const unitPrice = parseFloat(row.querySelector('.unit-price').value) || 0;
+                            return productName !== "" && qty > 0 && unitPrice > 0;
+                        })
+                        .map(row => ({
+                            productName: row.querySelector('.product-name').value,
+                            description: row.querySelector('.description').value,
+                            qty: parseFloat(row.querySelector('.qty').value) || 0,
+                            packing: row.querySelector('.packing').value, // Packing details included
+                            unitPrice: parseFloat(row.querySelector('.unit-price').value) || 0,
+                            amount: parseFloat(row.querySelector('.amount').textContent) || 0
+                        }));
+                } else { // 'with-gst'
+                    subtotal = parseFloat(subtotalSpan.textContent) || 0;
+                    gstTotal = parseFloat(gstTotalSpan.textContent) || 0;
+                    items = Array.from(itemsWithGst.querySelectorAll('tr'))
+                        .filter(row => {
+                            const productName = row.querySelector('.product-name').value;
+                            const qty = parseFloat(row.querySelector('.qty').value) || 0;
+                            const unitPrice = parseFloat(row.querySelector('.unit-price-incl-gst').value) || 0;
+                            return productName !== "" && qty > 0 && unitPrice > 0;
+                        })
+                        .map(row => {
+                            const qty = parseFloat(row.querySelector('.qty').value) || 0;
+                            const baseAmount = parseFloat(row.querySelector('.base-amount').textContent) || 0;
+                            return {
+                                productName: row.querySelector('.product-name').value,
+                                description: row.querySelector('.description').value,
+                                qty: qty,
+                                packing: row.querySelector('.packing').value, // Packing details included
+                                unitPrice: qty > 0 ? (baseAmount / qty) : 0,
+                                amount: baseAmount
+                            };
+                        });
+                }
+
+                if (items.length === 0) {
+                    return null;
+                }
+
+                return {
+                    id: currentInvoiceId,
+                    invoice_number: invoiceNumberInput.value || "1001",
+                    date: dateInput.value || new Date().toISOString().split('T')[0],
+                    due_date: dueDateInput.value || new Date().toISOString().split('T')[0],
+                    party_name: partyName,
+                    party_ntn: partyNtn, // Include NTN in data
+                    items: items,
+                    subtotal: subtotal,
+                    gst_total: gstTotal,
+                    grand_total: parseFloat(grandTotalSpan.textContent) || 0,
+                    invoice_type: activeTab === 'with-gst' ? 'tax' : 'non-tax',
+                    fbr_invoice_number: fbrInvoiceNumberInput.value.trim() || ''
+                };
+            }
+
+            function clearForm() {
+                currentInvoiceId = null;
+                invoiceNumberInput.value = Math.floor(1000 + Math.random() * 9000);
+                fbrInvoiceNumberInput.value = '';
+                partyInput.value = '';
+                partyNtnInput.value = ''; // Clear NTN field
+                dateInput.value = today;
+                dueDateInput.value = today;
+
+                // Clear items
+                itemsWithoutGst.innerHTML = '';
+                itemsWithGst.innerHTML = '';
+
+                // Add one empty row
+                createWithoutGstRow();
+                createWithGstRow();
+                updateTotals();
+
+                // Switch to without GST tab
+                switchTab('without-gst');
+            }
+
+            function loadInvoiceIntoForm(invoice) {
+                currentInvoiceId = invoice.id;
+                invoiceNumberInput.value = invoice.invoice_number;
+                fbrInvoiceNumberInput.value = invoice.fbr_invoice_number || '';
+                partyInput.value = invoice.party_name;
+                partyNtnInput.value = invoice.party_ntn || ''; // Load NTN data
+                dateInput.value = invoice.date;
+                dueDateInput.value = invoice.due_date;
+
+                // Clear existing items
+                itemsWithoutGst.innerHTML = '';
+                itemsWithGst.innerHTML = '';
+
+                // Set tab and add items
+                if (invoice.invoice_type === 'tax') {
+                    switchTab('with-gst');
+                    invoice.items.forEach(item => {
+                        createWithGstRow(
+                            item.productName,
+                            item.description,
+                            item.qty,
+                            item.packing, // Load packing details
+                            item.unitPrice
+                        );
+                    });
+                } else {
+                    switchTab('without-gst');
+                    invoice.items.forEach(item => {
+                        createWithoutGstRow(
+                            item.productName,
+                            item.description,
+                            item.qty,
+                            item.packing, // Load packing details
+                            item.unitPrice
+                        );
+                    });
+                }
+
+                updateTotals();
+                showModal('Invoice loaded successfully! You can now edit and save it.');
+            }
+
+            // --- Event Listeners ---
+
+            // Save Invoice Button
+            document.getElementById('save-invoice').addEventListener('click', async function() {
+                try {
+                    const invoiceData = getInvoiceData();
+                    if (!invoiceData) {
+                        showModal("Please fill all required fields and add at least one valid item.");
+                        return;
+                    }
+
+                    const saveResult = await saveInvoiceToBackend(invoiceData);
+
+                    if (saveResult.success) {
+                        currentInvoiceId = saveResult.invoice_id;
+                        showModal(`Invoice ${currentInvoiceId ? 'updated' : 'saved'} successfully!`);
+                    } else {
+                        showModal(`Error saving invoice: ${saveResult.error}`);
+                    }
+
+                } catch (error) {
+                    console.error('Unexpected error:', error);
+                    showModal('An unexpected error occurred. Please check the console for details.');
+                }
+            });
+
+            // Download PDF Button (Single Invoice)
+            document.getElementById('download-pdf').addEventListener('click', function() {
+                try {
+                    const invoiceData = getInvoiceData();
+                    if (!invoiceData) {
+                        showModal("Please fill all required fields and add at least one valid item.");
+                        return;
+                    }
+
+                    const doc = generateInvoicePdf(invoiceData);
+                    const fileName = `Invoice_${invoiceData.invoice_number}_${invoiceData.party_name.replace(/\s+/g, '')}.pdf`;
+                    doc.save(fileName);
+                    showModal("PDF downloaded successfully!");
+
+                } catch (error) {
+                    console.error('PDF Generation Error:', error);
+                    showModal(`Error generating PDF: ${error.message}. Check console for details.`);
+                }
+            });
+
+            // Clear Form Button
+            document.getElementById('clear-form').addEventListener('click', clearForm);
+
+            // Search Invoice Button
+            searchButton.addEventListener('click', async function() {
+                const searchTerm = searchTermInput.value.trim();
+                if (!searchTerm) {
+                    showModal("Please enter a search term.");
+                    return;
+                }
+
+                try {
+                    const result = await searchInvoices(searchTerm);
+
+                    if (result.success) {
+                        const invoices = result.invoices;
+
+                        if (invoices.length === 0) {
+                            searchResults.classList.add('hidden');
+                            showModal("No invoices found matching your search.");
+                            return;
+                        }
+
+                        // Populate search results
+                        searchResultsBody.innerHTML = '';
+                        invoices.forEach(invoice => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td class="px-4 py-2">${invoice.invoice_number}</td>
+                                <td class="px-4 py-2">${invoice.party_name}</td>
+                                <td class="px-4 py-2">${invoice.date}</td>
+                                <td class="px-4 py-2">${invoice.invoice_type === 'tax' ? 'Tax Invoice' : 'Non-Tax Invoice'}</td>
+                                <td class="px-4 py-2">Rs ${invoice.grand_total.toFixed(2)}</td>
+                                <td class="px-4 py-2">
+                                    <button class="load-invoice bg-blue-500 text-white px-3 py-1 rounded text-sm mr-2" data-id="${invoice.id}">Load</button>
+                                    <button class="download-invoice bg-green-500 text-white px-3 py-1 rounded text-sm mr-2" data-id="${invoice.id}">PDF</button>
+                                    <button class="delete-invoice bg-red-500 text-white px-3 py-1 rounded text-sm" data-id="${invoice.id}">Delete</button>
+                                </td>
+                            `;
+                            searchResultsBody.appendChild(row);
+                        });
+
+                        // Add event listeners to action buttons
+                        document.querySelectorAll('.load-invoice').forEach(btn => {
+                            btn.addEventListener('click', async function() {
+                                const invoiceId = this.getAttribute('data-id');
+                                const result = await getInvoiceById(invoiceId);
+                                if (result.success) {
+                                    loadInvoiceIntoForm(result.invoice);
+                                    searchResults.classList.add('hidden');
+                                } else {
+                                    showModal(`Error loading invoice: ${result.error}`);
+                                }
+                            });
+                        });
+
+                        document.querySelectorAll('.download-invoice').forEach(btn => {
+                            btn.addEventListener('click', async function() {
+                                const invoiceId = this.getAttribute('data-id');
+                                const result = await getInvoiceById(invoiceId);
+                                if (result.success) {
+                                    const doc = generateInvoicePdf(result.invoice);
+                                    const fileName = `Invoice_${result.invoice.invoice_number}_${result.invoice.party_name.replace(/\s+/g, '')}.pdf`;
+                                    doc.save(fileName);
+                                } else {
+                                    showModal(`Error downloading invoice: ${result.error}`);
+                                }
+                            });
+                        });
+
+                        document.querySelectorAll('.delete-invoice').forEach(btn => {
+                            btn.addEventListener('click', async function() {
+                                const invoiceId = this.getAttribute('data-id');
+                                if (confirm('Are you sure you want to delete this invoice?')) {
+                                    const result = await deleteInvoice(invoiceId);
+                                    if (result.success) {
+                                        showModal('Invoice deleted successfully!');
+                                        // Remove from search results
+                                        this.closest('tr').remove();
+                                        // If no more results, hide the table
+                                        if (searchResultsBody.children.length === 0) {
+                                            searchResults.classList.add('hidden');
+                                        }
+                                    } else {
+                                        showModal(`Error deleting invoice: ${result.error}`);
+                                    }
+                                }
+                            });
+                        });
+
+                        searchResults.classList.remove('hidden');
+                    } else {
+                        showModal(`Error searching invoices: ${result.error}`);
+                    }
+
+                } catch (error) {
+                    console.error('Search error:', error);
+                    showModal('Error searching invoices. See console for details.');
+                }
+            });
+
+            // --- Event Listener for Tax Invoices Download (COMBINED PDF) ---
+            document.getElementById('download-tax-pdf').addEventListener('click', async function() {
+                const startDate = startDateInput.value;
+                const endDate = endDateInput.value;
+
+                if (!startDate || !endDate) {
+                    showModal("Please select both a start and end date.");
+                    return;
+                }
+
+                try {
+                    showModal("Generating combined tax invoices PDF...");
+
+                    // Get invoices from backend
+                    const result = await getInvoicesByDateRange(startDate, endDate, 'tax');
+
+                    if (!result.success) {
+                        showModal(`Error fetching invoices: ${result.error}`);
+                        return;
+                    }
+
+                    const invoices = result.invoices;
+
+                    if (invoices.length === 0) {
+                        showModal("No tax invoices found for the selected date range.");
+                        return;
+                    }
+
+                    // Generate single PDF with all invoices using template
+                    const doc = generateAllInvoicesInOnePdf(invoices, 'tax', startDate, endDate);
+                    const fileName = `Tax_Invoices_Compilation_${startDate}_to_${endDate}.pdf`;
+                    doc.save(fileName);
+
+                    showModal(`Combined tax invoices PDF generated successfully! Total: ${invoices.length} invoices`);
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    showModal('Error generating combined tax invoices PDF. See console for details.');
+                }
+            });
+
+            // --- Event Listener for Non-Tax Invoices Download (COMBINED PDF) ---
+            document.getElementById('download-non-tax-pdf').addEventListener('click', async function() {
+                const startDate = startDateInput.value;
+                const endDate = endDateInput.value;
+
+                if (!startDate || !endDate) {
+                    showModal("Please select both a start and end date.");
+                    return;
+                }
+
+                try {
+                    showModal("Generating combined non-tax invoices PDF...");
+
+                    // Get invoices from backend
+                    const result = await getInvoicesByDateRange(startDate, endDate, 'non-tax');
+
+                    if (!result.success) {
+                        showModal(`Error fetching invoices: ${result.error}`);
+                        return;
+                    }
+
+                    const invoices = result.invoices;
+
+                    if (invoices.length === 0) {
+                        showModal("No non-tax invoices found for the selected date range.");
+                        return;
+                    }
+
+                    // Generate single PDF with all invoices using template
+                    const doc = generateAllInvoicesInOnePdf(invoices, 'non-tax', startDate, endDate);
+                    const fileName = `NonTax_Invoices_Compilation_${startDate}_to_${endDate}.pdf`;
+                    doc.save(fileName);
+
+                    showModal(`Combined non-tax invoices PDF generated successfully! Total: ${invoices.length} invoices`);
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    showModal('Error generating combined non-tax invoices PDF. See console for details.');
+                }
+            });
+
+            // Initialize with one row
+            clearForm();
+        });
+    </script>
+</body>
+</html>

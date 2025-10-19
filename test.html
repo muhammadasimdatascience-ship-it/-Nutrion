@@ -1,0 +1,2218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrion - Professional Employee Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+        }
+        .nav-active {
+            background-color: var(--primary);
+            color: white;
+        }
+        .sidebar {
+            transition: all 0.3s ease;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+        .sidebar.collapsed {
+            width: 70px;
+        }
+        .sidebar.collapsed .nav-text {
+            display: none;
+        }
+        .main-content {
+            transition: all 0.3s ease;
+        }
+        .stat-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+        .btn-success {
+            background: var(--success);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-success:hover {
+            background: #3aa8d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 201, 240, 0.3);
+        }
+        .btn-danger {
+            background: var(--warning);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-danger:hover {
+            background: #d61a6f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(247, 37, 133, 0.3);
+        }
+        .table-header {
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+        }
+        .modal-header {
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border-radius: 10px 10px 0 0;
+        }
+        .content-section {
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .badge-success {
+            background: rgba(76, 201, 240, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(76, 201, 240, 0.3);
+        }
+        .badge-danger {
+            background: rgba(247, 37, 133, 0.15);
+            color: var(--warning);
+            border: 1px solid rgba(247, 37, 133, 0.3);
+        }
+        .badge-warning {
+            background: rgba(255, 193, 7, 0.15);
+            color: #ffc107;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+        .logo-container {
+            background: white;
+            border-radius: 10px;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar h-full w-64 flex flex-col">
+            <!-- Logo -->
+            <div class="p-6 border-b border-blue-400 flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="logo-container mr-3">
+                        <img src="logo.png" alt="Nutrion Logo" class="h-8 w-8 object-contain" onerror="this.style.display='none'; document.getElementById('logo-placeholder').style.display='flex';">
+                        <div id="logo-placeholder" class="h-8 w-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded flex items-center justify-center text-white font-bold text-sm" style="display: none;">N</div>
+                    </div>
+                    <span class="text-xl font-bold text-white nav-text">Nutrion</span>
+                </div>
+                <button id="toggle-sidebar" class="text-blue-200 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex-1 py-4">
+                <nav class="space-y-1 px-4">
+                    <a href="#" data-tab="dashboard" class="nav-item nav-active flex items-center px-4 py-3 text-sm font-medium rounded-lg text-white bg-blue-500 bg-opacity-20">
+                        <i class="fas fa-tachometer-alt mr-3"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="#" data-tab="employees" class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg text-blue-100 hover:bg-blue-500 hover:bg-opacity-20 hover:text-white">
+                        <i class="fas fa-users mr-3"></i>
+                        <span class="nav-text">Employees</span>
+                    </a>
+                    <a href="#" data-tab="attendance" class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg text-blue-100 hover:bg-blue-500 hover:bg-opacity-20 hover:text-white">
+                        <i class="fas fa-calendar-check mr-3"></i>
+                        <span class="nav-text">Attendance</span>
+                    </a>
+                    <a href="#" data-tab="salary" class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg text-blue-100 hover:bg-blue-500 hover:bg-opacity-20 hover:text-white">
+                        <i class="fas fa-money-bill-wave mr-3"></i>
+                        <span class="nav-text">Salary</span>
+                    </a>
+                    <a href="#" data-tab="reports" class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg text-blue-100 hover:bg-blue-500 hover:bg-opacity-20 hover:text-white">
+                        <i class="fas fa-chart-bar mr-3"></i>
+                        <span class="nav-text">Reports</span>
+                    </a>
+                    <a href="#" data-tab="settings" class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg text-blue-100 hover:bg-blue-500 hover:bg-opacity-20 hover:text-white">
+                        <i class="fas fa-cog mr-3"></i>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- User Profile -->
+            <div class="p-4 border-t border-blue-400">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-white bg-opacity-20 flex items-center justify-center text-white font-bold">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="ml-3 nav-text">
+                        <p class="text-sm font-medium text-white">Admin User</p>
+                        <p class="text-xs text-blue-200">Administrator</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-white shadow-sm z-10">
+                <div class="flex items-center justify-between px-6 py-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900" id="page-title">Employee Dashboard</h1>
+                        <p class="text-gray-500" id="page-description">Welcome to Nutrion Employee Management System</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button id="add-employee-btn" class="btn-primary px-4 py-2 rounded-lg text-sm font-medium">
+                            <i class="fas fa-plus mr-2"></i>Add Employee
+                        </button>
+                        <div class="relative">
+                            <button class="p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100">
+                                <i class="fas fa-bell"></i>
+                            </button>
+                            <span class="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full"></span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- Dashboard Content -->
+                <div id="dashboard-content" class="content-section">
+                    <!-- Stats Overview -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="stat-card p-6 border-l-4 border-blue-500">
+                            <div class="flex items-center">
+                                <div class="p-3 rounded-lg bg-blue-100 text-blue-500">
+                                    <i class="fas fa-users text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-sm font-medium text-gray-500">Total Employees</h3>
+                                    <p class="text-2xl font-bold text-gray-900" id="total-employees">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card p-6 border-l-4 border-green-500">
+                            <div class="flex items-center">
+                                <div class="p-3 rounded-lg bg-green-100 text-green-500">
+                                    <i class="fas fa-user-check text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-sm font-medium text-gray-500">Present Today</h3>
+                                    <p class="text-2xl font-bold text-gray-900" id="present-today">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card p-6 border-l-4 border-purple-500">
+                            <div class="flex items-center">
+                                <div class="p-3 rounded-lg bg-purple-100 text-purple-500">
+                                    <i class="fas fa-money-bill text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-sm font-medium text-gray-500">Monthly Payroll</h3>
+                                    <p class="text-2xl font-bold text-gray-900" id="monthly-payroll">Rs 0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card p-6 border-l-4 border-yellow-500">
+                            <div class="flex items-center">
+                                <div class="p-3 rounded-lg bg-yellow-100 text-yellow-500">
+                                    <i class="fas fa-tasks text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-sm font-medium text-gray-500">Pending Tasks</h3>
+                                    <p class="text-2xl font-bold text-gray-900">5</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts and Quick Actions -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Attendance Overview</h3>
+                            <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
+                                <div class="text-center">
+                                    <i class="fas fa-chart-bar text-4xl text-gray-400 mb-2"></i>
+                                    <p class="text-gray-500">Attendance chart will be displayed here</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-sm p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                            <div class="space-y-4">
+                                <button id="mark-attendance-btn" class="w-full btn-primary px-4 py-3 rounded-lg text-sm font-medium flex items-center justify-center">
+                                    <i class="fas fa-calendar-check mr-2"></i>Mark Today's Attendance
+                                </button>
+                                <button id="generate-slips-btn" class="w-full btn-success px-4 py-3 rounded-lg text-sm font-medium flex items-center justify-center">
+                                    <i class="fas fa-file-invoice-dollar mr-2"></i>Generate Salary Slips
+                                </button>
+                                <button id="download-reports-btn" class="w-full bg-purple-500 text-white px-4 py-3 rounded-lg text-sm font-medium hover:bg-purple-600 transition-colors flex items-center justify-center">
+                                    <i class="fas fa-download mr-2"></i>Download Reports
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center p-3 bg-blue-50 rounded-lg">
+                                <div class="p-2 rounded-full bg-blue-100 text-blue-500 mr-3">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">New employee added</p>
+                                    <p class="text-xs text-gray-500">John Doe was added to the system</p>
+                                </div>
+                                <span class="ml-auto text-xs text-gray-500">2 hours ago</span>
+                            </div>
+                            <div class="flex items-center p-3 bg-green-50 rounded-lg">
+                                <div class="p-2 rounded-full bg-green-100 text-green-500 mr-3">
+                                    <i class="fas fa-money-check"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">Salary processed</p>
+                                    <p class="text-xs text-gray-500">March salaries have been processed</p>
+                                </div>
+                                <span class="ml-auto text-xs text-gray-500">1 day ago</span>
+                            </div>
+                            <div class="flex items-center p-3 bg-yellow-50 rounded-lg">
+                                <div class="p-2 rounded-full bg-yellow-100 text-yellow-500 mr-3">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">Attendance alert</p>
+                                    <p class="text-xs text-gray-500">3 employees have not marked attendance today</p>
+                                </div>
+                                <span class="ml-auto text-xs text-gray-500">Just now</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Employees Content -->
+                <div id="employees-content" class="content-section hidden">
+                    <div class="bg-white rounded-xl shadow-sm mb-6">
+                        <div class="p-6">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                                <div>
+                                    <h2 class="text-lg font-semibold text-gray-900">Employee Management</h2>
+                                    <p class="text-sm text-gray-500">Manage all Nutrion employees</p>
+                                </div>
+                                <button id="add-new-employee" class="mt-4 sm:mt-0 btn-primary px-4 py-2 rounded-lg text-sm font-medium">
+                                    <i class="fas fa-plus mr-2"></i>Add New Employee
+                                </button>
+                            </div>
+
+                            <!-- Employees Table -->
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="table-header">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Employee</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Position</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Department</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Salary</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Status</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200" id="employees-table-body">
+                                        <!-- Employees will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendance Content -->
+                <div id="attendance-content" class="content-section hidden">
+                    <div class="bg-white rounded-xl shadow-sm mb-6">
+                        <div class="p-6">
+                            <!-- Date Range Selector -->
+                            <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <h2 class="text-lg font-semibold text-gray-900">Attendance Records</h2>
+                                    <p class="text-sm text-gray-500">View and manage employee attendance</p>
+                                </div>
+                                <div class="mt-4 sm:mt-0 flex items-center space-x-4">
+                                    <div>
+                                        <label for="start-date" class="block text-sm font-medium text-gray-700">From</label>
+                                        <input type="date" id="start-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                    </div>
+                                    <div>
+                                        <label for="end-date" class="block text-sm font-medium text-gray-700">To</label>
+                                        <input type="date" id="end-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                    </div>
+                                    <div class="flex items-end">
+                                        <button id="download-attendance-pdf" class="btn-primary px-4 py-2 rounded-lg text-sm font-medium">
+                                            <i class="fas fa-download mr-2"></i>Export PDF
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Attendance Table -->
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="table-header">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Employee</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Date</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Check In</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Check Out</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Status</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Hours</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200" id="attendance-table-body">
+                                        <!-- Attendance records will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Salary Content -->
+                <div id="salary-content" class="content-section hidden">
+                    <div class="bg-white rounded-xl shadow-sm mb-6">
+                        <div class="p-6">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                                <div>
+                                    <h2 class="text-lg font-semibold text-gray-900">Salary Management</h2>
+                                    <p class="text-sm text-gray-500">Manage employee salaries and generate slips</p>
+                                </div>
+                                <div class="mt-4 sm:mt-0 flex items-center space-x-4">
+                                    <select id="salary-month" class="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                        <option value="0">January</option>
+                                        <option value="1">February</option>
+                                        <option value="2">March</option>
+                                        <option value="3">April</option>
+                                        <option value="4">May</option>
+                                        <option value="5">June</option>
+                                        <option value="6">July</option>
+                                        <option value="7">August</option>
+                                        <option value="8">September</option>
+                                        <option value="9">October</option>
+                                        <option value="10">November</option>
+                                        <option value="11">December</option>
+                                    </select>
+                                    <select id="salary-year" class="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                        <!-- Years will be populated by JavaScript -->
+                                    </select>
+                                    <button id="generate-salary-sheet" class="btn-primary px-4 py-2 rounded-lg text-sm font-medium">
+                                        <i class="fas fa-file-alt mr-2"></i>Generate Sheet
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Salary Sheet Table -->
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="table-header">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Employee</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Basic Salary</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Allowances</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Deductions</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Net Salary</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Payment Method</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200" id="salary-table-body">
+                                        <!-- Salary data will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Content -->
+                <div id="reports-content" class="content-section hidden">
+                    <div class="bg-white rounded-xl shadow-sm mb-6">
+                        <div class="p-6">
+                            <h2 class="text-lg font-semibold text-gray-900 mb-6">Reports & Analytics</h2>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-100">
+                                    <h3 class="text-lg font-medium text-gray-900 mb-4">Attendance Report</h3>
+                                    <p class="text-sm text-gray-500 mb-4">Generate comprehensive attendance reports</p>
+                                    <button id="generate-attendance-report" class="w-full btn-primary px-4 py-2 rounded-lg text-sm font-medium">
+                                        <i class="fas fa-chart-line mr-2"></i>Generate Report
+                                    </button>
+                                </div>
+                                <div class="bg-gradient-to-r from-green-50 to-teal-50 rounded-lg p-6 border border-green-100">
+                                    <h3 class="text-lg font-medium text-gray-900 mb-4">Salary Report</h3>
+                                    <p class="text-sm text-gray-500 mb-4">Generate detailed salary reports</p>
+                                    <button id="generate-salary-report" class="w-full btn-success px-4 py-2 rounded-lg text-sm font-medium">
+                                        <i class="fas fa-file-invoice-dollar mr-2"></i>Generate Report
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-6 border border-purple-100">
+                                <h3 class="text-lg font-medium text-gray-900 mb-4">Custom Report</h3>
+                                <p class="text-sm text-gray-500 mb-4">Generate custom reports based on date range</p>
+                                <div class="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                                    <div>
+                                        <label for="report-start-date" class="block text-sm font-medium text-gray-700">From</label>
+                                        <input type="date" id="report-start-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                    </div>
+                                    <div>
+                                        <label for="report-end-date" class="block text-sm font-medium text-gray-700">To</label>
+                                        <input type="date" id="report-end-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                    </div>
+                                    <div class="flex items-end">
+                                        <button id="generate-custom-report" class="bg-purple-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-600 transition-colors">
+                                            <i class="fas fa-cogs mr-2"></i>Generate Custom Report
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Content -->
+                <div id="settings-content" class="content-section hidden">
+                    <div class="bg-white rounded-xl shadow-sm mb-6">
+                        <div class="p-6">
+                            <h2 class="text-lg font-semibold text-gray-900 mb-6">System Settings</h2>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-gray-50 rounded-lg p-6">
+                                    <h3 class="text-lg font-medium text-gray-900 mb-4">Company Information</h3>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">Company Name</label>
+                                            <input type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" value="Nutrion">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">Address</label>
+                                            <textarea class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">Office # 34, Lower Ground, Pearl City Towers, Sargodha Road, Faisalabad</textarea>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">Contact Email</label>
+                                            <input type="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" value="info@nutrion.pk">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-6">
+                                    <h3 class="text-lg font-medium text-gray-900 mb-4">Attendance Settings</h3>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">Work Start Time</label>
+                                            <input type="time" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" value="09:00">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">Work End Time</label>
+                                            <input type="time" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" value="17:00">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">Late Tolerance (minutes)</label>
+                                            <input type="number" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" value="15">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 flex justify-end">
+                                <button class="btn-primary px-4 py-2 rounded-lg text-sm font-medium">
+                                    <i class="fas fa-save mr-2"></i>Save Settings
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add Employee Modal -->
+    <div id="employee-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+            <div class="modal-header p-4 rounded-t-md">
+                <h3 class="text-lg leading-6 font-medium text-white" id="modal-title">Add New Employee</h3>
+            </div>
+            <div class="p-6">
+                <form id="employee-form">
+                    <div class="mb-4">
+                        <label for="employee-name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                        <input type="text" id="employee-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="employee-position" class="block text-sm font-medium text-gray-700">Position</label>
+                        <select id="employee-position" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
+                            <option value="">Select Position</option>
+                            <option value="CEO">CEO</option>
+                            <option value="Manager">Manager</option>
+                            <option value="Team Lead">Team Lead</option>
+                            <option value="Senior Developer">Senior Developer</option>
+                            <option value="Developer">Developer</option>
+                            <option value="Designer">Designer</option>
+                            <option value="HR Specialist">HR Specialist</option>
+                            <option value="Accountant">Accountant</option>
+                            <option value="Sales Executive">Sales Executive</option>
+                            <option value="Marketing Specialist">Marketing Specialist</option>
+                            <option value="Support Staff">Support Staff</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="employee-department" class="block text-sm font-medium text-gray-700">Department</label>
+                        <select id="employee-department" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
+                            <option value="">Select Department</option>
+                            <option value="Management">Management</option>
+                            <option value="Development">Development</option>
+                            <option value="Design">Design</option>
+                            <option value="Human Resources">Human Resources</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Sales">Sales</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Operations">Operations</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="employee-salary" class="block text-sm font-medium text-gray-700">Basic Salary (Rs)</label>
+                        <input type="number" id="employee-salary" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
+                    </div>
+                    <div class="flex items-center justify-between px-4 py-3">
+                        <button type="button" id="modal-cancel" class="px-4 py-2 bg-gray-300 text-gray-700 text-base font-medium rounded-md w-5/12 shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn-primary px-4 py-2 text-base font-medium rounded-md w-5/12 shadow-sm">
+                            Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Salary Details Modal -->
+    <div id="salary-details-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+            <div class="modal-header p-4 rounded-t-md">
+                <h3 class="text-lg leading-6 font-medium text-white">Salary Details</h3>
+            </div>
+            <div class="p-6">
+                <form id="salary-details-form">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="salary-basic" class="block text-sm font-medium text-gray-700">Basic Salary (Rs)</label>
+                            <input type="number" id="salary-basic" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
+                        </div>
+                        <div>
+                            <label for="salary-overtime" class="block text-sm font-medium text-gray-700">Overtime (Rs)</label>
+                            <input type="number" id="salary-overtime" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" value="0">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4 class="text-md font-medium text-gray-700 mb-2">Allowances</h4>
+                        <div id="allowances-container">
+                            <div class="flex items-center mb-2">
+                                <input type="text" placeholder="Description" class="flex-1 mr-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                <input type="number" placeholder="Amount" class="w-24 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" value="0">
+                                <button type="button" class="ml-2 text-red-500 remove-allowance">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" id="add-allowance" class="text-sm text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-plus mr-1"></i>Add Allowance
+                        </button>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4 class="text-md font-medium text-gray-700 mb-2">Deductions</h4>
+                        <div id="deductions-container">
+                            <div class="flex items-center mb-2">
+                                <input type="text" placeholder="Description" class="flex-1 mr-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                <input type="number" placeholder="Amount" class="w-24 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" value="0">
+                                <button type="button" class="ml-2 text-red-500 remove-deduction">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" id="add-deduction" class="text-sm text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-plus mr-1"></i>Add Deduction
+                        </button>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4 class="text-md font-medium text-gray-700 mb-2">Payment Details</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="payment-method" class="block text-sm font-medium text-gray-700">Payment Method</label>
+                                <select id="payment-method" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                    <option value="Bank Transfer">Bank Transfer</option>
+                                    <option value="Cash">Cash</option>
+                                    <option value="Cheque">Cheque</option>
+                                    <option value="Digital Wallet">Digital Wallet</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="payment-date" class="block text-sm font-medium text-gray-700">Payment Date</label>
+                                <input type="date" id="payment-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4 class="text-md font-medium text-gray-700 mb-2">Bank Details</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="bank-name" class="block text-sm font-medium text-gray-700">Bank Name</label>
+                                <input type="text" id="bank-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label for="account-title" class="block text-sm font-medium text-gray-700">Account Title</label>
+                                <input type="text" id="account-title" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="account-number" class="block text-sm font-medium text-gray-700">Account Number</label>
+                                <input type="text" id="account-number" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between px-4 py-3">
+                        <button type="button" id="salary-modal-cancel" class="px-4 py-2 bg-gray-300 text-gray-700 text-base font-medium rounded-md w-5/12 shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn-primary px-4 py-2 text-base font-medium rounded-md w-5/12 shadow-sm">
+                            Save Details
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+                    <i class="fas fa-check text-green-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mt-2">Success!</h3>
+                <div class="mt-2 px-7 py-3">
+                    <p class="text-sm text-gray-500" id="modal-message">Operation completed successfully.</p>
+                </div>
+                <div class="items-center px-4 py-3">
+                    <button id="modal-close" class="btn-primary px-4 py-2 text-base font-medium rounded-md w-full shadow-sm">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                    <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mt-2">Confirm Delete</h3>
+                <div class="mt-2 px-7 py-3">
+                    <p class="text-sm text-gray-500" id="delete-message">Are you sure you want to delete this record? This action cannot be undone.</p>
+                </div>
+                <div class="items-center px-4 py-3 flex justify-between">
+                    <button id="delete-cancel" class="px-4 py-2 bg-gray-300 text-gray-700 text-base font-medium rounded-md w-5/12 shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                        Cancel
+                    </button>
+                    <button id="delete-confirm" class="btn-danger px-4 py-2 text-base font-medium rounded-md w-5/12 shadow-sm">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { jsPDF } = window.jspdf;
+
+        // Employee Management System Data and Functions
+        const EmployeeManagementSystem = {
+            // Initialize the application
+            init: function() {
+                this.setDefaultDates();
+                this.setupEventListeners();
+                this.loadEmployees();
+                this.loadAttendance();
+                this.updateDashboardStats();
+                this.populateYearDropdown();
+                this.showContent('dashboard');
+            },
+
+            // Set default dates for date inputs
+            setDefaultDates: function() {
+                const today = new Date();
+                const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+
+                const formatDate = (date) => {
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const year = date.getFullYear();
+                    return `${year}-${month}-${day}`;
+                };
+
+                document.getElementById('start-date').value = formatDate(firstDay);
+                document.getElementById('end-date').value = formatDate(today);
+                document.getElementById('report-start-date').value = formatDate(firstDay);
+                document.getElementById('report-end-date').value = formatDate(today);
+
+                // Set current month in salary section
+                document.getElementById('salary-month').value = today.getMonth();
+                document.getElementById('salary-year').value = today.getFullYear();
+            },
+
+            // Setup all event listeners
+            setupEventListeners: function() {
+                // Sidebar toggle
+                document.getElementById('toggle-sidebar').addEventListener('click', this.toggleSidebar);
+
+                // Navigation items
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const tab = e.currentTarget.getAttribute('data-tab');
+                        this.showContent(tab);
+                    });
+                });
+
+                // Modal functions
+                document.getElementById('modal-close').addEventListener('click', this.hideSuccessModal);
+                document.getElementById('modal-cancel').addEventListener('click', this.hideEmployeeModal);
+                document.getElementById('employee-form').addEventListener('submit', this.saveEmployee.bind(this));
+
+                // Salary details modal
+                document.getElementById('salary-modal-cancel').addEventListener('click', this.hideSalaryDetailsModal);
+                document.getElementById('salary-details-form').addEventListener('submit', this.saveSalaryDetails.bind(this));
+
+                // Delete modal
+                document.getElementById('delete-cancel').addEventListener('click', this.hideDeleteModal);
+                document.getElementById('delete-confirm').addEventListener('click', this.confirmDelete.bind(this));
+
+                // Button actions
+                document.getElementById('add-employee-btn').addEventListener('click', () => this.showEmployeeModal());
+                document.getElementById('add-new-employee').addEventListener('click', () => this.showEmployeeModal());
+                document.getElementById('mark-attendance-btn').addEventListener('click', this.markTodaysAttendance.bind(this));
+                document.getElementById('generate-slips-btn').addEventListener('click', this.generateSalarySlips.bind(this));
+                document.getElementById('download-reports-btn').addEventListener('click', this.downloadMonthlyReports.bind(this));
+                document.getElementById('download-attendance-pdf').addEventListener('click', this.downloadAttendancePDF.bind(this));
+                document.getElementById('generate-salary-sheet').addEventListener('click', this.generateSalarySheet.bind(this));
+                document.getElementById('generate-attendance-report').addEventListener('click', this.generateAttendanceReport.bind(this));
+                document.getElementById('generate-salary-report').addEventListener('click', this.generateSalaryReport.bind(this));
+                document.getElementById('generate-custom-report').addEventListener('click', this.generateCustomReport.bind(this));
+
+                // Salary details modal buttons
+                document.getElementById('add-allowance').addEventListener('click', this.addAllowanceField.bind(this));
+                document.getElementById('add-deduction').addEventListener('click', this.addDeductionField.bind(this));
+
+                // Date change listeners
+                document.getElementById('start-date').addEventListener('change', this.renderAttendanceTable.bind(this));
+                document.getElementById('end-date').addEventListener('change', this.renderAttendanceTable.bind(this));
+            },
+
+            // Toggle sidebar collapse/expand
+            toggleSidebar: function() {
+                const sidebar = document.querySelector('.sidebar');
+                sidebar.classList.toggle('collapsed');
+
+                const mainContent = document.querySelector('.main-content');
+                if (sidebar.classList.contains('collapsed')) {
+                    mainContent.classList.add('ml-16');
+                } else {
+                    mainContent.classList.remove('ml-16');
+                }
+            },
+
+            // Show specific content section
+            showContent: function(tab) {
+                // Hide all content sections
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.add('hidden');
+                });
+
+                // Show selected content section
+                document.getElementById(`${tab}-content`).classList.remove('hidden');
+
+                // Update active nav item
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('nav-active', 'text-white', 'bg-blue-500', 'bg-opacity-20');
+                    item.classList.add('text-blue-100', 'hover:bg-blue-500', 'hover:bg-opacity-20', 'hover:text-white');
+                });
+
+                document.querySelector(`[data-tab="${tab}"]`).classList.add('nav-active', 'text-white', 'bg-blue-500', 'bg-opacity-20');
+                document.querySelector(`[data-tab="${tab}"]`).classList.remove('text-blue-100', 'hover:bg-blue-500', 'hover:bg-opacity-20', 'hover:text-white');
+
+                // Update page title and description
+                const titles = {
+                    dashboard: { title: 'Employee Dashboard', desc: 'Welcome to Nutrion Employee Management System' },
+                    employees: { title: 'Employee Management', desc: 'Manage all Nutrion employees' },
+                    attendance: { title: 'Attendance Records', desc: 'View and manage employee attendance' },
+                    salary: { title: 'Salary Management', desc: 'Manage employee salaries and generate slips' },
+                    reports: { title: 'Reports & Analytics', desc: 'Generate comprehensive reports' },
+                    settings: { title: 'System Settings', desc: 'Configure system preferences' }
+                };
+
+                document.getElementById('page-title').textContent = titles[tab].title;
+                document.getElementById('page-description').textContent = titles[tab].desc;
+
+                // Load specific data if needed
+                if (tab === 'employees') {
+                    this.renderEmployeesTable();
+                } else if (tab === 'attendance') {
+                    this.renderAttendanceTable();
+                } else if (tab === 'salary') {
+                    this.renderSalaryTable();
+                }
+            },
+
+            // Employee management functions
+            showEmployeeModal: function() {
+                document.getElementById('employee-modal').classList.remove('hidden');
+            },
+
+            hideEmployeeModal: function() {
+                document.getElementById('employee-modal').classList.add('hidden');
+                document.getElementById('employee-form').reset();
+            },
+
+            saveEmployee: function(e) {
+                e.preventDefault();
+
+                const employee = {
+                    id: Date.now().toString(),
+                    name: document.getElementById('employee-name').value,
+                    position: document.getElementById('employee-position').value,
+                    department: document.getElementById('employee-department').value,
+                    salary: parseFloat(document.getElementById('employee-salary').value),
+                    joinDate: new Date().toISOString().split('T')[0],
+                    status: 'Active'
+                };
+
+                // Save to localStorage
+                const employees = this.getEmployees();
+                employees.push(employee);
+                localStorage.setItem('nutrion_employees', JSON.stringify(employees));
+
+                this.hideEmployeeModal();
+                this.showSuccess('Employee added successfully!');
+                this.renderEmployeesTable();
+                this.updateDashboardStats();
+            },
+
+            getEmployees: function() {
+                return JSON.parse(localStorage.getItem('nutrion_employees') || '[]');
+            },
+
+            loadEmployees: function() {
+                // Start with empty employee data
+                if (this.getEmployees().length === 0) {
+                    localStorage.setItem('nutrion_employees', JSON.stringify([]));
+                }
+            },
+
+            renderEmployeesTable: function() {
+                const employees = this.getEmployees();
+                const tableBody = document.getElementById('employees-table-body');
+
+                tableBody.innerHTML = '';
+
+                if (employees.length === 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
+                            <i class="fas fa-users text-3xl text-gray-300 mb-2 block"></i>
+                            No employees found. Click "Add New Employee" to add your first employee.
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                    return;
+                }
+
+                employees.forEach(employee => {
+                    const row = document.createElement('tr');
+
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                                        ${employee.name.split(' ').map(n => n[0]).join('')}
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">${employee.name}</div>
+                                    <div class="text-sm text-gray-500">EMP${employee.id}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${employee.position}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${employee.department}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rs ${employee.salary.toLocaleString()}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="badge-success px-2 inline-flex text-xs leading-5 font-semibold rounded-full">${employee.status}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-blue-600 hover:text-blue-900 mr-3 edit-employee" data-id="${employee.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="text-red-600 hover:text-red-900 delete-employee" data-id="${employee.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+
+                // Add event listeners to edit and delete buttons
+                document.querySelectorAll('.edit-employee').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const employeeId = e.target.closest('button').getAttribute('data-id');
+                        this.editEmployee(employeeId);
+                    });
+                });
+
+                document.querySelectorAll('.delete-employee').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const employeeId = e.target.closest('button').getAttribute('data-id');
+                        this.showDeleteModal(employeeId, 'employee');
+                    });
+                });
+            },
+
+            editEmployee: function(employeeId) {
+                const employees = this.getEmployees();
+                const employee = employees.find(emp => emp.id === employeeId);
+
+                if (employee) {
+                    document.getElementById('employee-name').value = employee.name;
+                    document.getElementById('employee-position').value = employee.position;
+                    document.getElementById('employee-department').value = employee.department;
+                    document.getElementById('employee-salary').value = employee.salary;
+
+                    // Change modal title
+                    document.getElementById('modal-title').textContent = 'Edit Employee';
+
+                    // Update form submit handler
+                    const form = document.getElementById('employee-form');
+                    form.onsubmit = (e) => {
+                        e.preventDefault();
+                        this.updateEmployee(employeeId);
+                    };
+
+                    this.showEmployeeModal();
+                }
+            },
+
+            updateEmployee: function(employeeId) {
+                const employees = this.getEmployees();
+                const employeeIndex = employees.findIndex(emp => emp.id === employeeId);
+
+                if (employeeIndex !== -1) {
+                    employees[employeeIndex].name = document.getElementById('employee-name').value;
+                    employees[employeeIndex].position = document.getElementById('employee-position').value;
+                    employees[employeeIndex].department = document.getElementById('employee-department').value;
+                    employees[employeeIndex].salary = parseFloat(document.getElementById('employee-salary').value);
+
+                    localStorage.setItem('nutrion_employees', JSON.stringify(employees));
+
+                    this.hideEmployeeModal();
+                    this.showSuccess('Employee updated successfully!');
+                    this.renderEmployeesTable();
+                    this.updateDashboardStats();
+
+                    // Reset form handler
+                    document.getElementById('employee-form').onsubmit = this.saveEmployee.bind(this);
+                    document.getElementById('modal-title').textContent = 'Add New Employee';
+                }
+            },
+
+            showDeleteModal: function(id, type) {
+                this.currentDeleteId = id;
+                this.currentDeleteType = type;
+
+                let message = '';
+                if (type === 'employee') {
+                    const employees = this.getEmployees();
+                    const employee = employees.find(emp => emp.id === id);
+                    message = `Are you sure you want to delete ${employee.name}? This action cannot be undone.`;
+                } else if (type === 'attendance') {
+                    const attendance = JSON.parse(localStorage.getItem('nutrion_attendance') || '[]');
+                    const record = attendance.find(rec => rec.id === id);
+                    const employees = this.getEmployees();
+                    const employee = employees.find(emp => emp.id === record.employeeId);
+                    message = `Are you sure you want to delete the attendance record for ${employee.name} on ${record.date}?`;
+                }
+
+                document.getElementById('delete-message').textContent = message;
+                document.getElementById('delete-modal').classList.remove('hidden');
+            },
+
+            hideDeleteModal: function() {
+                document.getElementById('delete-modal').classList.add('hidden');
+                this.currentDeleteId = null;
+                this.currentDeleteType = null;
+            },
+
+            confirmDelete: function() {
+                if (this.currentDeleteType === 'employee') {
+                    this.deleteEmployee(this.currentDeleteId);
+                } else if (this.currentDeleteType === 'attendance') {
+                    this.deleteAttendance(this.currentDeleteId);
+                }
+
+                this.hideDeleteModal();
+            },
+
+            deleteEmployee: function(employeeId) {
+                let employees = this.getEmployees();
+                employees = employees.filter(emp => emp.id !== employeeId);
+                localStorage.setItem('nutrion_employees', JSON.stringify(employees));
+
+                // Also delete related attendance records
+                let attendance = JSON.parse(localStorage.getItem('nutrion_attendance') || '[]');
+                attendance = attendance.filter(record => record.employeeId !== employeeId);
+                localStorage.setItem('nutrion_attendance', JSON.stringify(attendance));
+
+                this.showSuccess('Employee deleted successfully!');
+                this.renderEmployeesTable();
+                this.updateDashboardStats();
+            },
+
+            // Attendance management functions
+            loadAttendance: function() {
+                // Start with empty attendance data
+                if (!localStorage.getItem('nutrion_attendance')) {
+                    localStorage.setItem('nutrion_attendance', JSON.stringify([]));
+                }
+            },
+
+            renderAttendanceTable: function() {
+                const attendance = JSON.parse(localStorage.getItem('nutrion_attendance') || '[]');
+                const employees = this.getEmployees();
+                const tableBody = document.getElementById('attendance-table-body');
+
+                tableBody.innerHTML = '';
+
+                // Filter by date range if specified
+                const startDate = document.getElementById('start-date').value;
+                const endDate = document.getElementById('end-date').value;
+
+                let filteredAttendance = attendance;
+                if (startDate && endDate) {
+                    filteredAttendance = attendance.filter(record => {
+                        return record.date >= startDate && record.date <= endDate;
+                    });
+                }
+
+                if (filteredAttendance.length === 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
+                            <i class="fas fa-calendar-times text-3xl text-gray-300 mb-2 block"></i>
+                            No attendance records found for the selected date range.
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                    return;
+                }
+
+                filteredAttendance.forEach(record => {
+                    const employee = employees.find(emp => emp.id === record.employeeId);
+                    if (!employee) return;
+
+                    const row = document.createElement('tr');
+
+                    // Format date to d/m/y
+                    const dateParts = record.date.split('-');
+                    const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                                        ${employee.name.split(' ').map(n => n[0]).join('')}
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">${employee.name}</div>
+                                    <div class="text-sm text-gray-500">EMP${employee.id}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formattedDate}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.checkIn || '-'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.checkOut || '-'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${record.status === 'Present' ? 'badge-success' : 'badge-danger'}">${record.status}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.hours}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-red-600 hover:text-red-900 delete-attendance" data-id="${record.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+
+                // Add event listeners to delete buttons
+                document.querySelectorAll('.delete-attendance').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const attendanceId = e.target.closest('button').getAttribute('data-id');
+                        this.showDeleteModal(attendanceId, 'attendance');
+                    });
+                });
+            },
+
+            deleteAttendance: function(attendanceId) {
+                let attendance = JSON.parse(localStorage.getItem('nutrion_attendance') || '[]');
+                attendance = attendance.filter(record => record.id !== attendanceId);
+                localStorage.setItem('nutrion_attendance', JSON.stringify(attendance));
+
+                this.showSuccess('Attendance record deleted successfully!');
+                this.renderAttendanceTable();
+                this.updateDashboardStats();
+            },
+
+            markTodaysAttendance: function() {
+                const employees = this.getEmployees();
+
+                if (employees.length === 0) {
+                    this.showError("No employees found. Please add employees first.");
+                    return;
+                }
+
+                const today = new Date().toISOString().split('T')[0];
+                let attendance = JSON.parse(localStorage.getItem('nutrion_attendance') || '[]');
+
+                // Remove existing records for today
+                attendance = attendance.filter(record => record.date !== today);
+
+                // Create new records for today
+                employees.forEach(employee => {
+                    // Randomly determine if employee is present (80% chance)
+                    const isPresent = Math.random() > 0.2;
+
+                    if (isPresent) {
+                        // Generate random check-in time between 9:00 and 9:30
+                        const checkInHour = 9;
+                        const checkInMinute = Math.floor(Math.random() * 30);
+                        const checkIn = `${checkInHour.toString().padStart(2, '0')}:${checkInMinute.toString().padStart(2, '0')}`;
+
+                        // Generate check-out time between 5:00 and 5:30
+                        const checkOutHour = 17;
+                        const checkOutMinute = Math.floor(Math.random() * 30);
+                        const checkOut = `${checkOutHour.toString().padStart(2, '0')}:${checkOutMinute.toString().padStart(2, '0')}`;
+
+                        // Calculate hours worked (8 hours standard work day)
+                        const hours = 8;
+
+                        attendance.push({
+                            id: Date.now().toString() + employee.id,
+                            employeeId: employee.id,
+                            date: today,
+                            checkIn: checkIn,
+                            checkOut: checkOut,
+                            status: 'Present',
+                            hours: hours.toFixed(1)
+                        });
+                    } else {
+                        attendance.push({
+                            id: Date.now().toString() + employee.id,
+                            employeeId: employee.id,
+                            date: today,
+                            checkIn: null,
+                            checkOut: null,
+                            status: 'Absent',
+                            hours: 0
+                        });
+                    }
+                });
+
+                localStorage.setItem('nutrion_attendance', JSON.stringify(attendance));
+                this.showSuccess("Today's attendance marked successfully!");
+                this.renderAttendanceTable();
+                this.updateDashboardStats();
+            },
+
+            // Salary management functions
+            renderSalaryTable: function() {
+                const employees = this.getEmployees();
+                const tableBody = document.getElementById('salary-table-body');
+
+                tableBody.innerHTML = '';
+
+                if (employees.length === 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
+                            <i class="fas fa-money-bill-wave text-3xl text-gray-300 mb-2 block"></i>
+                            No employees found. Add employees to view salary information.
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                    return;
+                }
+
+                employees.forEach(employee => {
+                    // Get salary details from localStorage or use defaults
+                    const salaryDetails = this.getSalaryDetails(employee.id);
+
+                    const basicSalary = salaryDetails.basic || employee.salary;
+                    const overtime = salaryDetails.overtime || 0;
+                    const allowances = salaryDetails.allowances || [];
+                    const deductions = salaryDetails.deductions || [];
+                    const paymentMethod = salaryDetails.paymentMethod || 'Bank Transfer';
+
+                    const totalAllowances = allowances.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+                    const totalDeductions = deductions.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+                    const netSalary = basicSalary + overtime + totalAllowances - totalDeductions;
+
+                    const row = document.createElement('tr');
+
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                                        ${employee.name.split(' ').map(n => n[0]).join('')}
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">${employee.name}</div>
+                                    <div class="text-sm text-gray-500">${employee.position}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rs ${basicSalary.toLocaleString()}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rs ${totalAllowances.toLocaleString()}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rs ${totalDeductions.toLocaleString()}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Rs ${netSalary.toLocaleString()}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <span class="badge-warning px-2 inline-flex text-xs leading-5 font-semibold rounded-full">${paymentMethod}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-blue-600 hover:text-blue-900 mr-3 edit-salary-details" data-id="${employee.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="text-green-600 hover:text-green-900 generate-slip" data-id="${employee.id}">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                            </button>
+                        </td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+
+                // Add event listeners to edit and generate slip buttons
+                document.querySelectorAll('.edit-salary-details').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const employeeId = e.target.closest('button').getAttribute('data-id');
+                        this.showSalaryDetailsModal(employeeId);
+                    });
+                });
+
+                document.querySelectorAll('.generate-slip').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const employeeId = e.target.closest('button').getAttribute('data-id');
+                        this.generateSalarySlip(employeeId);
+                    });
+                });
+            },
+
+            getSalaryDetails: function(employeeId) {
+                const salaryDetails = JSON.parse(localStorage.getItem('nutrion_salary_details') || '{}');
+                return salaryDetails[employeeId] || {};
+            },
+
+            saveSalaryDetailsToStorage: function(employeeId, details) {
+                const salaryDetails = JSON.parse(localStorage.getItem('nutrion_salary_details') || '{}');
+                salaryDetails[employeeId] = details;
+                localStorage.setItem('nutrion_salary_details', JSON.stringify(salaryDetails));
+            },
+
+            showSalaryDetailsModal: function(employeeId) {
+                const employees = this.getEmployees();
+                const employee = employees.find(emp => emp.id === employeeId);
+
+                if (!employee) return;
+
+                // Get existing salary details
+                const salaryDetails = this.getSalaryDetails(employeeId);
+
+                // Set form values
+                document.getElementById('salary-basic').value = salaryDetails.basic || employee.salary;
+                document.getElementById('salary-overtime').value = salaryDetails.overtime || 0;
+
+                // Set payment details
+                document.getElementById('payment-method').value = salaryDetails.paymentMethod || 'Bank Transfer';
+                document.getElementById('payment-date').value = salaryDetails.paymentDate || '';
+
+                // Set bank details
+                document.getElementById('bank-name').value = salaryDetails.bankName || '';
+                document.getElementById('account-title').value = salaryDetails.accountTitle || '';
+                document.getElementById('account-number').value = salaryDetails.accountNumber || '';
+
+                // Clear existing allowance and deduction fields
+                document.getElementById('allowances-container').innerHTML = '';
+                document.getElementById('deductions-container').innerHTML = '';
+
+                // Add allowance fields
+                if (salaryDetails.allowances && salaryDetails.allowances.length > 0) {
+                    salaryDetails.allowances.forEach(allowance => {
+                        this.addAllowanceField(allowance.description, allowance.amount);
+                    });
+                } else {
+                    this.addAllowanceField();
+                }
+
+                // Add deduction fields
+                if (salaryDetails.deductions && salaryDetails.deductions.length > 0) {
+                    salaryDetails.deductions.forEach(deduction => {
+                        this.addDeductionField(deduction.description, deduction.amount);
+                    });
+                } else {
+                    this.addDeductionField();
+                }
+
+                // Store current employee ID
+                this.currentSalaryEmployeeId = employeeId;
+
+                // Show modal
+                document.getElementById('salary-details-modal').classList.remove('hidden');
+            },
+
+            hideSalaryDetailsModal: function() {
+                document.getElementById('salary-details-modal').classList.add('hidden');
+                this.currentSalaryEmployeeId = null;
+            },
+
+            addAllowanceField: function(description = '', amount = 0) {
+                const container = document.getElementById('allowances-container');
+                const div = document.createElement('div');
+                div.className = 'flex items-center mb-2';
+                div.innerHTML = `
+                    <input type="text" placeholder="Description" value="${description}" class="allowance-desc flex-1 mr-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                    <input type="number" placeholder="Amount" value="${amount}" class="allowance-amt w-24 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                    <button type="button" class="ml-2 text-red-500 remove-allowance">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                container.appendChild(div);
+
+                // Add event listener to remove button
+                div.querySelector('.remove-allowance').addEventListener('click', function() {
+                    if (container.children.length > 1) {
+                        div.remove();
+                    }
+                });
+            },
+
+            addDeductionField: function(description = '', amount = 0) {
+                const container = document.getElementById('deductions-container');
+                const div = document.createElement('div');
+                div.className = 'flex items-center mb-2';
+                div.innerHTML = `
+                    <input type="text" placeholder="Description" value="${description}" class="deduction-desc flex-1 mr-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                    <input type="number" placeholder="Amount" value="${amount}" class="deduction-amt w-24 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                    <button type="button" class="ml-2 text-red-500 remove-deduction">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                container.appendChild(div);
+
+                // Add event listener to remove button
+                div.querySelector('.remove-deduction').addEventListener('click', function() {
+                    if (container.children.length > 1) {
+                        div.remove();
+                    }
+                });
+            },
+
+            saveSalaryDetails: function(e) {
+                e.preventDefault();
+
+                if (!this.currentSalaryEmployeeId) return;
+
+                // Collect allowance data
+                const allowances = [];
+                document.querySelectorAll('#allowances-container > div').forEach(div => {
+                    const desc = div.querySelector('.allowance-desc').value;
+                    const amt = parseFloat(div.querySelector('.allowance-amt').value) || 0;
+                    if (desc) {
+                        allowances.push({ description: desc, amount: amt });
+                    }
+                });
+
+                // Collect deduction data
+                const deductions = [];
+                document.querySelectorAll('#deductions-container > div').forEach(div => {
+                    const desc = div.querySelector('.deduction-desc').value;
+                    const amt = parseFloat(div.querySelector('.deduction-amt').value) || 0;
+                    if (desc) {
+                        deductions.push({ description: desc, amount: amt });
+                    }
+                });
+
+                // Collect other data
+                const salaryDetails = {
+                    basic: parseFloat(document.getElementById('salary-basic').value) || 0,
+                    overtime: parseFloat(document.getElementById('salary-overtime').value) || 0,
+                    allowances: allowances,
+                    deductions: deductions,
+                    paymentMethod: document.getElementById('payment-method').value,
+                    paymentDate: document.getElementById('payment-date').value,
+                    bankName: document.getElementById('bank-name').value,
+                    accountTitle: document.getElementById('account-title').value,
+                    accountNumber: document.getElementById('account-number').value
+                };
+
+                // Save to storage
+                this.saveSalaryDetailsToStorage(this.currentSalaryEmployeeId, salaryDetails);
+
+                this.hideSalaryDetailsModal();
+                this.showSuccess('Salary details saved successfully!');
+                this.renderSalaryTable();
+            },
+
+            generateSalarySheet: function() {
+                const month = document.getElementById('salary-month').value;
+                const year = document.getElementById('salary-year').value;
+
+                this.showSuccess(`Salary sheet generated for ${this.getMonthName(month)} ${year}`);
+                this.renderSalaryTable();
+            },
+
+            generateSalarySlips: function() {
+                const employees = this.getEmployees();
+
+                if (employees.length === 0) {
+                    this.showError("No employees found. Please add employees first.");
+                    return;
+                }
+
+                // Create a zip file or individual PDFs (simplified for demo)
+                this.showSuccess("Salary slips generated for all employees!");
+
+                // In a real implementation, you would generate and download all slips
+                employees.forEach(employee => {
+                    this.generateSalarySlip(employee.id, false);
+                });
+            },
+
+            generateSalarySlip: function(employeeId, download = true) {
+                const employees = this.getEmployees();
+                const employee = employees.find(emp => emp.id === employeeId);
+                if (!employee) return;
+
+                // Get salary details
+                const salaryDetails = this.getSalaryDetails(employeeId);
+
+                const basicSalary = salaryDetails.basic || employee.salary;
+                const overtime = salaryDetails.overtime || 0;
+                const allowances = salaryDetails.allowances || [];
+                const deductions = salaryDetails.deductions || [];
+                const paymentMethod = salaryDetails.paymentMethod || 'Bank Transfer';
+                const paymentDate = salaryDetails.paymentDate || new Date().toISOString().split('T')[0];
+                const bankName = salaryDetails.bankName || '';
+                const accountTitle = salaryDetails.accountTitle || '';
+                const accountNumber = salaryDetails.accountNumber || '';
+
+                const totalAllowances = allowances.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+                const totalDeductions = deductions.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+                const netSalary = basicSalary + overtime + totalAllowances - totalDeductions;
+
+                try {
+                    const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+                    const pageWidth = doc.internal.pageSize.getWidth();
+                    const margin = 15;
+
+                    // Company header with logo
+                    doc.setFillColor(67, 97, 238);
+                    doc.rect(0, 0, pageWidth, 40, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(20);
+                    doc.setFont("helvetica", "bold");
+
+                    // Try to add logo
+                    try {
+                        // This would normally be a base64 encoded image or URL
+                        // For demo purposes, we'll use a placeholder
+                        doc.addImage(this.getCompanyLogoBase64(), 'PNG', margin, 5, 30, 30);
+                        doc.text("NUTRION", margin + 35, 25);
+                    } catch(e) {
+                        doc.text("NUTRION", pageWidth / 2, 25, { align: 'center' });
+                    }
+
+                    doc.setFontSize(10);
+                    doc.text("Employee Management System", pageWidth / 2, 32, { align: 'center' });
+
+                    // Reset text color
+                    doc.setTextColor(0, 0, 0);
+
+                    // Title
+                    doc.setFontSize(16);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("SALARY SLIP", pageWidth / 2, 55, { align: 'center' });
+
+                    // Employee details
+                    doc.setFontSize(12);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("Employee Details:", margin, 70);
+
+                    doc.setFont("helvetica", "normal");
+                    doc.text(`Name: ${employee.name}`, margin + 5, 77);
+                    doc.text(`Position: ${employee.position}`, margin + 5, 84);
+                    doc.text(`Department: ${employee.department}`, margin + 5, 91);
+
+                    const currentDate = new Date();
+                    const month = currentDate.getMonth();
+                    const year = currentDate.getFullYear();
+                    doc.text(`Period: ${this.getMonthName(month)} ${year}`, margin + 5, 98);
+
+                    // Salary breakdown
+                    const salaryY = 115;
+                    doc.setFont("helvetica", "bold");
+                    doc.text("Salary Breakdown", margin, salaryY);
+
+                    // Table headers
+                    doc.setFillColor(67, 97, 238);
+                    doc.rect(margin, salaryY + 5, pageWidth - (2 * margin), 8, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(10);
+                    doc.text("Description", margin + 5, salaryY + 10);
+                    doc.text("Amount (Rs)", pageWidth - margin - 25, salaryY + 10, { align: 'right' });
+
+                    // Table rows
+                    doc.setTextColor(0, 0, 0);
+                    let currentY = salaryY + 18;
+
+                    // Basic salary
+                    doc.setFillColor(240, 240, 240);
+                    doc.rect(margin, currentY, pageWidth - (2 * margin), 8, 'F');
+                    doc.text("Basic Salary", margin + 5, currentY + 5);
+                    doc.text(basicSalary.toLocaleString(), pageWidth - margin - 5, currentY + 5, { align: 'right' });
+                    currentY += 8;
+
+                    // Overtime
+                    doc.setFillColor(255, 255, 255);
+                    doc.rect(margin, currentY, pageWidth - (2 * margin), 8, 'F');
+                    doc.text("Overtime", margin + 5, currentY + 5);
+                    doc.text(overtime.toLocaleString(), pageWidth - margin - 5, currentY + 5, { align: 'right' });
+                    currentY += 8;
+
+                    // Allowances
+                    allowances.forEach(allowance => {
+                        doc.setFillColor(240, 240, 240);
+                        doc.rect(margin, currentY, pageWidth - (2 * margin), 8, 'F');
+                        doc.text(allowance.description, margin + 5, currentY + 5);
+                        doc.text(allowance.amount.toLocaleString(), pageWidth - margin - 5, currentY + 5, { align: 'right' });
+                        currentY += 8;
+                    });
+
+                    // Deductions
+                    deductions.forEach(deduction => {
+                        doc.setFillColor(255, 255, 255);
+                        doc.rect(margin, currentY, pageWidth - (2 * margin), 8, 'F');
+                        doc.text(deduction.description, margin + 5, currentY + 5);
+                        doc.text(`-${deduction.amount.toLocaleString()}`, pageWidth - margin - 5, currentY + 5, { align: 'right' });
+                        currentY += 8;
+                    });
+
+                    // Net salary
+                    doc.setFillColor(67, 97, 238);
+                    doc.rect(margin, currentY, pageWidth - (2 * margin), 10, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("Net Salary", margin + 5, currentY + 7);
+                    doc.text(netSalary.toLocaleString(), pageWidth - margin - 5, currentY + 7, { align: 'right' });
+                    currentY += 15;
+
+                    // Payment details
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("Payment Details:", margin, currentY);
+                    currentY += 7;
+
+                    doc.setFont("helvetica", "normal");
+                    doc.text(`Payment Method: ${paymentMethod}`, margin + 5, currentY);
+                    currentY += 5;
+
+                    if (paymentDate) {
+                        doc.text(`Payment Date: ${paymentDate}`, margin + 5, currentY);
+                        currentY += 5;
+                    }
+
+                    currentY += 5;
+
+                    // Bank details (if available)
+                    if (bankName || accountTitle || accountNumber) {
+                        doc.setFont("helvetica", "bold");
+                        doc.text("Bank Transfer Details:", margin, currentY);
+                        currentY += 7;
+
+                        doc.setFont("helvetica", "normal");
+                        if (bankName) {
+                            doc.text(`Bank: ${bankName}`, margin + 5, currentY);
+                            currentY += 5;
+                        }
+                        if (accountTitle) {
+                            doc.text(`Account Title: ${accountTitle}`, margin + 5, currentY);
+                            currentY += 5;
+                        }
+                        if (accountNumber) {
+                            doc.text(`Account Number: ${accountNumber}`, margin + 5, currentY);
+                            currentY += 5;
+                        }
+                        currentY += 5;
+                    }
+
+                    // Footer
+                    const footerY = Math.max(currentY + 10, 250);
+                    doc.setFontSize(10);
+                    doc.text("Generated on: " + new Date().toLocaleDateString('en-GB'), margin, footerY);
+                    doc.text("Authorized Signature: _________________________", pageWidth - margin, footerY, { align: 'right' });
+
+                    // Save the PDF
+                    if (download) {
+                        doc.save(`Salary_Slip_${employee.name.replace(/\s+/g, '_')}_${this.getMonthName(month)}_${year}.pdf`);
+                        this.showSuccess(`Salary slip generated for ${employee.name}`);
+                    }
+                } catch (error) {
+                    console.error('PDF Generation Error:', error);
+                    this.showError("Error generating salary slip. Please try again.");
+                }
+            },
+
+            getCompanyLogoBase64: function() {
+                // In a real implementation, this would return the base64 encoded logo
+                // For demo purposes, we return a placeholder
+                return "logo.png";
+            },
+
+            // Report generation functions
+            generateAttendanceReport: function() {
+                const startDate = document.getElementById('report-start-date').value;
+                const endDate = document.getElementById('report-end-date').value;
+
+                if (!startDate || !endDate) {
+                    this.showError("Please select both start and end dates.");
+                    return;
+                }
+
+                this.downloadAttendanceReportPDF(startDate, endDate);
+            },
+
+            generateSalaryReport: function() {
+                const month = document.getElementById('salary-month').value;
+                const year = document.getElementById('salary-year').value;
+
+                this.downloadSalaryReportPDF(month, year);
+            },
+
+            generateCustomReport: function() {
+                const startDate = document.getElementById('report-start-date').value;
+                const endDate = document.getElementById('report-end-date').value;
+
+                if (!startDate || !endDate) {
+                    this.showError("Please select both start and end dates.");
+                    return;
+                }
+
+                this.downloadCustomReportPDF(startDate, endDate);
+            },
+
+            // PDF Export functions
+            downloadAttendancePDF: function() {
+                const startDate = document.getElementById('start-date').value;
+                const endDate = document.getElementById('end-date').value;
+
+                if (!startDate || !endDate) {
+                    this.showError("Please select both start and end dates.");
+                    return;
+                }
+
+                this.downloadAttendanceReportPDF(startDate, endDate);
+            },
+
+            downloadAttendanceReportPDF: function(startDate, endDate) {
+                try {
+                    const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+                    const pageWidth = doc.internal.pageSize.getWidth();
+                    const margin = 15;
+
+                    // Company header
+                    doc.setFillColor(67, 97, 238);
+                    doc.rect(0, 0, pageWidth, 40, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(20);
+                    doc.setFont("helvetica", "bold");
+
+                    // Try to add logo
+                    try {
+                        doc.addImage(this.getCompanyLogoBase64(), 'PNG', margin, 5, 30, 30);
+                        doc.text("NUTRION", margin + 35, 25);
+                    } catch(e) {
+                        doc.text("NUTRION ", pageWidth / 2, 25, { align: 'center' });
+                    }
+
+                    doc.setFontSize(10);
+                    doc.text("Employee Management System", pageWidth / 2, 32, { align: 'center' });
+
+                    // Reset text color
+                    doc.setTextColor(0, 0, 0);
+
+                    // Title
+                    doc.setFontSize(16);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("ATTENDANCE REPORT", pageWidth / 2, 55, { align: 'center' });
+
+                    // Date Range
+                    doc.setFontSize(12);
+                    doc.setFont("helvetica", "normal");
+
+                    // Format dates to d/m/y
+                    const formatDisplayDate = (dateStr) => {
+                        const dateParts = dateStr.split('-');
+                        return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+                    };
+
+                    doc.text(`Date Range: ${formatDisplayDate(startDate)} - ${formatDisplayDate(endDate)}`, margin, 65);
+
+                    // Table Headers
+                    const headers = [['Employee', 'Date', 'Check In', 'Check Out', 'Status', 'Hours']];
+
+                    // Get attendance data
+                    const attendance = JSON.parse(localStorage.getItem('nutrion_attendance') || '[]');
+                    const employees = this.getEmployees();
+
+                    // Filter by date range
+                    const filteredAttendance = attendance.filter(record => {
+                        return record.date >= startDate && record.date <= endDate;
+                    });
+
+                    // Prepare table body
+                    const body = filteredAttendance.map(record => {
+                        const employee = employees.find(emp => emp.id === record.employeeId);
+                        if (!employee) return null;
+
+                        // Format date to d/m/y
+                        const dateParts = record.date.split('-');
+                        const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+
+                        return [
+                            employee.name,
+                            formattedDate,
+                            record.checkIn || '-',
+                            record.checkOut || '-',
+                            record.status,
+                            record.hours.toString()
+                        ];
+                    }).filter(row => row !== null);
+
+                    // Generate table
+                    doc.autoTable({
+                        head: headers,
+                        body: body,
+                        startY: 75,
+                        theme: 'grid',
+                        headStyles: { fillColor: [67, 97, 238], textColor: 255, fontStyle: 'bold' },
+                        columnStyles: {
+                            0: { cellWidth: 35 },
+                            1: { cellWidth: 25 },
+                            2: { cellWidth: 20 },
+                            3: { cellWidth: 20 },
+                            4: { cellWidth: 20 },
+                            5: { cellWidth: 15 }
+                        },
+                    });
+
+                    // Footer
+                    const finalY = doc.autoTable.previous.finalY + 10;
+                    doc.setFontSize(10);
+                    doc.text("Generated on: " + new Date().toLocaleDateString('en-GB'), margin, finalY);
+                    doc.text("Signature: _________________________", pageWidth - margin - 60, finalY, { align: 'right' });
+
+                    // Save the PDF
+                    doc.save(`Attendance_Report_${startDate}_to_${endDate}.pdf`);
+                    this.showSuccess("Attendance report downloaded successfully!");
+                } catch (error) {
+                    console.error('PDF Generation Error:', error);
+                    this.showError("Error generating PDF. Please try again.");
+                }
+            },
+
+            downloadSalaryReportPDF: function(month, year) {
+                try {
+                    const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+                    const pageWidth = doc.internal.pageSize.getWidth();
+                    const margin = 15;
+
+                    // Company header
+                    doc.setFillColor(67, 97, 238);
+                    doc.rect(0, 0, pageWidth, 40, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(20);
+                    doc.setFont("helvetica", "bold");
+
+                    // Try to add logo
+                    try {
+                        doc.addImage(this.getCompanyLogoBase64(), 'PNG', margin, 5, 30, 30);
+                        doc.text("NUTRION ", margin + 35, 25);
+                    } catch(e) {
+                        doc.text("NUTRION", pageWidth / 2, 25, { align: 'center' });
+                    }
+
+                    doc.setFontSize(10);
+                    doc.text("Employee Management System", pageWidth / 2, 32, { align: 'center' });
+
+                    // Reset text color
+                    doc.setTextColor(0, 0, 0);
+
+                    // Title
+                    doc.setFontSize(16);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("SALARY REPORT", pageWidth / 2, 55, { align: 'center' });
+
+                    // Period
+                    doc.setFontSize(12);
+                    doc.setFont("helvetica", "normal");
+                    doc.text(`Period: ${this.getMonthName(month)} ${year}`, margin, 65);
+
+                    // Table Headers
+                    const headers = [['Employee', 'Basic Salary', 'Allowances', 'Deductions', 'Net Salary', 'Payment Method']];
+
+                    // Get employees and salary data
+                    const employees = this.getEmployees();
+
+                    // Prepare table body
+                    const body = employees.map(employee => {
+                        const salaryDetails = this.getSalaryDetails(employee.id);
+
+                        const basicSalary = salaryDetails.basic || employee.salary;
+                        const overtime = salaryDetails.overtime || 0;
+                        const allowances = salaryDetails.allowances || [];
+                        const deductions = salaryDetails.deductions || [];
+                        const paymentMethod = salaryDetails.paymentMethod || 'Bank Transfer';
+
+                        const totalAllowances = allowances.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+                        const totalDeductions = deductions.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+                        const netSalary = basicSalary + overtime + totalAllowances - totalDeductions;
+
+                        return [
+                            employee.name,
+                            `Rs ${basicSalary.toLocaleString()}`,
+                            `Rs ${totalAllowances.toLocaleString()}`,
+                            `Rs ${totalDeductions.toLocaleString()}`,
+                            `Rs ${netSalary.toLocaleString()}`,
+                            paymentMethod
+                        ];
+                    });
+
+                    // Generate table
+                    doc.autoTable({
+                        head: headers,
+                        body: body,
+                        startY: 75,
+                        theme: 'grid',
+                        headStyles: { fillColor: [67, 97, 238], textColor: 255, fontStyle: 'bold' },
+                        columnStyles: {
+                            0: { cellWidth: 35 },
+                            1: { cellWidth: 25 },
+                            2: { cellWidth: 25 },
+                            3: { cellWidth: 25 },
+                            4: { cellWidth: 25 },
+                            5: { cellWidth: 25 }
+                        },
+                    });
+
+                    // Footer
+                    const finalY = doc.autoTable.previous.finalY + 10;
+                    doc.setFontSize(10);
+                    doc.text("Generated on: " + new Date().toLocaleDateString('en-GB'), margin, finalY);
+                    doc.text("Signature: _________________________", pageWidth - margin - 60, finalY, { align: 'right' });
+
+                    // Save the PDF
+                    doc.save(`Salary_Report_${this.getMonthName(month)}_${year}.pdf`);
+                    this.showSuccess("Salary report downloaded successfully!");
+                } catch (error) {
+                    console.error('PDF Generation Error:', error);
+                    this.showError("Error generating PDF. Please try again.");
+                }
+            },
+
+            downloadCustomReportPDF: function(startDate, endDate) {
+                try {
+                    const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+                    const pageWidth = doc.internal.pageSize.getWidth();
+                    const margin = 15;
+
+                    // Company header
+                    doc.setFillColor(67, 97, 238);
+                    doc.rect(0, 0, pageWidth, 40, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(20);
+                    doc.setFont("helvetica", "bold");
+
+                    // Try to add logo
+                    try {
+                        doc.addImage(this.getCompanyLogoBase64(), 'PNG', margin, 5, 30, 30);
+                        doc.text("NUTRION", margin + 35, 25);
+                    } catch(e) {
+                        doc.text("NUTRION", pageWidth / 2, 25, { align: 'center' });
+                    }
+
+                    doc.setFontSize(10);
+                    doc.text("Employee Management System", pageWidth / 2, 32, { align: 'center' });
+
+                    // Reset text color
+                    doc.setTextColor(0, 0, 0);
+
+                    // Title
+                    doc.setFontSize(16);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("CUSTOM REPORT", pageWidth / 2, 55, { align: 'center' });
+
+                    // Date Range
+                    doc.setFontSize(12);
+                    doc.setFont("helvetica", "normal");
+
+                    // Format dates to d/m/y
+                    const formatDisplayDate = (dateStr) => {
+                        const dateParts = dateStr.split('-');
+                        return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+                    };
+
+                    doc.text(`Date Range: ${formatDisplayDate(startDate)} - ${formatDisplayDate(endDate)}`, margin, 65);
+
+                    // Get data for the report
+                    const employees = this.getEmployees();
+                    const attendance = JSON.parse(localStorage.getItem('nutrion_attendance') || '[]');
+
+                    // Filter attendance by date range
+                    const filteredAttendance = attendance.filter(record => {
+                        return record.date >= startDate && record.date <= endDate;
+                    });
+
+                    // Calculate stats
+                    const totalEmployees = employees.length;
+                    const presentDays = filteredAttendance.filter(record => record.status === 'Present').length;
+                    const absentDays = filteredAttendance.filter(record => record.status === 'Absent').length;
+
+                    // Calculate total payroll for the period
+                    let totalPayroll = 0;
+                    employees.forEach(employee => {
+                        const salaryDetails = this.getSalaryDetails(employee.id);
+                        const basicSalary = salaryDetails.basic || employee.salary;
+                        const overtime = salaryDetails.overtime || 0;
+                        const allowances = salaryDetails.allowances || [];
+                        const deductions = salaryDetails.deductions || [];
+
+                        const totalAllowances = allowances.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+                        const totalDeductions = deductions.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+                        const netSalary = basicSalary + overtime + totalAllowances - totalDeductions;
+
+                        totalPayroll += netSalary;
+                    });
+
+                    // Report content
+                    let currentY = 75;
+                    doc.setFont("helvetica", "bold");
+                    doc.text("Summary:", margin, currentY);
+                    currentY += 10;
+
+                    doc.setFont("helvetica", "normal");
+                    doc.text(`Total Employees: ${totalEmployees}`, margin + 5, currentY);
+                    currentY += 7;
+
+                    doc.text(`Total Present Days: ${presentDays}`, margin + 5, currentY);
+                    currentY += 7;
+
+                    doc.text(`Total Absent Days: ${absentDays}`, margin + 5, currentY);
+                    currentY += 7;
+
+                    doc.text(`Total Payroll: Rs ${totalPayroll.toLocaleString()}`, margin + 5, currentY);
+                    currentY += 15;
+
+                    // Employee list
+                    doc.setFont("helvetica", "bold");
+                    doc.text("Employees:", margin, currentY);
+                    currentY += 7;
+
+                    doc.setFont("helvetica", "normal");
+                    employees.forEach(employee => {
+                        if (currentY > 250) {
+                            doc.addPage();
+                            currentY = 20;
+                        }
+
+                        doc.text(`${employee.name} - ${employee.position} (${employee.department})`, margin + 5, currentY);
+                        currentY += 5;
+                    });
+
+                    // Footer
+                    const finalY = Math.max(currentY + 10, 250);
+                    doc.setFontSize(10);
+                    doc.text("Generated on: " + new Date().toLocaleDateString('en-GB'), margin, finalY);
+                    doc.text("Signature: _________________________", pageWidth - margin - 60, finalY, { align: 'right' });
+
+                    // Save the PDF
+                    doc.save(`Custom_Report_${startDate}_to_${endDate}.pdf`);
+                    this.showSuccess("Custom report downloaded successfully!");
+                } catch (error) {
+                    console.error('PDF Generation Error:', error);
+                    this.showError("Error generating PDF. Please try again.");
+                }
+            },
+
+            downloadMonthlyReports: function() {
+                const today = new Date();
+                const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+                const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+                const formatDate = (date) => {
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const year = date.getFullYear();
+                    return `${year}-${month}-${day}`;
+                };
+
+                const startDate = formatDate(firstDay);
+                const endDate = formatDate(lastDay);
+
+                this.downloadCustomReportPDF(startDate, endDate);
+            },
+
+            // Utility functions
+            updateDashboardStats: function() {
+                const employees = this.getEmployees();
+                const attendance = JSON.parse(localStorage.getItem('nutrion_attendance') || '[]');
+                const today = new Date().toISOString().split('T')[0];
+
+                // Total employees
+                document.getElementById('total-employees').textContent = employees.length;
+
+                // Present today
+                const presentToday = attendance.filter(record =>
+                    record.date === today && record.status === 'Present'
+                ).length;
+                document.getElementById('present-today').textContent = presentToday;
+
+                // Monthly payroll
+                let totalSalary = 0;
+                employees.forEach(employee => {
+                    const salaryDetails = this.getSalaryDetails(employee.id);
+                    const basicSalary = salaryDetails.basic || employee.salary;
+                    const overtime = salaryDetails.overtime || 0;
+                    const allowances = salaryDetails.allowances || [];
+                    const deductions = salaryDetails.deductions || [];
+
+                    const totalAllowances = allowances.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+                    const totalDeductions = deductions.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+                    const netSalary = basicSalary + overtime + totalAllowances - totalDeductions;
+
+                    totalSalary += netSalary;
+                });
+                document.getElementById('monthly-payroll').textContent = `Rs ${totalSalary.toLocaleString()}`;
+            },
+
+            populateYearDropdown: function() {
+                const yearSelect = document.getElementById('salary-year');
+                const currentYear = new Date().getFullYear();
+
+                for (let year = currentYear - 5; year <= currentYear + 1; year++) {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    yearSelect.appendChild(option);
+                }
+
+                yearSelect.value = currentYear;
+            },
+
+            getMonthName: function(monthIndex) {
+                const months = [
+                    'January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'
+                ];
+                return months[monthIndex];
+            },
+
+            showSuccess: function(message) {
+                document.getElementById('modal-message').textContent = message;
+                document.getElementById('success-modal').classList.remove('hidden');
+            },
+
+            showError: function(message) {
+                document.getElementById('modal-message').textContent = message;
+                document.getElementById('success-modal').classList.remove('hidden');
+            },
+
+            hideSuccessModal: function() {
+                document.getElementById('success-modal').classList.add('hidden');
+            }
+        };
+
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            EmployeeManagementSystem.init();
+        });
+    </script>
+</body>
+</html>
