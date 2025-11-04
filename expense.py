@@ -269,6 +269,27 @@ def init_database():
         VALUES ('default', 'HMD Solutions', 'Karachi, Pakistan', '+92-3207429422', 'info@hmdsolutions.com', 'PKR')
     ''')
 
+    # Check and add missing columns to employees table
+    c.execute("PRAGMA table_info(employees)")
+    existing_columns = [column[1] for column in c.fetchall()]
+    
+    # Add missing columns if they don't exist
+    missing_columns = {
+        'phone': 'TEXT DEFAULT ""',
+        'email': 'TEXT DEFAULT ""', 
+        'department': 'TEXT DEFAULT ""',
+        'position': 'TEXT DEFAULT ""',
+        'join_date': 'TEXT DEFAULT ""'
+    }
+    
+    for column_name, column_type in missing_columns.items():
+        if column_name not in existing_columns:
+            try:
+                c.execute(f'ALTER TABLE employees ADD COLUMN {column_name} {column_type}')
+                st.success(f"Added missing column: {column_name}")
+            except Exception as e:
+                st.warning(f"Could not add column {column_name}: {str(e)}")
+
     conn.commit()
     conn.close()
 
@@ -1496,7 +1517,9 @@ def render_employee_ledger(ledger, pdf_generator):
             
             join_date = st.date_input("Join Date", value=datetime.now())
             
-            if st.form_submit_button("➕ Add Employee", use_container_width=True):
+            # FIXED: Added proper submit button
+            submitted = st.form_submit_button("➕ Add Employee", use_container_width=True)
+            if submitted:
                 if name:
                     employee_id = ledger.add_employee(name, initial_balance, phone, email, department, position, join_date.isoformat())
                     if employee_id:
@@ -1611,7 +1634,9 @@ def render_employee_ledger(ledger, pdf_generator):
                     category = st.text_input("Category", placeholder="e.g., Travel, Office, Food")
                     date = st.date_input("Date *", value=datetime.now())
                 
-                if st.form_submit_button("💾 Record Transaction", use_container_width=True):
+                # FIXED: Added proper submit button
+                submitted = st.form_submit_button("💾 Record Transaction", use_container_width=True)
+                if submitted:
                     if description and amount > 0:
                         transaction_id = ledger.add_transaction(employee_id, transaction_type, amount, description, category, date.isoformat())
                         if transaction_id:
@@ -1764,7 +1789,9 @@ def render_expense_dashboard(expense_tracker, ledger, pdf_generator):
             
             status = st.selectbox("Status", ["Pending", "Approved", "Rejected", "Paid"])
             
-            if st.form_submit_button("💾 Add Expense", use_container_width=True):
+            # FIXED: Added proper submit button
+            submitted = st.form_submit_button("💾 Add Expense", use_container_width=True)
+            if submitted:
                 if description and amount > 0:
                     emp_name = employee_name if expense_type == "employee" else None
                     expense_id = expense_tracker.add_expense(expense_type, description, amount, category, emp_name, date.isoformat(), status)
@@ -2206,15 +2233,18 @@ def render_settings(settings_manager):
         currency = st.selectbox("Currency", ["PKR", "USD", "EUR", "GBP"], 
                                index=["PKR", "USD", "EUR", "GBP"].index(settings['currency']))
         
+        # FIXED: Added proper submit buttons
         col1, col2 = st.columns(2)
         with col1:
-            if st.form_submit_button("💾 Save Settings", use_container_width=True):
+            save_submitted = st.form_submit_button("💾 Save Settings", use_container_width=True)
+            if save_submitted:
                 settings_manager.update_settings(company_name, company_address, company_phone, company_email, currency)
                 st.success("✅ Settings saved successfully!")
                 st.rerun()
         
         with col2:
-            if st.form_submit_button("🔄 Reset to Default", use_container_width=True):
+            reset_submitted = st.form_submit_button("🔄 Reset to Default", use_container_width=True)
+            if reset_submitted:
                 settings_manager.update_settings(
                     "HMD Solutions", 
                     "Karachi, Pakistan", 
