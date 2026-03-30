@@ -18,7 +18,7 @@
     }
     .btn {
       display: inline-block;
-      margin: 10px;
+      margin: 1px;
       padding: 12px 24px;
       background: #28a745;
       color: white;
@@ -1576,7 +1576,7 @@
 
     <script>
          const { jsPDF } = window.jspdf;
-        const API_BASE_URL = 'http://127.0.0.1:5000';
+        app.run(host='0.0.0.0', port=5000)
         const MAX_INVOICE_ITEMS_CAP = 15;
 const initialProductOptions = [
   "Strophase G",
