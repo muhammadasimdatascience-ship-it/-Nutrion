@@ -18,7 +18,7 @@
     }
     .btn {
       display: inline-block;
-      margin: 1px;
+      margin: 10px;
       padding: 12px 24px;
       background: #28a745;
       color: white;
@@ -34,8 +34,6 @@
 </head>
 <body>
   <h1>Welcome Back to Home</h1>
-  <!-- Link back to Index -->
-  <a href="Expense.html" class="btn">Expense Page</a>
 <a href="FBR.html" class="btn">Tax Invoices</a>
 </body>
 </html>
@@ -1247,20 +1245,20 @@
         <h3>Payment Recieved </h3>
         <div class="flex-inputs">
             <div class="input-group">
-                <label for="paymentPartyName">Party Name:</label>
+                <label for="paymentPartyName">Party Name</label>
                 <input type="text" id="paymentPartyName" list="partyListForPayment" placeholder="Select or type party name">
                 <datalist id="partyListForPayment"></datalist>
             </div>
             <div class="input-group">
-                <label for="paymentAmount">Amount Received:</label>
+                <label for="paymentAmount">Amount Received</label>
                 <input type="number" id="paymentAmount" placeholder="0.00" min="0" step="0.01">
             </div>
             <div class="input-group">
-                <label for="paymentRemarks">Remarks (Wajah):</label>
+                <label for="paymentRemarks">Remarks</label>
                 <input type="text" id="paymentRemarks" placeholder="e.g., Advance, Bill Clearance">
             </div>
             <div class="input-group">
-                <label for="paymentDate">Payment Date:</label>
+                <label for="paymentDate">Payment Date</label>
                 <input type="date" id="paymentDate">
             </div>
             <button class="btn" onclick="recordPayment()">Save Payment</button>
@@ -1272,11 +1270,11 @@
         <h3>Payments Range Download</h3>
         <div class="flex-inputs">
             <div class="input-group">
-                <label for="paymentStartDate">Start Date:</label>
+                <label for="paymentStartDate">Start Date</label>
                 <input type="date" id="paymentStartDate">
             </div>
             <div class="input-group">
-                <label for="paymentEndDate">End Date:</label>
+                <label for="paymentEndDate">End Date</label>
                 <input type="date" id="paymentEndDate">
             </div>
             <button class="btn btn-info" onclick="downloadPaymentsByDateRange()">Download Payments PDF</button>
@@ -1286,7 +1284,7 @@
     <h3>Payment Delete </h3>
     <div class="flex-inputs">
         <div class="input-group">
-            <label for="partySearchInputForPayments">Party Name:</label>
+            <label for="partySearchInputForPayments">Party Name</label>
             <input type="text" id="partySearchInputForPayments" list="partyListForSearchPayments" placeholder="Enter Party Name to View Payments">
             <datalist id="partyListForSearchPayments"></datalist>
         </div>
@@ -1303,11 +1301,11 @@
         <h3>Invoices Range Download</h3>
         <div class="flex-inputs">
             <div class="input-group">
-                <label for="invoiceStartDate">Start Date:</label>
+                <label for="invoiceStartDate">Start Date</label>
                 <input type="date" id="invoiceStartDate">
             </div>
             <div class="input-group">
-                <label for="invoiceEndDate">End Date:</label>
+                <label for="invoiceEndDate">End Date</label>
                 <input type="date" id="invoiceEndDate">
             </div>
             <button class="btn btn-danger" onclick="downloadInvoicesByDateRange()">Download Invoices PDF</button>
@@ -1318,11 +1316,11 @@
     <h3>Bilty Expense Report</h3>
     <div class="flex-inputs">
         <div class="input-group">
-            <label for="biltyStartDate">Start Date:</label>
+            <label for="biltyStartDate">Start Date</label>
             <input type="date" id="biltyStartDate">
         </div>
         <div class="input-group">
-            <label for="biltyEndDate">End Date:</label>
+            <label for="biltyEndDate">End Date</label>
             <input type="date" id="biltyEndDate">
         </div>
         <button class="btn btn-info" onclick="generateBiltyExpensePDF()">Download Bilty Expense Report PDF</button>
@@ -1343,11 +1341,11 @@
             </small>
         </div>
         <div class="input-group">
-            <label for="excludeStartDate">Start Date:</label>
+            <label for="excludeStartDate">Start Date</label>
             <input type="date" id="excludeStartDate">
         </div>
         <div class="input-group">
-            <label for="excludeEndDate">End Date:</label>
+            <label for="excludeEndDate">End Date</label>
             <input type="date" id="excludeEndDate">
         </div>
         <button class="btn btn-warning" onclick="generatePartyExcludePDF()">Download Party Exclude Report PDF</button>
@@ -1364,11 +1362,11 @@
     <h3>Payments Without Bilty Expense</h3>
     <div class="flex-inputs">
         <div class="input-group">
-            <label for="noBiltyStartDate">Start Date:</label>
+            <label for="noBiltyStartDate">Start Date</label>
             <input type="date" id="noBiltyStartDate">
         </div>
         <div class="input-group">
-            <label for="noBiltyEndDate">End Date:</label>
+            <label for="noBiltyEndDate">End Date</label>
             <input type="date" id="noBiltyEndDate">
         </div>
         <div class="input-group">
@@ -1376,11 +1374,12 @@
         </div>
     </div>
 </div>
+
     <div class="section-container ledger-section">
         <h3>Feed Mills Ledger Details</h3>
         <div class="flex-inputs">
             <div class="input-group">
-                <label for="partySearchInput">Party Name:</label>
+                <label for="partySearchInput">Party Name</label>
                 <input type="text" id="partySearchInput" list="partyListForSearch" placeholder="Enter Party Name to Search Ledger">
                 <datalist id="partyListForSearch"></datalist>
             </div>
@@ -1395,7 +1394,7 @@
         <h3>Opening Balance History</h3>
         <div class="flex-inputs">
             <div class="input-group">
-                <label for="partySearchInputForHistory">Party Name:</label>
+                <label for="partySearchInputForHistory">Party Name</label>
                 <input type="text" id="partySearchInputForHistory" list="partyListForSearchHistory" placeholder="Enter Party Name to View History">
                 <datalist id="partyListForSearchHistory"></datalist>
             </div>
@@ -1409,11 +1408,11 @@
   <h3>Product Sales Summary with Date Range</h3>
   <div class="flex-inputs">
     <div class="input-group">
-      <label for="productSalesStartDate">Start Date:</label>
+      <label for="productSalesStartDate">Start Date</label>
       <input type="date" id="productSalesStartDate">
     </div>
     <div class="input-group">
-      <label for="productSalesEndDate">End Date:</label>
+      <label for="productSalesEndDate">End Date</label>
       <input type="date" id="productSalesEndDate">
     </div>
     <button class="btn btn-info" onclick="generateProductSalesSummaryPDFWithDateRange()">Product Sales Summary PDF</button>
@@ -1423,16 +1422,16 @@
         <h3>Individual Invoices </h3>
         <div class="flex-inputs">
             <div class="input-group">
-                <label for="partyInvoicesPartyName">Party Name:</label>
+                <label for="partyInvoicesPartyName">Party Name</label>
                 <input type="text" id="partyInvoicesPartyName" list="partyListForInvoices" placeholder="Select or type party name">
                 <datalist id="partyListForInvoices"></datalist>
             </div>
             <div class="input-group">
-                <label for="partyInvoicesStartDate">Start Date:</label>
+                <label for="partyInvoicesStartDate">Start Date</label>
                 <input type="date" id="partyInvoicesStartDate">
             </div>
             <div class="input-group">
-                <label for="partyInvoicesEndDate">End Date:</label>
+                <label for="partyInvoicesEndDate">End Date</label>
                 <input type="date" id="partyInvoicesEndDate">
             </div>
             <button class="btn btn-info" onclick="downloadPartyInvoices()">Party Invoices Download </button>
@@ -1483,18 +1482,18 @@
             <button class="btn btn-info" onclick="downloadStockReportPDF()">Stock Report PDF</button>
         </div>
     </div>
-
     <div class="section-container" id="editInvoiceSection">
-        <h3>Invoice Update&Delete Karen</h3>
+        <h3>Invoice Update&Delete</h3>
         <div class="flex-inputs">
             <div class="input-group">
-                <label for="searchInvoiceNumberInput">Invoice Number Likhen:</label>
+                <label for="searchInvoiceNumberInput">Invoice Number</label>
                 <input type="text" id="searchInvoiceNumberInput" placeholder="Enter Invoice # to Edit/Delete">
             </div>
-            <button class="btn btn-info" onclick="searchInvoiceToEdit()">Search Aur Load Invoice</button>
+            <button class="btn btn-info" onclick="searchInvoiceToEdit()">Search&Load Invoice</button>
             <button class="btn btn-danger" id="deleteInvoiceBtn" onclick="deleteLoadedInvoice()" style="display: none;">Delete Loaded Invoice</button>
         </div>
     </div>
+
     <table id="invoiceTable">
         <thead>
             <tr class="party-details-header">
@@ -1512,7 +1511,17 @@
                 </td>
                 <td colspan="2">
                     <label for="invoice" class="bold">Invoice #:</label>
-                    <input type="text" id="invoice" class="conditionally-readonly" readonly style="width: 120px;">
+<input type="text" id="invoice" class="conditionally-readonly" style="width: 120px;">
+
+<script>
+    // Auto number (example). You can change the format later.
+    const autoNum = "INV-" + Date.now();
+    const invoiceInput = document.getElementById("invoice");
+
+    if (!invoiceInput.value) {
+        invoiceInput.value = autoNum;
+    }
+</script>
                 </td>
                 <td></td>
             </tr>
@@ -1553,13 +1562,13 @@
         </tfoot>
     </table>
     <div style="text-align: left; margin-top: 10px; margin-bottom: 20px; padding-left: 5px;">
-        <button type="button" class="btn btn-success-outline" style="padding: 8px 15px; font-size: 14px;" onclick="addNewInvoiceItemRow()">+ Add Product</button>
+        <button type="button" class="btn btn-success-outline" style="padding: 8px 15px; font-size: 14px;" onclick="addNewInvoiceItemRow()">Add Product</button>
     </div>
     <div class="btn-container">
         <button class="btn" id="saveOrUpdateInvoiceBtn" onclick="saveInvoice()">Save Invoice</button>
         <button class="btn btn-danger" onclick="downloadCurrentInvoicePDF()">Current Invoice PDF </button>
         <button class="btn btn-success" onclick="downloadAllPartyLedgersPDF()">All Party Balances PDF</button>
-        <button class="btn btn-info" id="productSalesSummaryBtn" onclick="generateProductSalesSummaryPDF()">Sales Summary with Party Details PDF</button>
+        <button class="btn btn-info" id="productSalesSummaryBtn" onclick="generateProductSalesSummaryPDF()">Sales with Party</button>
         <button class="btn btn-warning" onclick="resetInvoiceForm()">Clear Invoice Form</button>
         <button class="btn btn-info" onclick="window.location.reload()">Refresh Page</button>
         <div class="section-container file-load-area" style="width:100%; margin-top: 15px; padding: 15px;">
@@ -1590,14 +1599,15 @@ const initialProductOptions = [
   "Enra Magic",
   "InduceAcid Plus",
   "InduceAcid Buty",
-  "Huntox",
+  "Coxibac 12%",
   "Strozyme XYL",
   "Super Ener Emusifier",
   "Antioxdant",
   "Toxin Binder Weilituo",
   "Toxin Clean",
-  "GutPro 60 (Tributyrin)",
-  "InduceAcid Liquid"
+  "GutPro 60",
+  "InduceAcid Liquid",
+  "Syngrow",
 ];
 
 const productPackingMap = {
@@ -1618,15 +1628,17 @@ const productPackingMap = {
   "Antioxdant": "Kg",
   "Toxin Binder Weilituo": "Kg",
   "Toxin Clean": "Kg",
-  "GutPro 60 (Tributyrin)": "Kg",
-  "InduceAcid Liquid": "Ltr" // only this stays in Ltr
+  "GutPro 60": "Kg",
+  "Syngrow":"Kg",
+  "InduceAcid Liquid": "Ltr", // only this stays in Ltr
+  "Coxibac 12%":"Kg"
 };
 
-const packingOptions = ["Ltr", "Kg", "25 Ltr"];
+const packingOptions = ["Ltr", "Kg", "25 Ltr","25 kg","Other"];
 
         const COMPANY_NAME = "NUTRION";
-        const NUTRION_ADDRESS = "  Address: Pearl City Sargodha Road Faisalabad ";
-        const NUTRION_CONTACT = "                   Contact: +923007993003";
+        const NUTRION_ADDRESS = "Address: Office # 34, Lower Ground, Pearl City Sargodha Road,Faisalabad";
+        const NUTRION_CONTACT = "                                                                                                    Contact: 0300-7993003";
         const PDF_PRIMARY_COLOR = [40, 167, 69];
         const PDF_SECONDARY_COLOR = [0, 123, 255];
         const PDF_TERTIARY_COLOR = [240, 173, 78];
@@ -2241,8 +2253,7 @@ function applyIndianNumberFormatting() {
                 statusDiv.innerHTML = `<p style="color: red;">Error: ${error.message || 'Invoices download nahi ho sake.'}</p>`;
             }
         }
-        // Function to generate product sales summary with date range
-// Updated generateProductSalesSummaryPDFWithDateRange function
+
 async function generateProductSalesSummaryPDFWithDateRange() {
     const startDate = document.getElementById('productSalesStartDate').value;
     const endDate = document.getElementById('productSalesEndDate').value;
@@ -2275,6 +2286,7 @@ async function generateProductSalesSummaryPDFWithDateRange() {
         // Process product sales data
         const productSalesMap = {};
         let overallTotalAmount = 0;
+        let overallTotalQty = 0; // Added for total quantity
 
         invoices.forEach(invoice => {
             invoice.items.forEach(item => {
@@ -2288,8 +2300,11 @@ async function generateProductSalesSummaryPDFWithDateRange() {
                     };
                 }
 
-                productSalesMap[key].totalQty += parseFloat(item.qty) || 0;
-                const itemAmount = (parseFloat(item.qty) || 0) * (parseFloat(item.unitPrice) || 0);
+                const itemQty = parseFloat(item.qty) || 0;
+                productSalesMap[key].totalQty += itemQty;
+                overallTotalQty += itemQty; // Add to overall quantity total
+
+                const itemAmount = itemQty * (parseFloat(item.unitPrice) || 0);
                 productSalesMap[key].totalAmount += itemAmount;
                 overallTotalAmount += itemAmount;
             });
@@ -2298,6 +2313,19 @@ async function generateProductSalesSummaryPDFWithDateRange() {
         // Convert to array and sort
         const productSalesData = Object.values(productSalesMap);
         productSalesData.sort((a, b) => a.productName.localeCompare(b.productName));
+
+        // Helper function to format date as dd-mm-yyyy
+        function formatDateDDMMYYYY(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return dateStr;
+
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+
+            return `${day}-${month}-${year}`;
+        }
 
         hideLoadingStatus(`Generating Product Sales Summary PDF for ${startDate} to ${endDate}...`, false);
 
@@ -2308,7 +2336,11 @@ async function generateProductSalesSummaryPDFWithDateRange() {
         });
 
         let currentY = 48;
-        const pdfTitle = `Product Sales Summary (${startDate} to ${endDate})`;
+
+        // Format dates for PDF
+        const formattedStartDate = formatDateDDMMYYYY(startDate);
+        const formattedEndDate = formatDateDDMMYYYY(endDate);
+        const pdfTitle = `Product Sales Summary (${formattedStartDate} to ${formattedEndDate})`;
 
         const summaryPageHook = (data) => {
             addPdfHeaderAndFooter(doc, data, pdfTitle, data.pageNumber > 1);
@@ -2335,14 +2367,20 @@ async function generateProductSalesSummaryPDFWithDateRange() {
             index + 1,
             item.productName,
             item.packing,
-            formatNumberInIndianStyle(item.totalQty), // Indian format
-            formatNumberInIndianStyle(item.totalAmount) // Indian format
+            formatNumberInIndianStyle(item.totalQty), // Indian format for quantity
+            formatNumberInIndianStyle(item.totalAmount) // Indian format for amount
         ]);
 
-        // Add total row with Indian formatting
+        // Add total rows with Indian formatting
         body.push([
-            {content: 'TOTAL', colSpan: 4, styles: {halign: 'right', fontStyle: 'bold'}},
-            {content: formatNumberInIndianStyle(overallTotalAmount), styles: {halign: 'right', fontStyle: 'bold'}}
+            {content: 'TOTAL QUANTITY', colSpan: 3, styles: {halign: 'right', fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: formatNumberInIndianStyle(overallTotalQty), styles: {halign: 'center', fontStyle: 'bold', fillColor: [240, 240, 240]}},
+            {content: '', styles: {fillColor: [240, 240, 240]}}
+        ]);
+
+        body.push([
+            {content: 'TOTAL AMOUNT', colSpan: 4, styles: {halign: 'right', fontStyle: 'bold', fillColor: '#e6ffed', textColor: [10, 90, 40]}},
+            {content: formatNumberInIndianStyle(overallTotalAmount), styles: {halign: 'right', fontStyle: 'bold', fillColor: '#e6ffed', textColor: [10, 90, 40]}}
         ]);
 
         if (body.length > 0) {
@@ -2714,8 +2752,8 @@ async function downloadPartyPaymentsPDF() {
                         console.error("Signature image add karne me error:", e);
                     }
                 }
-                doc.text("Accountant Signature", accountantSigX + sigAreaWidth / 2, footerStartY + 8, { align: 'center' });
-                doc.text("Receiver Signature", receiverSigX + sigAreaWidth / 2, footerStartY + 8, { align: 'center' });
+                doc.text("Accountant Signature", accountantSigX + sigAreaWidth / 2, footerStartY +4, { align: 'center' });
+                doc.text("Receiver Signature", receiverSigX + sigAreaWidth / 2, footerStartY + 4, { align: 'center' });
 
             }
                         const bottomTextY = pageHeight - margin + 5;
@@ -2746,7 +2784,7 @@ async function downloadPartyPaymentsPDF() {
                 await fetchStockData();
                 addNewInvoiceItemRow();
                 addNewStockRow();
-                hideLoadingStatus("Application kamyabi se initialize ho gayi.", false);
+                hideLoadingStatus("Application initialize.", false);
             } catch (error) {
                 hideLoadingStatus(error, true);
             }
@@ -3070,39 +3108,84 @@ async function downloadPartyPaymentsPDF() {
                 hideLoadingStatus(error, true);
             }
         }
+async function searchInvoiceToEdit() {
+    const searchTerm = searchInvoiceNumberInputEl.value.trim();
 
-        async function searchInvoiceToEdit() {
-            const invoiceNumToSearch = searchInvoiceNumberInputEl.value.trim();
-            if (!invoiceNumToSearch) {
-                alert("Barae meharbani update karne ke liye Invoice Number likhen.");
-                return;
-            }
-            showLoadingStatus(`Invoice #${invoiceNumToSearch} search ho raha hai...`);
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/invoices/${encodeURIComponent(invoiceNumToSearch)}`);
-                if (!response.ok) {
-                     if (response.status === 404) throw new Error(`Invoice #${invoiceNumToSearch} nahi mila.`);
-                     await handleFetchError(response, `Invoice search karne me error.`);
-                }
-                const invoiceData = await response.json();
-                loadInvoiceDataIntoForm(invoiceData);
-                currentEditingInvoiceNumber = invoiceData.invoiceNumber;
-                invoiceFormTitle.textContent = `Editing Invoice #${invoiceData.invoiceNumber}`;
-                saveOrUpdateInvoiceBtn.textContent = "Update Invoice";
-                saveOrUpdateInvoiceBtn.classList.remove('btn-success');
-                saveOrUpdateInvoiceBtn.classList.add('btn-warning');
-                invoiceNumberInput.classList.add('conditionally-readonly');
-                invoiceNumberInput.readOnly = true;
-                deleteInvoiceBtn.style.display = 'inline-block';
-                hideLoadingStatus(`Invoice #${invoiceNumToSearch} kamyabi se load ho gaya.`, false);
-                searchInvoiceNumberInputEl.value = '';
-                document.getElementById('invoiceTable').scrollIntoView({ behavior: 'smooth' });
-            } catch (error) {
-                hideLoadingStatus(error, true);
-                resetInvoiceForm(true);
-            }
+    if (!searchTerm) {
+        alert("Barae meharbani update karne ke liye Invoice Number likhen.");
+        return;
+    }
+
+    showLoadingStatus(`"${searchTerm}" search ho raha hai...`);
+
+    try {
+        // First try exact match with encoded URI
+        let response = await fetch(`${API_BASE_URL}/api/invoices/${encodeURIComponent(searchTerm)}`);
+
+        if (response.ok) {
+            // Exact match found
+            const invoiceData = await response.json();
+            loadInvoiceDataIntoForm(invoiceData);
+            currentEditingInvoiceNumber = invoiceData.invoiceNumber;
+            invoiceFormTitle.textContent = `Editing Invoice #${invoiceData.invoiceNumber}`;
+            saveOrUpdateInvoiceBtn.textContent = "Update Invoice";
+            saveOrUpdateInvoiceBtn.classList.remove('btn-success');
+            saveOrUpdateInvoiceBtn.classList.add('btn-warning');
+            invoiceNumberInput.classList.add('conditionally-readonly');
+            invoiceNumberInput.readOnly = true;
+            deleteInvoiceBtn.style.display = 'inline-block';
+            hideLoadingStatus(`Invoice #${searchTerm} kamyabi se load ho gaya.`, false);
+            searchInvoiceNumberInputEl.value = '';
+            document.getElementById('invoiceTable').scrollIntoView({ behavior: 'smooth' });
+            return;
         }
 
+        // If exact search fails, search through all invoices
+        showLoadingStatus(`Exact match nahi mila, all invoices me search kar raha hoon...`);
+
+        const allInvoicesResponse = await fetch(`${API_BASE_URL}/api/invoices`);
+        if (!allInvoicesResponse.ok) {
+            await handleFetchError(allInvoicesResponse, `Invoices fetch karne me error.`);
+        }
+
+        const allInvoices = await allInvoicesResponse.json();
+
+        // Enhanced search: look for partial matches in invoice number
+        const foundInvoice = allInvoices.find(invoice => {
+            if (!invoice.invoiceNumber) return false;
+
+            const invoiceNum = invoice.invoiceNumber.toString().toLowerCase();
+            const searchLower = searchTerm.toLowerCase();
+
+            // Check for exact match, partial match, or match without special characters
+            return invoiceNum === searchLower ||
+                   invoiceNum.includes(searchLower) ||
+                   invoiceNum.replace(/[^a-zA-Z0-9]/g, '').includes(searchLower.replace(/[^a-zA-Z0-9]/g, ''));
+        });
+
+        if (foundInvoice) {
+            // Found a match, load it
+            loadInvoiceDataIntoForm(foundInvoice);
+            currentEditingInvoiceNumber = foundInvoice.invoiceNumber;
+            invoiceFormTitle.textContent = `Editing Invoice #${foundInvoice.invoiceNumber}`;
+            saveOrUpdateInvoiceBtn.textContent = "Update Invoice";
+            saveOrUpdateInvoiceBtn.classList.remove('btn-success');
+            saveOrUpdateInvoiceBtn.classList.add('btn-warning');
+            invoiceNumberInput.classList.add('conditionally-readonly');
+            invoiceNumberInput.readOnly = true;
+            deleteInvoiceBtn.style.display = 'inline-block';
+            hideLoadingStatus(`Invoice "${foundInvoice.invoiceNumber}" kamyabi se load ho gaya.`, false);
+            searchInvoiceNumberInputEl.value = '';
+            document.getElementById('invoiceTable').scrollIntoView({ behavior: 'smooth' });
+        } else {
+            throw new Error(`Invoice "${searchTerm}" nahi mila.`);
+        }
+
+    } catch (error) {
+        hideLoadingStatus(error, true);
+        resetInvoiceForm(true);
+    }
+}
         function loadInvoiceDataIntoForm(invoiceData) {
             partyInput.value = invoiceData.partyName;
             dateInput.value = invoiceData.date;
@@ -3277,11 +3360,8 @@ async function downloadPartyPaymentsPDF() {
         }
 
         // --- FIXED: displayPartyLedger to show running balance, correct columns, and Unit Price ---
-        /**
-         * Fetches and displays the detailed transaction ledger for a party.
-         * Data is sorted chronologically (oldest to newest).
-         */
-     async function displayPartyLedger() {
+
+   async function displayPartyLedger() {
     const partyName = partySearchInput.value.trim();
     if (!partyName) {
         alert("Barae meharbani ledger dekhne ke liye party ka naam darj karen.");
@@ -3411,11 +3491,24 @@ function downloadLedgerPDF() {
         return;
     }
 
+    // Helper function to format date as dd-mm-yyyy
+    function formatDateDDMMYYYY(dateStr) {
+        if (!dateStr) return '';
+        const date = new Date(dateStr);
+        if (isNaN(date.getTime())) return dateStr;
+
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+
+        return `${day}-${month}-${year}`;
+    }
+
     const { partyName, transactions, openingBalance = 0, currentBalance = 0, totalDebit = 0, totalCredit = 0 } = currentLedgerDataForPDF;
     const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
     const margin = 12;
     const pageWidth = doc.internal.pageSize.getWidth();
-    let currentY = 32;
+    let currentY = 34;
 
     const didDrawPage = (data) => {
         addPdfHeaderAndFooter(doc, { showSignatures: true }, `Party Statement`);
@@ -3430,11 +3523,13 @@ function downloadLedgerPDF() {
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
     const transactionDates = transactions.map(tx => new Date(tx.date)).filter(date => !isNaN(date.getTime()));
-    const startDate = transactionDates.length > 0 ? new Date(Math.min(...transactionDates)).toISOString().slice(0, 10) : 'N/A';
-    const endDate = transactionDates.length > 0 ? new Date(Math.max(...transactionDates)).toISOString().slice(0, 10) : 'N/A';
+
+    // Format start and end dates for PDF as dd-mm-yyyy
+    const startDate = transactionDates.length > 0 ? formatDateDDMMYYYY(new Date(Math.min(...transactionDates)).toISOString()) : 'N/A';
+    const endDate = transactionDates.length > 0 ? formatDateDDMMYYYY(new Date(Math.max(...transactionDates)).toISOString()) : 'N/A';
 
     doc.text(`Statement Period: ${startDate} to ${endDate}`, pageWidth / 2, currentY, { align: 'center' });
-    currentY += 12;
+    currentY += 5;
 
     const head = [['Date', 'Invoice #', 'Product Name / Description', 'Qty', 'Packing', 'Unit Price', 'Debit', 'Credit', 'Balance']];
     let runningBalanceForPdf = openingBalance;
@@ -3455,7 +3550,8 @@ function downloadLedgerPDF() {
 
     transactions.forEach(tx => {
         if (tx.type === 'invoice_item') {
-            const displayDate = tx.invoiceNumber !== lastInvoiceNumber ? tx.date : '';
+            // Use formatted date for PDF only
+            const displayDate = tx.invoiceNumber !== lastInvoiceNumber ? formatDateDDMMYYYY(tx.date) : '';
             const displayInvoiceNumber = tx.invoiceNumber !== lastInvoiceNumber ? tx.invoiceNumber : '';
 
             runningBalanceForPdf += tx.amount;
@@ -3481,7 +3577,7 @@ function downloadLedgerPDF() {
                 paymentDesc += ` (${tx.remarks})`;
             }
             body.push([
-                tx.date,
+                formatDateDDMMYYYY(tx.date), // Use formatted date for PDF
                 '',
                 { content: paymentDesc, colSpan: 5, styles: { fontStyle: 'bold', textColor: [200, 0, 0], halign: 'left' } },
                 { content: formatNumberInIndianStyle(tx.amount), styles: { halign: 'right' } },
@@ -3512,9 +3608,9 @@ function downloadLedgerPDF() {
         theme: 'grid',
         headStyles: { fillColor: PDF_PRIMARY_COLOR, fontSize: 9.5 },
         columnStyles: {
-            0: { cellWidth: 22, halign: 'center' },
-            1: { cellWidth: 13, halign: 'center' },
-            2: { cellWidth: 38 },
+            0: { cellWidth: 21, halign: 'center' },
+            1: { cellWidth: 20, halign: 'center' },
+            2: { cellWidth: 32 },
             3: { cellWidth: 12, halign: 'center' },
             4: { cellWidth: 12, halign: 'center' },
             5: { cellWidth: 20, halign: 'right' },
@@ -3528,7 +3624,7 @@ function downloadLedgerPDF() {
     });
 
     // Additional summary below the table
-    currentY = doc.autoTable.previous.finalY + 15;
+    currentY = doc.autoTable.previous.finalY + 8;
 
     if (currentY > doc.internal.pageSize.getHeight() - 50) {
         doc.addPage();
@@ -3541,7 +3637,7 @@ function downloadLedgerPDF() {
     doc.setFont("helvetica", "bold");
     doc.setTextColor(...PDF_PRIMARY_COLOR);
     doc.text("Transaction Summary:", margin, currentY);
-    currentY += 8;
+    currentY += 5;
 
     doc.setFont("helvetica", "normal");
     doc.setTextColor(...PDF_TEXT_COLOR);
@@ -3552,7 +3648,7 @@ function downloadLedgerPDF() {
     // Total Debit
     doc.text("Total Debit (Sales):", summaryLeft, currentY);
     doc.text(formatNumberInIndianStyle(pdfTotalDebit), summaryRight, currentY, { align: 'right' });
-    currentY += 6;
+    currentY += 5;
 
     // Total Credit
     doc.text("Total Credit (Payments):", summaryLeft, currentY);
@@ -3563,24 +3659,19 @@ function downloadLedgerPDF() {
     const netChange = pdfTotalDebit - pdfTotalCredit;
     doc.text("Net Balance Change:", summaryLeft, currentY);
     doc.text(formatNumberInIndianStyle(netChange), summaryRight, currentY, { align: 'right' });
-    currentY += 6;
+    currentY += 5;
 
     // Opening Balance
     doc.text("Opening Balance:", summaryLeft, currentY);
     doc.text(formatNumberInIndianStyle(openingBalance), summaryRight, currentY, { align: 'right' });
-    currentY += 6;
+    currentY += 5;
 
     // Closing Balance
     doc.setFont("helvetica", "bold");
     doc.setTextColor(...PDF_PRIMARY_COLOR);
     doc.text("Closing Balance:", summaryLeft, currentY);
     doc.text(formatNumberInIndianStyle(currentBalance), summaryRight, currentY, { align: 'right' });
-    currentY += 10;
-
-    // Add a horizontal line
-    doc.setDrawColor(200, 200, 200);
-    doc.setLineWidth(0.3);
-    doc.line(margin, currentY, pageWidth - margin, currentY);
+    currentY += 5;
 
     doc.save(`PartyStatement_Detailed_${partyName.replace(/\s+/g, '_')}.pdf`);
     hideLoadingStatus("Detailed Party Statement PDF download ho gaya.", false);
@@ -4074,182 +4165,1183 @@ async function downloadInvoicesByDateRange() {
         hideLoadingStatus(error, true);
     }
 }
+// ✅ UPDATED: downloadAllPartyLedgersPDF with interactive party selection and zero-balance filtering
 async function downloadAllPartyLedgersPDF() {
-    showLoadingStatus("Fetching all party data for balances summary...");
+    showLoadingStatus("Fetching all parties...");
 
     try {
+        // 1. Fetch all parties (including zero balance)
         const response = await fetch(`${API_BASE_URL}/api/all-party-ledgers`);
-        if (!response.ok) await handleFetchError(response, "Failed to fetch all party data.");
-        let allLedgersData = await response.json();
+        if (!response.ok) await handleFetchError(response, "Failed to fetch party data.");
+        let allParties = await response.json();
 
-        if (!allLedgersData || allLedgersData.length === 0) {
-            alert("No party data found to generate a report.");
-            hideLoadingStatus("No party data available.", true);
+        if (!allParties || allParties.length === 0) {
+            alert("No party data available.");
+            hideLoadingStatus("No parties found.", true);
             return;
         }
 
-        // Filter out parties with zero balance
-        const nonZeroBalanceParties = allLedgersData.filter(ledger => {
-            const balance = parseFloat(ledger.currentBalance) || 0;
-            return balance !== 0;
-        });
+        hideLoadingStatus("Parties loaded. Select parties to include...", false);
 
-        if (nonZeroBalanceParties.length === 0) {
-            alert("No parties with non-zero balance found to generate a report.");
-            hideLoadingStatus("No non-zero balance parties available.", true);
+        // 2. Show selection modal and wait for user choice
+        const selectedParties = await showPartySelectionModal(allParties);
+        if (!selectedParties || selectedParties.length === 0) {
+            alert("No parties selected. Report generation cancelled.");
             return;
         }
 
-        // Fetch last payment details for non-zero balance parties only
-        showLoadingStatus("Fetching last payment details for parties with non-zero balances...");
-        const lastPaymentDetails = await fetchLastPaymentDetailsForParties(nonZeroBalanceParties);
-
-        nonZeroBalanceParties.sort((a, b) => a.partyName.localeCompare(b.partyName));
-        hideLoadingStatus("Generating All Party Balances PDF...", false);
-
-        const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-        let currentY = 48;
-        const pdfTitle = "All Party Balances Summary";
-
-        addPdfHeaderAndFooter(doc, {
-            pageNumber: 1,
-            addHeaderOnEveryPage: true,
-            addWatermarkOnEveryPage: true,
-            showSignatures: false
-        }, pdfTitle);
-
-        doc.setFontSize(18);
-        doc.setFont("helvetica", "bold");
-        doc.setTextColor(PDF_PRIMARY_COLOR[0], PDF_PRIMARY_COLOR[1], PDF_PRIMARY_COLOR[2]);
-        doc.text(pdfTitle, doc.internal.pageSize.getWidth() / 2, currentY, { align: 'center' });
-        currentY += 15;
-
-        // Add summary of filtering
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "italic");
-        doc.setTextColor(100, 100, 100);
-        doc.text(`Showing ${nonZeroBalanceParties.length} of ${allLedgersData.length} parties (non-zero balances only)`,
-                doc.internal.pageSize.getWidth() / 2, currentY, { align: 'center' });
-        currentY += 8;
-
-        // Updated table headers with actual payment remarks
-        const head = [['Sr.', 'Party Name', 'Current Balance (PKR)', 'Last Payment Remarks']];
-        const body = [];
-        let overallTotalCorrectedBalance = 0;
-
-        for (let i = 0; i < nonZeroBalanceParties.length; i++) {
-            const ledger = nonZeroBalanceParties[i];
-            const correctedBalance = parseFloat(ledger.currentBalance) || 0;
-            overallTotalCorrectedBalance += correctedBalance;
-
-            // Get last payment details for this party
-            const partyName = ledger.partyName;
-            const paymentDetails = lastPaymentDetails[partyName] || {
-                date: 'No record',
-                amount: 0,
-                remarks: 'No payment record',
-                status: 'No payments'
-            };
-
-            body.push([
-                i + 1,
-                partyName,
-                formatNumberInIndianStyle(correctedBalance),
-                paymentDetails.remarks || 'No remarks' // Show actual remarks from payment
-            ]);
-        }
-
-        doc.autoTable({
-            head,
-            body,
-            startY: currentY,
-            ...getPdfTableStyles(PDF_SECONDARY_COLOR),
-            columnStyles: {
-                0: { halign: 'center', cellWidth: 12 },
-                1: { halign: 'left', cellWidth: 70 },
-                2: { halign: 'right', cellWidth: 45 },
-                3: { halign: 'left', cellWidth: 63 }
-            },
-            didDrawPage: (data) => {
-                addPdfHeaderAndFooter(doc, data, pdfTitle, data.pageNumber > 1);
-                currentY = 48;
-            }
+        // 3. Filter out parties with zero balance – they will NOT appear in PDF even if selected
+        const nonZeroSelected = selectedParties.filter(p => {
+            const bal = parseFloat(p.currentBalance) || 0;
+            return bal !== 0;
         });
 
-        currentY = doc.autoTable.previous.finalY + 12;
-
-        if (currentY + 15 > doc.internal.pageSize.getHeight() - 40) {
-            doc.addPage();
-            addPdfHeaderAndFooter(doc, {pageNumber: doc.internal.getCurrentPageInfo().pageNumber}, pdfTitle, true);
-            currentY = 48;
+        if (nonZeroSelected.length === 0) {
+            alert("No parties with non‑zero balance selected. PDF generation cancelled.");
+            return;
         }
 
-        doc.setFontSize(14);
-        doc.setFont("helvetica", "bold");
-        doc.setTextColor(PDF_PRIMARY_COLOR[0], PDF_PRIMARY_COLOR[1], PDF_PRIMARY_COLOR[2]);
-        doc.setDrawColor(PDF_PRIMARY_COLOR[0], PDF_PRIMARY_COLOR[1], PDF_PRIMARY_COLOR[2]);
-        doc.setLineWidth(0.5);
-
-        const totalLabel = "Total:";
-        const totalAmountStr = formatNumberInIndianStyle(overallTotalCorrectedBalance);
-        const totalLabelWidth = doc.getTextWidth(totalLabel);
-        const totalAmountWidth = doc.getTextWidth(totalAmountStr);
-        const totalStartX = doc.internal.pageSize.getWidth() - 12 - totalAmountWidth - totalLabelWidth - 5;
-
-        doc.line(12, currentY, doc.internal.pageSize.getWidth() - 12, currentY);
-        currentY += 8;
-        doc.text(totalLabel, totalStartX, currentY);
-        doc.text(totalAmountStr, doc.internal.pageSize.getWidth() - 12 - totalAmountWidth, currentY);
-        currentY += 8;
-        doc.line(12, currentY, doc.internal.pageSize.getWidth() - 12, currentY);
-
-        doc.save('All_Party_Non_Zero_Balances_Summary.pdf');
-        hideLoadingStatus("All Party Non-Zero Balances PDF generated.", false);
+        // 4. Generate PDF for the filtered (non‑zero) parties
+        await generatePDFForSelectedParties(nonZeroSelected);
 
     } catch (error) {
         hideLoadingStatus(error, true);
+        console.error("Error in party selection process:", error);
     }
 }
 
+// ✅ Custom modal (no Bootstrap) – shows all parties (including zero) with a note that zero-balance parties will be excluded from PDF
+function showPartySelectionModal(allParties) {
+    return new Promise((resolve) => {
+        // Create overlay
+        const overlay = document.createElement('div');
+        overlay.id = 'partyModalOverlay';
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = 'rgba(0,0,0,0.5)';
+        overlay.style.zIndex = '10000';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+
+        // Create modal container
+        const modal = document.createElement('div');
+        modal.id = 'partyModal';
+        modal.style.backgroundColor = 'white';
+        modal.style.borderRadius = '8px';
+        modal.style.boxShadow = '0 5px 20px rgba(0,0,0,0.3)';
+        modal.style.width = '80%';
+        modal.style.maxWidth = '900px';
+        modal.style.maxHeight = '90vh';
+        modal.style.display = 'flex';
+        modal.style.flexDirection = 'column';
+        modal.style.overflow = 'hidden';
+
+        // Header
+        const header = document.createElement('div');
+        header.style.padding = '15px 20px';
+        header.style.backgroundColor = '#007bff';
+        header.style.color = 'white';
+        header.style.display = 'flex';
+        header.style.justifyContent = 'space-between';
+        header.style.alignItems = 'center';
+        header.style.borderTopLeftRadius = '8px';
+        header.style.borderTopRightRadius = '8px';
+
+        const titleContainer = document.createElement('div');
+        titleContainer.style.display = 'flex';
+        titleContainer.style.flexDirection = 'column';
+
+        const title = document.createElement('h5');
+        title.textContent = 'Select Parties to Include in Report';
+        title.style.margin = '0';
+        title.style.fontSize = '1.25rem';
+
+        const note = document.createElement('small');
+        note.textContent = 'Note: Parties with zero balance will NOT appear in the PDF.';
+        note.style.fontSize = '0.8rem';
+        note.style.opacity = '0.9';
+
+        titleContainer.appendChild(title);
+        titleContainer.appendChild(note);
+
+        const closeBtn = document.createElement('button');
+        closeBtn.innerHTML = '&times;';
+        closeBtn.style.background = 'none';
+        closeBtn.style.border = 'none';
+        closeBtn.style.color = 'white';
+        closeBtn.style.fontSize = '1.5rem';
+        closeBtn.style.cursor = 'pointer';
+        closeBtn.style.padding = '0 5px';
+        closeBtn.setAttribute('aria-label', 'Close');
+
+        header.appendChild(titleContainer);
+        header.appendChild(closeBtn);
+        modal.appendChild(header);
+
+        // Body
+        const body = document.createElement('div');
+        body.style.padding = '20px';
+        body.style.overflowY = 'auto';
+        body.style.flex = '1';
+
+        // Search and select all row
+        const controlsRow = document.createElement('div');
+        controlsRow.style.display = 'flex';
+        controlsRow.style.justifyContent = 'space-between';
+        controlsRow.style.marginBottom = '15px';
+        controlsRow.style.gap = '10px';
+
+        const searchDiv = document.createElement('div');
+        searchDiv.style.flex = '1';
+        const searchInput = document.createElement('input');
+        searchInput.type = 'text';
+        searchInput.placeholder = 'Search parties...';
+        searchInput.style.width = '100%';
+        searchInput.style.padding = '5px 10px';
+        searchInput.style.border = '1px solid #ccc';
+        searchInput.style.borderRadius = '4px';
+        searchDiv.appendChild(searchInput);
+
+        const selectAllDiv = document.createElement('div');
+        selectAllDiv.style.display = 'flex';
+        selectAllDiv.style.alignItems = 'center';
+        selectAllDiv.style.gap = '10px';
+
+        const selectAllLabel = document.createElement('label');
+        selectAllLabel.style.display = 'flex';
+        selectAllLabel.style.alignItems = 'center';
+        selectAllLabel.style.gap = '5px';
+        selectAllLabel.style.cursor = 'pointer';
+
+        const selectAllCheck = document.createElement('input');
+        selectAllCheck.type = 'checkbox';
+        selectAllCheck.checked = true;
+
+        selectAllLabel.appendChild(selectAllCheck);
+        selectAllLabel.appendChild(document.createTextNode('Select All'));
+
+        const selectedCount = document.createElement('span');
+        selectedCount.style.backgroundColor = '#6c757d';
+        selectedCount.style.color = 'white';
+        selectedCount.style.padding = '2px 8px';
+        selectedCount.style.borderRadius = '12px';
+        selectedCount.style.fontSize = '0.85rem';
+        selectedCount.textContent = `${allParties.length}/${allParties.length}`;
+
+        selectAllDiv.appendChild(selectAllLabel);
+        selectAllDiv.appendChild(selectedCount);
+        controlsRow.appendChild(searchDiv);
+        controlsRow.appendChild(selectAllDiv);
+        body.appendChild(controlsRow);
+
+        // Party list container
+        const listContainer = document.createElement('div');
+        listContainer.id = 'partyList';
+        listContainer.style.border = '1px solid #ddd';
+        listContainer.style.borderRadius = '4px';
+        listContainer.style.maxHeight = '400px';
+        listContainer.style.overflowY = 'auto';
+        listContainer.style.padding = '5px';
+
+        // Build party items
+        allParties.forEach((party, index) => {
+            const balance = parseFloat(party.currentBalance) || 0;
+            const balanceClass = balance > 0 ? '#dc3545' : (balance < 0 ? '#28a745' : '#6c757d');
+            const item = document.createElement('div');
+            item.className = 'party-item';
+            item.style.padding = '5px 10px';
+            item.style.borderBottom = '1px solid #eee';
+            item.style.display = 'flex';
+            item.style.alignItems = 'center';
+            item.style.gap = '10px';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'party-checkbox';
+            checkbox.value = party.partyName;
+            checkbox.id = `party_${index}`;
+            checkbox.checked = true;
+
+            const label = document.createElement('label');
+            label.htmlFor = `party_${index}`;
+            label.style.display = 'flex';
+            label.style.justifyContent = 'space-between';
+            label.style.width = '100%';
+            label.style.cursor = 'pointer';
+            label.style.margin = '0';
+
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = party.partyName;
+
+            const balanceSpan = document.createElement('span');
+            balanceSpan.textContent = formatNumberSmart(balance);
+            balanceSpan.style.color = balanceClass;
+
+            label.appendChild(nameSpan);
+            label.appendChild(balanceSpan);
+
+            item.appendChild(checkbox);
+            item.appendChild(label);
+            listContainer.appendChild(item);
+        });
+
+        body.appendChild(listContainer);
+        modal.appendChild(body);
+
+        // Footer
+        const footer = document.createElement('div');
+        footer.style.padding = '15px 20px';
+        footer.style.borderTop = '1px solid #ddd';
+        footer.style.display = 'flex';
+        footer.style.justifyContent = 'flex-end';
+        footer.style.gap = '10px';
+
+        const cancelBtn = document.createElement('button');
+        cancelBtn.textContent = 'Cancel';
+        cancelBtn.style.padding = '8px 16px';
+        cancelBtn.style.border = '1px solid #ccc';
+        cancelBtn.style.borderRadius = '4px';
+        cancelBtn.style.backgroundColor = '#f8f9fa';
+        cancelBtn.style.cursor = 'pointer';
+
+        const generateBtn = document.createElement('button');
+        generateBtn.textContent = 'Generate PDF';
+        generateBtn.style.padding = '8px 16px';
+        generateBtn.style.border = 'none';
+        generateBtn.style.borderRadius = '4px';
+        generateBtn.style.backgroundColor = '#007bff';
+        generateBtn.style.color = 'white';
+        generateBtn.style.cursor = 'pointer';
+
+        footer.appendChild(cancelBtn);
+        footer.appendChild(generateBtn);
+        modal.appendChild(footer);
+
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        // Helper to get visible checkboxes based on search filter
+        const getVisibleCheckboxes = () => {
+            const items = listContainer.querySelectorAll('.party-item');
+            const visible = [];
+            items.forEach(item => {
+                if (item.style.display !== 'none') {
+                    visible.push(item.querySelector('.party-checkbox'));
+                }
+            });
+            return visible;
+        };
+
+        // Update selected count
+        const updateSelectedCount = () => {
+            const checkboxes = getVisibleCheckboxes();
+            const totalVisible = checkboxes.length;
+            const checkedVisible = checkboxes.filter(cb => cb.checked).length;
+            selectedCount.textContent = `${checkedVisible}/${totalVisible}`;
+
+            // Update select all checkbox state
+            if (totalVisible > 0) {
+                const allChecked = checkboxes.every(cb => cb.checked);
+                selectAllCheck.checked = allChecked;
+                selectAllCheck.indeterminate = !allChecked && checkedVisible > 0;
+            } else {
+                selectAllCheck.checked = false;
+                selectAllCheck.indeterminate = false;
+            }
+        };
+
+        // Search filter
+        searchInput.addEventListener('input', function() {
+            const term = this.value.toLowerCase();
+            const items = listContainer.querySelectorAll('.party-item');
+            items.forEach(item => {
+                const label = item.querySelector('label span:first-child').textContent.toLowerCase();
+                const matches = term === '' || label.includes(term);
+                item.style.display = matches ? 'flex' : 'none';
+            });
+            updateSelectedCount();
+        });
+
+        // Select all / deselect all visible
+        selectAllCheck.addEventListener('change', function() {
+            const checkboxes = getVisibleCheckboxes();
+            checkboxes.forEach(cb => cb.checked = this.checked);
+            updateSelectedCount();
+        });
+
+        // Update count when any checkbox changes
+        listContainer.addEventListener('change', (e) => {
+            if (e.target.classList.contains('party-checkbox')) {
+                updateSelectedCount();
+            }
+        });
+
+        // Initial count
+        updateSelectedCount();
+
+        // Helper to close modal and resolve
+        const closeModal = (result) => {
+            document.body.removeChild(overlay);
+            resolve(result);
+        };
+
+        // Generate button
+        generateBtn.addEventListener('click', () => {
+            const allCheckboxes = listContainer.querySelectorAll('.party-checkbox');
+            const selectedNames = Array.from(allCheckboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+            const selectedParties = allParties.filter(p => selectedNames.includes(p.partyName));
+            closeModal(selectedParties);
+        });
+
+        // Cancel button
+        cancelBtn.addEventListener('click', () => closeModal(null));
+
+        // Close button (X)
+        closeBtn.addEventListener('click', () => closeModal(null));
+
+        // Click outside overlay
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                closeModal(null);
+            }
+        });
+
+        // Escape key
+        const escHandler = (e) => {
+            if (e.key === 'Escape') {
+                closeModal(null);
+                document.removeEventListener('keydown', escHandler);
+            }
+        };
+        document.addEventListener('keydown', escHandler);
+    });
+}
+// ✅ PDF generation extracted to work with any list of parties
+async function generatePDFForSelectedParties(parties) {
+    showLoadingStatus("Fetching payment and invoice details...");
+
+    try {
+        // Sort parties alphabetically for consistency
+        parties.sort((a, b) => a.partyName.localeCompare(b.partyName));
+
+        // Fetch last payment details for these parties
+        const lastPaymentDetails = await fetchLastPaymentDetailsForParties(parties);
+
+        // Fetch last invoice details
+        const lastInvoiceDetails = await fetchLastInvoiceDetailsForParties(parties);
+
+        // Calculate REAL aging balances with 5 buckets
+        showLoadingStatus("Calculating accurate aging balances...");
+        const agingBalances = await calculateFiveBucketAgingBalances(parties);
+
+        hideLoadingStatus("Generating PDF...", false);
+
+        const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+        // Generate current date and time
+        const now = new Date();
+        const generatedDateTime = now.toLocaleString('en-US', {
+            year: 'numeric', month: 'long', day: 'numeric',
+            hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+        });
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const leftMargin = 10;
+        const rightMargin = 10;
+        const availableWidth = pageWidth - leftMargin - rightMargin;
+
+        // Header function
+        const addHeader = (pageNumber = 1) => {
+            const headerY = 9;
+            doc.setFontSize(16);
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(PDF_PRIMARY_COLOR[0], PDF_PRIMARY_COLOR[1], PDF_PRIMARY_COLOR[2]);
+            doc.text("PARTIES BALANCE SUMMARY", pageWidth / 2, headerY, { align: 'center' });
+
+            doc.setDrawColor(200, 200, 200);
+            doc.setLineWidth(0.5);
+            doc.line(leftMargin, headerY + 5, pageWidth - rightMargin, headerY + 5);
+            return headerY + 10;
+        };
+
+        // Footer function
+        const addFooter = (pageNumber, totalPages) => {
+            doc.setDrawColor(200, 200, 200);
+            doc.setLineWidth(0.5);
+            doc.line(leftMargin, pageHeight - 20, pageWidth - rightMargin, pageHeight - 20);
+
+            doc.setFontSize(8);
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(100, 100, 100);
+            doc.text(`Generated: ${generatedDateTime}`, leftMargin, pageHeight - 15);
+            doc.setFontSize(9);
+            doc.setTextColor(80, 80, 80);
+            doc.text(`Page ${pageNumber} of ${totalPages}`, pageWidth / 2, pageHeight - 15, { align: 'center' });
+            doc.text("Selected Parties Balance Report with Ageing", pageWidth - rightMargin, pageHeight - 15, { align: 'right' });
+            doc.setFontSize(8);
+            doc.setTextColor(150, 150, 150);
+            doc.text("Computer-generated report. Signature not required", pageWidth / 2, pageHeight - 10, { align: 'center' });
+        };
+
+        let currentY = addHeader(1);
+
+        // Report summary (first page only)
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(0, 0, 0);
+        doc.text("REPORT SUMMARY", leftMargin, currentY);
+        currentY += 6;
+
+        // Summary box
+        doc.setDrawColor(220, 220, 220);
+        doc.setFillColor(248, 249, 250);
+        doc.roundedRect(leftMargin, currentY, availableWidth, 16, 2, 2, 'F');
+
+        doc.setFontSize(9);
+        doc.setTextColor(60, 60, 60);
+        const summaryX = leftMargin + 4;
+        let summaryY = currentY + 5;
+
+        doc.setFont("helvetica", "bold");
+        doc.text("Selected Parties:", summaryX, summaryY);
+        doc.setFont("helvetica", "normal");
+        doc.text(`${parties.length}`, summaryX + 30, summaryY);
+
+        doc.setFont("helvetica", "bold");
+        doc.text("Report Date:", pageWidth / 2, summaryY);
+        doc.setFont("helvetica", "normal");
+        doc.text(now.toLocaleDateString('en-GB'), pageWidth / 2 + 25, summaryY);
+
+        doc.setFont("helvetica", "bold");
+        doc.text("Currency:", pageWidth / 2, summaryY + 6);
+        doc.setFont("helvetica", "normal");
+        doc.text("PKR", pageWidth / 2 + 25, summaryY + 6);
+
+        doc.setFont("helvetica", "bold");
+        doc.text("Generated:", pageWidth - 80, summaryY);
+        doc.setFont("helvetica", "normal");
+        doc.text(generatedDateTime, pageWidth - 55, summaryY);
+
+        currentY += 22;
+
+        // Column widths (same as original)
+        const columnWidths = {
+            sr: 10, partyName: 50, currentBalance: 25, lastPayment: 40,
+            lastInvoice: 30, aging0to15: 20, aging16to30: 20,
+            aging31to45: 20, aging46to60: 20, aging60Plus: 20
+        };
+        const totalColumnsWidth = Object.values(columnWidths).reduce((a, b) => a + b, 0);
+        const scalingFactor = availableWidth / totalColumnsWidth;
+        if (Math.abs(scalingFactor - 1) > 0.01) {
+            Object.keys(columnWidths).forEach(key => {
+                columnWidths[key] = Math.floor(columnWidths[key] * scalingFactor);
+            });
+        }
+
+        // Table header
+        const head = [[
+            { content: 'SR.', styles: { halign: 'center', fillColor: PDF_SECONDARY_COLOR, fontStyle: 'bold' } },
+            { content: 'PARTY NAME', styles: { halign: 'left', fillColor: PDF_SECONDARY_COLOR, fontStyle: 'bold' } },
+            { content: 'CURRENT BALANCE', styles: { halign: 'center', fillColor: PDF_SECONDARY_COLOR, fontStyle: 'bold' } },
+            { content: 'LAST PAYMENT', styles: { halign: 'left', fillColor: PDF_SECONDARY_COLOR, fontStyle: 'bold' } },
+            { content: 'LAST INVOICE', styles: { halign: 'center', fillColor: PDF_SECONDARY_COLOR, fontStyle: 'bold' } },
+            { content: '0-15', styles: { halign: 'center', fillColor: [0, 123, 255], fontStyle: 'bold', textColor: [255,255,255] } },
+            { content: '16-30', styles: { halign: 'center', fillColor: [40, 167, 69], fontStyle: 'bold', textColor: [255,255,255] } },
+            { content: '31-45', styles: { halign: 'center', fillColor: [255, 108, 180], fontStyle: 'bold', textColor: [255,255,255] } },
+            { content: '46-60', styles: { halign: 'center', fillColor: [255, 140, 0], fontStyle: 'bold', textColor: [255,255,255] } },
+            { content: '60+', styles: { halign: 'center', fillColor: [220, 53, 69], fontStyle: 'bold', textColor: [255,255,255] } }
+        ]];
+
+        // Aging header line (as before)
+        const agingColumnsStartX = leftMargin +
+            columnWidths.sr + columnWidths.partyName + columnWidths.currentBalance +
+            columnWidths.lastPayment + columnWidths.lastInvoice;
+        const agingColumnsWidth = columnWidths.aging0to15 + columnWidths.aging16to30 +
+            columnWidths.aging31to45 + columnWidths.aging46to60 + columnWidths.aging60Plus;
+        const agingHeaderCenterX = agingColumnsStartX + (agingColumnsWidth / 2);
+
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(33, 37, 41);
+        doc.text("", agingHeaderCenterX, currentY - 2, { align: 'center' });
+
+        doc.setDrawColor(200, 200, 200);
+        doc.setLineWidth(0.5);
+        doc.line(agingColumnsStartX, currentY, agingColumnsStartX + agingColumnsWidth, currentY);
+        currentY += 5;
+
+        // Build table body for selected parties
+        const body = [];
+        let overallTotalCorrectedBalance = 0;
+        let totalPositiveBalance = 0;
+        let totalNegativeBalance = 0;
+        let total0to15Days = 0, total16to30Days = 0, total31to45Days = 0, total46to60Days = 0, total60PlusDays = 0;
+
+        for (let i = 0; i < parties.length; i++) {
+            const ledger = parties[i];
+            const correctedBalance = parseFloat(ledger.currentBalance) || 0;
+            overallTotalCorrectedBalance += correctedBalance;
+
+            if (correctedBalance > 0) totalPositiveBalance += correctedBalance;
+            else totalNegativeBalance += correctedBalance;
+
+            const partyName = ledger.partyName;
+            const paymentDetails = lastPaymentDetails[partyName] || {
+                date: '', amount: 0, remarks: 'No payment received', byBill: 0, byCash: 0
+            };
+            const invoiceDetails = lastInvoiceDetails[partyName] || {
+                date: null, total: 0, formattedDate: 'No invoice'
+            };
+
+            let partyAgingBalances = agingBalances[partyName] || {
+                bucket0to15: 0, bucket16to30: 0, bucket31to45: 0,
+                bucket46to60: 0, bucket60Plus: 0, totalBalance: correctedBalance
+            };
+
+            // For negative balances, zero out aging
+            if (correctedBalance < 0) {
+                partyAgingBalances.bucket0to15 = 0;
+                partyAgingBalances.bucket16to30 = 0;
+                partyAgingBalances.bucket31to45 = 0;
+                partyAgingBalances.bucket46to60 = 0;
+                partyAgingBalances.bucket60Plus = 0;
+            }
+
+            // Add to aging totals only for positive balances
+            if (correctedBalance > 0) {
+                total0to15Days += partyAgingBalances.bucket0to15;
+                total16to30Days += partyAgingBalances.bucket16to30;
+                total31to45Days += partyAgingBalances.bucket31to45;
+                total46to60Days += partyAgingBalances.bucket46to60;
+                total60PlusDays += partyAgingBalances.bucket60Plus;
+            }
+
+            // Format last invoice
+            let lastInvoiceInfo = 'No invoices';
+            if (invoiceDetails.date && invoiceDetails.formattedDate !== 'No invoice') {
+                lastInvoiceInfo = `${invoiceDetails.formattedDate}\n${formatNumberSmart(invoiceDetails.total)}`;
+            }
+
+            const rowFillColor = correctedBalance > 0 ? [255, 245, 245] : [245, 255, 245];
+            const balanceColor = correctedBalance > 0 ? [220, 53, 69] : [40, 167, 69];
+
+            // Last payment remarks
+            let lastPaymentRemarks = 'No payment received';
+            if (paymentDetails.remarks && paymentDetails.remarks !== 'No payment received') {
+                const cleanRemarks = paymentDetails.remarks
+                    .replace(/by Cash:.*?(?=by Bill:|$)/, '')
+                    .replace(/by Bill:.*?(?=$)/, '')
+                    .replace(/\s+/g, ' ').trim();
+                if (cleanRemarks) {
+                    lastPaymentRemarks = cleanRemarks.length > 40 ? cleanRemarks.substring(0,40)+'...' : cleanRemarks;
+                }
+            }
+
+            const formatAgingCell = (amount, bucketColor, isNegativeBalance = false) => {
+                if (isNegativeBalance) {
+                    return { content: '', styles: { halign: 'center', fillColor: rowFillColor, textColor: [150,150,150], fontSize: 8, cellWidth: columnWidths.aging0to15 } };
+                }
+                if (amount === 0) {
+                    return { content: '-', styles: { halign: 'center', fillColor: rowFillColor, textColor: [150,150,150], fontSize: 8, cellWidth: columnWidths.aging0to15 } };
+                }
+                return {
+                    content: formatNumberSmart(amount),
+                    styles: { halign: 'center', fillColor: rowFillColor, textColor: bucketColor, fontStyle: 'bold', fontSize: 8, cellWidth: columnWidths.aging0to15 }
+                };
+            };
+
+            body.push([
+                { content: (i+1).toString(), styles: { halign: 'center', fillColor: rowFillColor, fontStyle: 'bold', cellWidth: columnWidths.sr } },
+                { content: partyName, styles: { halign: 'left', fillColor: rowFillColor, fontSize: 8, cellWidth: columnWidths.partyName } },
+                { content: formatNumberSmart(correctedBalance), styles: { halign: 'right', fillColor: rowFillColor, textColor: balanceColor, fontStyle: 'bold', fontSize: 9, cellWidth: columnWidths.currentBalance } },
+                { content: lastPaymentRemarks, styles: { halign: 'left', fillColor: rowFillColor, fontSize: 7, cellWidth: columnWidths.lastPayment } },
+                { content: lastInvoiceInfo, styles: { halign: 'left', fillColor: rowFillColor, fontSize: 7, cellWidth: columnWidths.lastInvoice } },
+                formatAgingCell(partyAgingBalances.bucket0to15, [0,123,255], correctedBalance < 0),
+                formatAgingCell(partyAgingBalances.bucket16to30, [40,167,69], correctedBalance < 0),
+                formatAgingCell(partyAgingBalances.bucket31to45, [255,105,180], correctedBalance < 0),
+                formatAgingCell(partyAgingBalances.bucket46to60, [255,140,0], correctedBalance < 0),
+                formatAgingCell(partyAgingBalances.bucket60Plus, [220,53,69], correctedBalance < 0)
+            ]);
+        }
+
+        // Generate table
+        doc.autoTable({
+            head: head,
+            body: body,
+            startY: currentY,
+            margin: { left: leftMargin, right: rightMargin, top: currentY, bottom: 25 },
+            tableWidth: 'auto',
+            theme: 'grid',
+            styles: { fontSize: 7, cellPadding: 2, lineColor: [200,200,200], lineWidth: 0.2, overflow: 'linebreak', minCellHeight: 6 },
+            headStyles: { fillColor: PDF_SECONDARY_COLOR, textColor: [255,255,255], fontSize: 8, fontStyle: 'bold', halign: 'center', valign: 'middle' },
+            columnStyles: {
+                0: { cellWidth: columnWidths.sr, halign: 'center' },
+                1: { cellWidth: columnWidths.partyName, halign: 'left' },
+                2: { cellWidth: columnWidths.currentBalance, halign: 'right' },
+                3: { cellWidth: columnWidths.lastPayment, halign: 'left' },
+                4: { cellWidth: columnWidths.lastInvoice, halign: 'left' },
+                5: { cellWidth: columnWidths.aging0to15, halign: 'center' },
+                6: { cellWidth: columnWidths.aging16to30, halign: 'center' },
+                7: { cellWidth: columnWidths.aging31to45, halign: 'center' },
+                8: { cellWidth: columnWidths.aging46to60, halign: 'center' },
+                9: { cellWidth: columnWidths.aging60Plus, halign: 'center' }
+            },
+            didDrawPage: (data) => {
+                const currentPage = data.pageNumber;
+                addFooter(currentPage, data.pageCount);
+
+                const headerY = addHeader(currentPage);
+                doc.setFontSize(9);
+                doc.setFont("helvetica", "bold");
+                doc.setTextColor(33, 37, 41);
+                const pageAgingStartX = agingColumnsStartX;
+                const pageAgingWidth = agingColumnsWidth;
+                const pageAgingCenterX = pageAgingStartX + (pageAgingWidth / 2);
+                let agingHeaderY = (currentPage === 1) ? currentY - 2 : 28;
+                doc.text("AGEING BALANCE DETAILS (Days)", pageAgingCenterX, agingHeaderY, { align: 'center' });
+                doc.setDrawColor(200,200,200);
+                doc.line(pageAgingStartX, agingHeaderY+2, pageAgingStartX+pageAgingWidth, agingHeaderY+2);
+
+                if (currentPage > 1) {
+                    doc.setFontSize(8);
+                    doc.setFont("helvetica", "italic");
+                    doc.setTextColor(100,100,100);
+                    doc.text("(Continued)", pageWidth/2, headerY+8, { align: 'center' });
+                }
+            },
+            willDrawPage: (data) => {
+                if (data.pageNumber === 1) {
+                    data.settings.margin.top = currentY;
+                } else {
+                    data.settings.margin.top = 35;
+                }
+            }
+        });
+
+        currentY = doc.autoTable.previous.finalY + 10;
+
+        // Add summary section (same as original)
+        if (currentY + 100 > pageHeight - 30) {
+            doc.addPage();
+            addHeader();
+            currentY = 30;
+        }
+
+        // Aging summary box
+        doc.setDrawColor(0,0,0);
+        doc.setLineWidth(0.5);
+        doc.line(leftMargin, currentY, pageWidth-rightMargin, currentY);
+        currentY += 8;
+        doc.setFillColor(248,249,250);
+        doc.roundedRect(leftMargin, currentY, availableWidth, 55, 3, 3, 'F');
+        doc.setFontSize(10);
+        doc.setFont("helvetica","bold");
+        doc.setTextColor(0,0,0);
+        doc.text("AGING BALANCE SUMMARY", pageWidth/2, currentY+7, { align: 'center' });
+
+        const summarySectionY = currentY + 15;
+        const col1X = leftMargin + 10;
+        const col2X = col1X + 45;
+        const col3X = col2X + 45;
+        const col4X = col3X + 45;
+        const col5X = col4X + 45;
+        const row1Y = summarySectionY;
+        const row2Y = row1Y + 8;
+        const row3Y = row2Y + 8;
+
+        // Bucket totals
+        doc.setFontSize(8);
+        doc.setTextColor(0,123,255); doc.text("0-15 Days:", col1X, row1Y); doc.text(formatNumberSmart(total0to15Days), col1X+20, row1Y);
+        doc.setTextColor(40,167,69); doc.text("16-30 Days:", col2X, row1Y); doc.text(formatNumberSmart(total16to30Days), col2X+25, row1Y);
+        doc.setTextColor(255,105,180); doc.text("31-45 Days:", col3X, row1Y); doc.text(formatNumberSmart(total31to45Days), col3X+25, row1Y);
+        doc.setTextColor(255,140,0); doc.text("46-60 Days:", col4X, row1Y); doc.text(formatNumberSmart(total46to60Days), col4X+25, row1Y);
+        doc.setTextColor(220,53,69); doc.text("60+ Days:", col5X, row1Y); doc.text(formatNumberSmart(total60PlusDays), col5X+20, row1Y);
+
+        const totalAgingBalance = total0to15Days + total16to30Days + total31to45Days + total46to60Days + total60PlusDays;
+        doc.setFont("helvetica","bold");
+        doc.setTextColor(0,0,0);
+        doc.text("Total Aging Balance:", col1X, row2Y);
+        doc.text(formatNumberSmart(totalAgingBalance), col1X+35, row2Y);
+
+        if (Math.abs(totalAgingBalance - totalPositiveBalance) > 1) {
+            doc.setTextColor(255,0,0);
+            doc.text(`Variance: ${formatNumberSmart(Math.abs(totalAgingBalance - totalPositiveBalance))}`, col3X, row2Y);
+        } else {
+            doc.setTextColor(40,167,69);
+            doc.text("Verified Ageing Balance", col3X, row2Y);
+        }
+
+        doc.setTextColor(220,53,69);
+        doc.text("Total Receivable:", col1X, row3Y);
+        doc.text(formatNumberSmart(totalPositiveBalance), col1X+30, row3Y);
+        doc.setTextColor(40,167,69);
+        doc.text("Total Payable:", col2X, row3Y);
+        doc.text(formatNumberSmart(Math.abs(totalNegativeBalance)), col2X+25, row3Y);
+        doc.setTextColor(0,0,0);
+        doc.text("Net Balance:", col3X, row3Y);
+        doc.text(formatNumberSmart(overallTotalCorrectedBalance), col3X+25, row3Y);
+
+        // Percentages
+        if (totalPositiveBalance > 0) {
+            doc.setFontSize(7);
+            doc.setTextColor(100,100,100);
+            doc.setFont("helvetica","italic");
+            doc.text(`${Math.round((total0to15Days/totalPositiveBalance)*100)}%`, col1X+30, row1Y+4);
+            doc.text(`${Math.round((total16to30Days/totalPositiveBalance)*100)}%`, col2X+35, row1Y+4);
+            doc.text(`${Math.round((total31to45Days/totalPositiveBalance)*100)}%`, col3X+35, row1Y+4);
+            doc.text(`${Math.round((total46to60Days/totalPositiveBalance)*100)}%`, col4X+35, row1Y+4);
+            doc.text(`${Math.round((total60PlusDays/totalPositiveBalance)*100)}%`, col5X+30, row1Y+4);
+        }
+
+        currentY += 60;
+
+        // Notes section
+        doc.setFontSize(12);
+        doc.setFont("helvetica","bold");
+        doc.setTextColor(0,0,0);
+        doc.text("NOTES:", leftMargin, currentY);
+        currentY += 6;
+        doc.setFont("helvetica","normal");
+        doc.setFontSize(8);
+        doc.setTextColor(80,80,80);
+        const notes = [
+            "• Positive Balance (Red): Amount receivable from party",
+            "• Negative Balance (Green): Amount payable to party",
+            "• Aging buckets: 0-15, 16-30, 31-45, 46-60, 60+ days",
+            "• Last Invoice: Date and amount of last invoice",
+            "• Last Payment: Remarks from most recent payment",
+            "• Aging shown only for receivable balances (positive)"
+        ];
+        const midPoint = Math.ceil(notes.length/2);
+        notes.slice(0,midPoint).forEach((note,i) => doc.text(note, leftMargin+5, currentY+(i*3)));
+        notes.slice(midPoint).forEach((note,i) => doc.text(note, pageWidth/2+10, currentY+(i*3)));
+
+        // Save PDF
+        const filenameDate = now.toISOString().slice(0,10).replace(/-/g,'');
+        const filenameTime = now.toTimeString().slice(0,8).replace(/:/g,'');
+        const filename = `Selected_Parties_Balance_5Bucket_${filenameDate}_${filenameTime}.pdf`;
+        doc.save(filename);
+
+        hideLoadingStatus("PDF generated successfully.", false);
+
+    } catch (error) {
+        hideLoadingStatus(error, true);
+        console.error("Error generating PDF:", error);
+    }
+}
+// ✅ ACCURATE 5-BUCKET AGING CALCULATION FUNCTION
+async function calculateFiveBucketAgingBalances(parties) {
+    const agingBalances = {};
+
+    try {
+        // Fetch ALL invoices and payments for accurate aging
+        showLoadingStatus("Fetching detailed ledger data for 5-bucket aging calculation...");
+
+        const [allInvoices, allPayments] = await Promise.all([
+            fetch(`${API_BASE_URL}/api/invoices`).then(res => {
+                if (!res.ok) throw new Error("Failed to fetch invoices");
+                return res.json();
+            }),
+            fetch(`${API_BASE_URL}/api/payments`).then(res => {
+                if (!res.ok) throw new Error("Failed to fetch payments");
+                return res.json();
+            })
+        ]);
+
+        // Get current date as cutoff (report date)
+        const currentDate = new Date();
+
+        console.log("Current Date (Report Date):", currentDate.toLocaleDateString());
+
+        // Process each party
+        for (const party of parties) {
+            const partyName = party.partyName;
+            const currentBalance = parseFloat(party.currentBalance) || 0;
+
+            // Initialize 5 aging buckets
+            agingBalances[partyName] = {
+                bucket0to15: 0,
+                bucket16to30: 0,
+                bucket31to45: 0,
+                bucket46to60: 0,
+                bucket60Plus: 0,
+                totalBalance: currentBalance
+            };
+
+            // ✅ If balance is NEGATIVE, show ZERO in all aging columns
+            if (currentBalance <= 0) {
+                continue;
+            }
+
+            // Get party's invoices and payments (only for positive balances)
+            const partyInvoices = Array.isArray(allInvoices) ? allInvoices.filter(inv =>
+                inv && inv.partyName && inv.partyName.toLowerCase() === partyName.toLowerCase()
+            ) : [];
+
+            const partyPayments = Array.isArray(allPayments) ? allPayments.filter(pay =>
+                pay && pay.partyName && pay.partyName.toLowerCase() === partyName.toLowerCase()
+            ) : [];
+
+            // If no invoices, use intelligent distribution ONLY FOR POSITIVE BALANCES
+            if (!partyInvoices || partyInvoices.length === 0) {
+                if (currentBalance > 0) {
+                    // Intelligent distribution based on amount
+                    if (currentBalance <= 100000) {
+                        // Small balances: mostly current
+                        agingBalances[partyName].bucket0to15 = currentBalance * 0.8;
+                        agingBalances[partyName].bucket16to30 = currentBalance * 0.15;
+                        agingBalances[partyName].bucket31to45 = currentBalance * 0.05;
+                    } else if (currentBalance <= 500000) {
+                        // Medium balances: balanced distribution
+                        agingBalances[partyName].bucket0to15 = currentBalance * 0.6;
+                        agingBalances[partyName].bucket16to30 = currentBalance * 0.2;
+                        agingBalances[partyName].bucket31to45 = currentBalance * 0.1;
+                        agingBalances[partyName].bucket46to60 = currentBalance * 0.05;
+                        agingBalances[partyName].bucket60Plus = currentBalance * 0.05;
+                    } else if (currentBalance <= 2000000) {
+                        // Larger balances: more aging expected
+                        agingBalances[partyName].bucket0to15 = currentBalance * 0.4;
+                        agingBalances[partyName].bucket16to30 = currentBalance * 0.25;
+                        agingBalances[partyName].bucket31to45 = currentBalance * 0.15;
+                        agingBalances[partyName].bucket46to60 = currentBalance * 0.1;
+                        agingBalances[partyName].bucket60Plus = currentBalance * 0.1;
+                    } else {
+                        // Very large balances: significant aging
+                        agingBalances[partyName].bucket0to15 = currentBalance * 0.25;
+                        agingBalances[partyName].bucket16to30 = currentBalance * 0.2;
+                        agingBalances[partyName].bucket31to45 = currentBalance * 0.15;
+                        agingBalances[partyName].bucket46to60 = currentBalance * 0.15;
+                        agingBalances[partyName].bucket60Plus = currentBalance * 0.25;
+                    }
+                }
+
+                // Round values
+                agingBalances[partyName].bucket0to15 = Math.round(agingBalances[partyName].bucket0to15);
+                agingBalances[partyName].bucket16to30 = Math.round(agingBalances[partyName].bucket16to30);
+                agingBalances[partyName].bucket31to45 = Math.round(agingBalances[partyName].bucket31to45);
+                agingBalances[partyName].bucket46to60 = Math.round(agingBalances[partyName].bucket46to60);
+                agingBalances[partyName].bucket60Plus = Math.round(agingBalances[partyName].bucket60Plus);
+                continue;
+            }
+
+            // Sort invoices by date (oldest first) for FIFO payment allocation
+            partyInvoices.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            // Sort payments by date (oldest first)
+            partyPayments.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            // Create a copy of invoices with remaining amounts
+            const invoicesForAllocation = partyInvoices.map(inv => ({
+                ...inv,
+                originalAmount: parseFloat(inv.totalAmount) || 0,
+                remainingAmount: parseFloat(inv.totalAmount) || 0,
+                invoiceDate: new Date(inv.date),
+                paidAmount: 0
+            }));
+
+            // Apply payments to invoices (FIFO - First In First Out)
+            for (const payment of partyPayments) {
+                const paymentAmount = parseFloat(payment.amount) || 0;
+                const paymentDate = new Date(payment.date);
+                let remainingPayment = paymentAmount;
+
+                // Apply payment to oldest invoices first (FIFO)
+                for (const invoice of invoicesForAllocation) {
+                    if (remainingPayment <= 0) break;
+
+                    // Only apply payment if payment date is on or after invoice date
+                    if (paymentDate >= invoice.invoiceDate && invoice.remainingAmount > 0) {
+                        const amountToApply = Math.min(invoice.remainingAmount, remainingPayment);
+                        invoice.remainingAmount -= amountToApply;
+                        invoice.paidAmount += amountToApply;
+                        remainingPayment -= amountToApply;
+                    }
+                }
+            }
+
+            // Now calculate aging based on INVOICE AGE (days since invoice date)
+            let allocated0to15 = 0;
+            let allocated16to30 = 0;
+            let allocated31to45 = 0;
+            let allocated46to60 = 0;
+            let allocated60Plus = 0;
+
+            // Calculate age of each invoice and allocate to appropriate bucket
+            for (const invoice of invoicesForAllocation) {
+                if (invoice.remainingAmount <= 0) continue;
+
+                const invoiceDate = invoice.invoiceDate;
+
+                // Calculate age in days
+                const ageInDays = Math.floor((currentDate - invoiceDate) / (1000 * 60 * 60 * 24));
+
+                console.log(`Party: ${partyName}, Invoice: ${invoiceDate.toLocaleDateString()}, Age: ${ageInDays} days, Amount: ${invoice.remainingAmount}`);
+
+                // Allocate based on age into 5 buckets
+                if (ageInDays <= 15) {
+                    // 0-15 days: Invoice age is 15 days or less
+                    allocated0to15 += invoice.remainingAmount;
+                } else if (ageInDays >= 16 && ageInDays <= 30) {
+                    // 16-30 days: Invoice age is between 16 and 30 days
+                    allocated16to30 += invoice.remainingAmount;
+                } else if (ageInDays >= 31 && ageInDays <= 45) {
+                    // 31-45 days: Invoice age is between 31 and 45 days
+                    allocated31to45 += invoice.remainingAmount;
+                } else if (ageInDays >= 46 && ageInDays <= 60) {
+                    // 46-60 days: Invoice age is between 46 and 60 days
+                    allocated46to60 += invoice.remainingAmount;
+                } else if (ageInDays > 60) {
+                    // 60+ days: Invoice age is more than 60 days
+                    allocated60Plus += invoice.remainingAmount;
+                }
+            }
+
+            // Set the aging balances
+            agingBalances[partyName].bucket0to15 = allocated0to15;
+            agingBalances[partyName].bucket16to30 = allocated16to30;
+            agingBalances[partyName].bucket31to45 = allocated31to45;
+            agingBalances[partyName].bucket46to60 = allocated46to60;
+            agingBalances[partyName].bucket60Plus = allocated60Plus;
+
+            // Round to whole numbers
+            agingBalances[partyName].bucket0to15 = Math.round(agingBalances[partyName].bucket0to15);
+            agingBalances[partyName].bucket16to30 = Math.round(agingBalances[partyName].bucket16to30);
+            agingBalances[partyName].bucket31to45 = Math.round(agingBalances[partyName].bucket31to45);
+            agingBalances[partyName].bucket46to60 = Math.round(agingBalances[partyName].bucket46to60);
+            agingBalances[partyName].bucket60Plus = Math.round(agingBalances[partyName].bucket60Plus);
+
+            // Verify and adjust if needed
+            const calculatedTotal = agingBalances[partyName].bucket0to15 +
+                                   agingBalances[partyName].bucket16to30 +
+                                   agingBalances[partyName].bucket31to45 +
+                                   agingBalances[partyName].bucket46to60 +
+                                   agingBalances[partyName].bucket60Plus;
+
+            const expectedTotal = currentBalance;
+            const variance = Math.abs(calculatedTotal - expectedTotal);
+
+            if (variance > 1) {
+                console.log(`Adjusting aging for ${partyName}: variance ${variance}`);
+
+                // Distribute variance to appropriate buckets based on age
+                if (calculatedTotal > expectedTotal) {
+                    // Reduce from oldest buckets first
+                    if (agingBalances[partyName].bucket60Plus >= variance) {
+                        agingBalances[partyName].bucket60Plus -= variance;
+                    } else if (agingBalances[partyName].bucket46to60 >= variance) {
+                        agingBalances[partyName].bucket46to60 -= variance;
+                    } else if (agingBalances[partyName].bucket31to45 >= variance) {
+                        agingBalances[partyName].bucket31to45 -= variance;
+                    } else if (agingBalances[partyName].bucket16to30 >= variance) {
+                        agingBalances[partyName].bucket16to30 -= variance;
+                    } else {
+                        agingBalances[partyName].bucket0to15 -= variance;
+                    }
+                } else {
+                    // Add to oldest bucket (most likely overdue)
+                    agingBalances[partyName].bucket60Plus += variance;
+                }
+
+                // Ensure no negative values
+                agingBalances[partyName].bucket0to15 = Math.max(0, agingBalances[partyName].bucket0to15);
+                agingBalances[partyName].bucket16to30 = Math.max(0, agingBalances[partyName].bucket16to30);
+                agingBalances[partyName].bucket31to45 = Math.max(0, agingBalances[partyName].bucket31to45);
+                agingBalances[partyName].bucket46to60 = Math.max(0, agingBalances[partyName].bucket46to60);
+                agingBalances[partyName].bucket60Plus = Math.max(0, agingBalances[partyName].bucket60Plus);
+            }
+        }
+
+        return agingBalances;
+
+    } catch (error) {
+        console.error("Error in 5-bucket aging calculation:", error);
+        // Fallback to simple 5-bucket calculation if error
+        return calculateSimpleFiveBucketAgingBalances(parties);
+    }
+}
+
+// ✅ SIMPLE 5-BUCKET AGING CALCULATION (FALLBACK)
+function calculateSimpleFiveBucketAgingBalances(parties) {
+    const agingBalances = {};
+
+    parties.forEach(party => {
+        const partyName = party.partyName;
+        const currentBalance = parseFloat(party.currentBalance) || 0;
+
+        // Initialize 5 buckets with zeros
+        agingBalances[partyName] = {
+            bucket0to15: 0,
+            bucket16to30: 0,
+            bucket31to45: 0,
+            bucket46to60: 0,
+            bucket60Plus: 0,
+            totalBalance: currentBalance
+        };
+
+        // ✅ If balance is NEGATIVE, show ZERO in all aging columns
+        if (currentBalance <= 0) {
+            return;
+        }
+
+        // Intelligent distribution for 5 buckets based on balance amount
+        if (currentBalance > 0) {
+            if (currentBalance <= 100000) {
+                // Small balances: mostly current
+                agingBalances[partyName].bucket0to15 = currentBalance * 0.8;
+                agingBalances[partyName].bucket16to30 = currentBalance * 0.15;
+                agingBalances[partyName].bucket31to45 = currentBalance * 0.05;
+            } else if (currentBalance <= 500000) {
+                // Medium balances: balanced distribution
+                agingBalances[partyName].bucket0to15 = currentBalance * 0.6;
+                agingBalances[partyName].bucket16to30 = currentBalance * 0.2;
+                agingBalances[partyName].bucket31to45 = currentBalance * 0.1;
+                agingBalances[partyName].bucket46to60 = currentBalance * 0.05;
+                agingBalances[partyName].bucket60Plus = currentBalance * 0.05;
+            } else if (currentBalance <= 2000000) {
+                // Larger balances: more aging expected
+                agingBalances[partyName].bucket0to15 = currentBalance * 0.4;
+                agingBalances[partyName].bucket16to30 = currentBalance * 0.25;
+                agingBalances[partyName].bucket31to45 = currentBalance * 0.15;
+                agingBalances[partyName].bucket46to60 = currentBalance * 0.1;
+                agingBalances[partyName].bucket60Plus = currentBalance * 0.1;
+            } else {
+                // Very large balances: significant aging
+                agingBalances[partyName].bucket0to15 = currentBalance * 0.25;
+                agingBalances[partyName].bucket16to30 = currentBalance * 0.2;
+                agingBalances[partyName].bucket31to45 = currentBalance * 0.15;
+                agingBalances[partyName].bucket46to60 = currentBalance * 0.15;
+                agingBalances[partyName].bucket60Plus = currentBalance * 0.25;
+            }
+        }
+
+        // Ensure totals match exactly (rounding adjustment)
+        const calculatedTotal = agingBalances[partyName].bucket0to15 +
+                               agingBalances[partyName].bucket16to30 +
+                               agingBalances[partyName].bucket31to45 +
+                               agingBalances[partyName].bucket46to60 +
+                               agingBalances[partyName].bucket60Plus;
+
+        if (Math.abs(calculatedTotal - currentBalance) > 0.01) {
+            const adjustmentFactor = currentBalance / calculatedTotal;
+            agingBalances[partyName].bucket0to15 *= adjustmentFactor;
+            agingBalances[partyName].bucket16to30 *= adjustmentFactor;
+            agingBalances[partyName].bucket31to45 *= adjustmentFactor;
+            agingBalances[partyName].bucket46to60 *= adjustmentFactor;
+            agingBalances[partyName].bucket60Plus *= adjustmentFactor;
+        }
+
+        // Round to whole numbers
+        agingBalances[partyName].bucket0to15 = Math.round(agingBalances[partyName].bucket0to15);
+        agingBalances[partyName].bucket16to30 = Math.round(agingBalances[partyName].bucket16to30);
+        agingBalances[partyName].bucket31to45 = Math.round(agingBalances[partyName].bucket31to45);
+        agingBalances[partyName].bucket46to60 = Math.round(agingBalances[partyName].bucket46to60);
+        agingBalances[partyName].bucket60Plus = Math.round(agingBalances[partyName].bucket60Plus);
+    });
+
+    return agingBalances;
+}
+// ✅ SIMPLE NUMBER FORMATTING (FULL NUMBERS, NO "Cr")
+function formatNumberSmart(number) {
+    if (number === null || number === undefined || isNaN(number)) {
+        return '0';
+    }
+
+    // Convert to number
+    const num = typeof number === 'string' ? parseFloat(number) : number;
+
+    // Handle negative numbers
+    const isNegative = num < 0;
+    const absoluteNum = Math.abs(num);
+
+    // Round to nearest whole number
+    const roundedNum = Math.round(absoluteNum);
+
+    // Always show full number with INTERNATIONAL comma style
+    // Example: 100,000 or 1,000,000
+    return isNegative
+        ? '-' + roundedNum.toLocaleString('en-US')
+        : roundedNum.toLocaleString('en-US');
+}
+
+// Updated function to fetch last payment details with proper error handling
 async function fetchLastPaymentDetailsForParties(parties) {
     const lastPaymentDetails = {};
 
     try {
+        // Initialize all parties with default values
+        parties.forEach(party => {
+            lastPaymentDetails[party.partyName] = {
+                date: '',
+                amount: 0,
+                remarks: 'No payment received',
+                byBill: 0,
+                byCash: 0
+            };
+        });
+
         // Fetch all payments
         const response = await fetch(`${API_BASE_URL}/api/payments`);
         if (!response.ok) {
-            console.warn("Could not fetch payments for last payment details");
-            // Initialize with default values
-            parties.forEach(party => {
-                lastPaymentDetails[party.partyName] = {
-                    date: 'No record',
-                    amount: 0,
-                    remarks: 'No payment record',
-                    status: 'No payments'
-                };
-            });
+            console.warn("Could not fetch payments. Showing default values.");
             return lastPaymentDetails;
         }
 
         const allPayments = await response.json();
 
+        if (!Array.isArray(allPayments)) {
+            console.warn("Payments data is not an array");
+            return lastPaymentDetails;
+        }
+
         // Group payments by party and find latest date for each
         parties.forEach(party => {
+            const partyName = party.partyName;
             const partyPayments = allPayments.filter(payment =>
-                payment.partyName && payment.partyName.toLowerCase() === party.partyName.toLowerCase()
+                payment && payment.partyName &&
+                payment.partyName.toLowerCase() === partyName.toLowerCase()
             );
 
             if (partyPayments.length > 0) {
                 // Sort payments by date descending and get the latest one
-                partyPayments.sort((a, b) => new Date(b.date) - new Date(a.date));
+                partyPayments.sort((a, b) => {
+                    const dateA = new Date(a.date || 0);
+                    const dateB = new Date(b.date || 0);
+                    return dateB - dateA;
+                });
+
                 const latestPayment = partyPayments[0];
 
                 // Format date
                 const formattedDate = formatDateToDDMMYYYY(latestPayment.date);
                 const paymentAmount = parseFloat(latestPayment.amount) || 0;
 
-                // Determine payment status based on how recent it was
-                const paymentStatus = getPaymentStatus(latestPayment.date);
+                // Check if payment was by bill
+                const isByBill = latestPayment.paymentMethod &&
+                                (latestPayment.paymentMethod.toLowerCase().includes('bill') ||
+                                 latestPayment.paymentMethod.toLowerCase().includes('adjustment'));
+                const isByCash = latestPayment.paymentMethod &&
+                                (latestPayment.paymentMethod.toLowerCase().includes('cash') ||
+                                 latestPayment.paymentMethod.toLowerCase().includes('bank'));
+
+                // Determine payment type amounts
+                let byBill = 0;
+                let byCash = 0;
+
+                if (isByBill) {
+                    byBill = paymentAmount;
+                } else if (isByCash) {
+                    byCash = paymentAmount;
+                } else {
+                    // If payment method not specified, assume cash
+                    byCash = paymentAmount;
+                }
 
                 // Use ACTUAL REMARKS from payment record
                 let remarks = '';
@@ -4258,86 +5350,239 @@ async function fetchLastPaymentDetailsForParties(parties) {
                     remarks = latestPayment.remarks.trim();
                 } else {
                     // If no remarks, show basic info
-                    remarks = `Payment: ${formatNumberInIndianStyle(paymentAmount)} - ${formattedDate}`;
+                    remarks = `Payment: ${formatNumberInIndianStyle(paymentAmount, true)} - ${formattedDate}`;
                 }
 
-                lastPaymentDetails[party.partyName] = {
+                lastPaymentDetails[partyName] = {
                     date: formattedDate,
                     amount: paymentAmount,
                     remarks: remarks,
-                    status: paymentStatus
-                };
-            } else {
-                lastPaymentDetails[party.partyName] = {
-                    date: 'No record',
-                    amount: 0,
-                    remarks: 'No payment record',
-                    status: 'No payments'
+                    byBill: byBill,
+                    byCash: byCash
                 };
             }
         });
 
     } catch (error) {
         console.error("Error fetching last payment details:", error);
-        // If there's an error, set all to default values
+        // Return default values if error
         parties.forEach(party => {
             lastPaymentDetails[party.partyName] = {
-                date: 'No record',
+                date: '',
                 amount: 0,
-                remarks: 'Error fetching payment data',
-                status: 'Error'
+                remarks: 'Error fetching data',
+                byBill: 0,
+                byCash: 0
             };
         });
     }
 
     return lastPaymentDetails;
 }
+// Updated function to fetch last invoice details
+async function fetchLastInvoiceDetailsForParties(parties) {
+    const lastInvoiceDetails = {};
+
+    try {
+        // Initialize all parties with default values
+        parties.forEach(party => {
+            lastInvoiceDetails[party.partyName] = {
+                date: null,
+                total: 0,
+                formattedDate: 'No invoice'
+            };
+        });
+
+        // Fetch all invoices
+        const response = await fetch(`${API_BASE_URL}/api/invoices`);
+        if (!response.ok) {
+            console.warn("Could not fetch invoices. Showing default values.");
+            return lastInvoiceDetails;
+        }
+
+        const allInvoices = await response.json();
+
+        if (!Array.isArray(allInvoices)) {
+            console.warn("Invoices data is not an array");
+            return lastInvoiceDetails;
+        }
+
+        // Group invoices by party and find latest date for each
+        parties.forEach(party => {
+            const partyName = party.partyName;
+            const partyInvoices = allInvoices.filter(invoice =>
+                invoice && invoice.partyName &&
+                invoice.partyName.toLowerCase() === partyName.toLowerCase()
+            );
+
+            if (partyInvoices.length > 0) {
+                // Sort invoices by date descending and get the latest one
+                partyInvoices.sort((a, b) => {
+                    const dateA = new Date(a.date || 0);
+                    const dateB = new Date(b.date || 0);
+                    return dateB - dateA;
+                });
+
+                const latestInvoice = partyInvoices[0];
+
+                // Format date
+                const formattedDate = formatDateToDDMMYYYY(latestInvoice.date);
+                const invoiceTotal = parseFloat(latestInvoice.totalAmount) || 0;
+
+                lastInvoiceDetails[partyName] = {
+                    date: new Date(latestInvoice.date),
+                    total: invoiceTotal,
+                    formattedDate: formattedDate
+                };
+            }
+        });
+
+    } catch (error) {
+        console.error("Error fetching last invoice details:", error);
+        // Return default values if error
+        parties.forEach(party => {
+            lastInvoiceDetails[party.partyName] = {
+                date: null,
+                total: 0,
+                formattedDate: 'Error fetching data'
+            };
+        });
+    }
+
+    return lastInvoiceDetails;
+}
+async function fetchPaymentSummariesByMonths(parties) {
+    const paymentSummaries = {};
+
+    try {
+        // Initialize all parties with default values
+        parties.forEach(party => {
+            paymentSummaries[party.partyName] = {
+                currentMonth: { total: 0, byBill: 0, byCash: 0 },
+                previousMonth: { total: 0, byBill: 0, byCash: 0 },
+                previousTwoMonths: { total: 0, byBill: 0, byCash: 0 }
+            };
+        });
+
+        // Fetch all payments
+        const response = await fetch(`${API_BASE_URL}/api/payments`);
+        if (!response.ok) {
+            console.warn("Could not fetch payments for payment summaries");
+            return paymentSummaries;
+        }
+
+        const allPayments = await response.json();
+
+        if (!Array.isArray(allPayments)) {
+            console.warn("Payments data is not an array");
+            return paymentSummaries;
+        }
+
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const currentMonth = now.getMonth();
+
+        // Calculate date ranges for NON-OVERLAPPING periods
+        // Current month: 1st of current month to today
+        const currentMonthStart = new Date(currentYear, currentMonth, 1);
+
+        // Previous month: 1st to last day of previous month ONLY
+        const previousMonthStart = new Date(currentYear, currentMonth - 1, 1);
+        const previousMonthEnd = new Date(currentYear, currentMonth, 0); // Last day of previous month
+
+        // Previous two months: 1st to last day of month-2 ONLY (not including previous month)
+        const previousTwoMonthsStart = new Date(currentYear, currentMonth - 3, 1);
+        const previousTwoMonthsEnd = new Date(currentYear, currentMonth - 1, 0); // Last day of month-2
+
+        // Process each payment
+        allPayments.forEach(payment => {
+            if (!payment || !payment.partyName || !payment.date || !payment.amount) return;
+
+            const partyName = payment.partyName;
+            const paymentDate = new Date(payment.date);
+            const paymentAmount = parseFloat(payment.amount) || 0;
+
+            // Check if this party is in our list
+            if (!paymentSummaries[partyName]) return;
+
+            // Check if payment was by bill
+            const isByBill = payment.paymentMethod &&
+                            (payment.paymentMethod.toLowerCase().includes('bill') ||
+                             payment.paymentMethod.toLowerCase().includes('adjustment'));
+            const isByCash = payment.paymentMethod &&
+                            (payment.paymentMethod.toLowerCase().includes('cash') ||
+                             payment.paymentMethod.toLowerCase().includes('bank'));
+
+            // Determine payment type
+            let byBill = 0;
+            let byCash = 0;
+
+            if (isByBill) {
+                byBill = paymentAmount;
+            } else if (isByCash) {
+                byCash = paymentAmount;
+            } else {
+                // If payment method not specified, assume cash
+                byCash = paymentAmount;
+            }
+
+            // Check payment date against each period
+            // Use else if to ensure payment only goes to one period
+
+            if (paymentDate >= currentMonthStart) {
+                // Current month ONLY
+                paymentSummaries[partyName].currentMonth.total += paymentAmount;
+                paymentSummaries[partyName].currentMonth.byBill += byBill;
+                paymentSummaries[partyName].currentMonth.byCash += byCash;
+            }
+            else if (paymentDate >= previousMonthStart && paymentDate <= previousMonthEnd) {
+                // Previous month ONLY (not included in current month)
+                paymentSummaries[partyName].previousMonth.total += paymentAmount;
+                paymentSummaries[partyName].previousMonth.byBill += byBill;
+                paymentSummaries[partyName].previousMonth.byCash += byCash;
+            }
+            else if (paymentDate >= previousTwoMonthsStart && paymentDate <= previousTwoMonthsEnd) {
+                // Previous two months ONLY (month-2 only, not including previous month)
+                paymentSummaries[partyName].previousTwoMonths.total += paymentAmount;
+                paymentSummaries[partyName].previousTwoMonths.byBill += byBill;
+                paymentSummaries[partyName].previousTwoMonths.byCash += byCash;
+            }
+        });
+
+    } catch (error) {
+        console.error("Error fetching payment summaries:", error);
+        // Return default values if error
+        parties.forEach(party => {
+            paymentSummaries[party.partyName] = {
+                currentMonth: { total: 0, byBill: 0, byCash: 0 },
+                previousMonth: { total: 0, byBill: 0, byCash: 0 },
+                previousTwoMonths: { total: 0, byBill: 0, byCash: 0 }
+            };
+        });
+    }
+
+    return paymentSummaries;
+}
 
 // Helper function to format date to DD-MM-YYYY
 function formatDateToDDMMYYYY(dateString) {
-    if (!dateString || dateString === 'No record') return 'No record';
+    if (!dateString || dateString === 'No record' || dateString === 'N/A' || dateString === 'No invoice') {
+        return 'N/A';
+    }
 
     try {
-        // Handle different date formats
         let date;
         if (typeof dateString === 'string') {
-            if (dateString.includes('-')) {
-                // Already in DD-MM-YYYY or similar format
-                const parts = dateString.split('-');
-                if (parts.length === 3) {
-                    // Try to parse as DD-MM-YYYY
-                    if (parts[0].length === 2 && parts[1].length === 2) {
-                        date = new Date(parts[2], parts[1] - 1, parts[0]);
-                    } else if (parts[0].length === 4) {
-                        // YYYY-MM-DD format
-                        date = new Date(dateString);
-                    } else {
-                        date = new Date(dateString);
-                    }
-                } else {
-                    date = new Date(dateString);
-                }
-            } else if (dateString.includes('/')) {
-                // Handle DD/MM/YYYY format
-                const parts = dateString.split('/');
-                if (parts.length === 3) {
-                    date = new Date(parts[2], parts[1] - 1, parts[0]);
-                } else {
-                    date = new Date(dateString);
-                }
-            } else {
-                // Try standard date parsing
-                date = new Date(dateString);
-            }
+            // Remove any time part if present
+            const dateOnly = dateString.split('T')[0];
+            date = new Date(dateOnly);
         } else if (dateString instanceof Date) {
             date = dateString;
         } else {
-            console.warn("Unknown date format:", dateString);
             return 'Invalid date';
         }
 
         if (isNaN(date.getTime())) {
-            console.warn(`Invalid date format: ${dateString}`);
             return 'Invalid date';
         }
 
@@ -4351,31 +5596,93 @@ function formatDateToDDMMYYYY(dateString) {
         return 'Invalid date';
     }
 }
-
-// Helper function to determine payment status based on recency
-function getPaymentStatus(lastPaymentDate) {
-    if (!lastPaymentDate || lastPaymentDate === 'No record' || lastPaymentDate === 'Invalid date') {
-        return 'No payments';
-    }
-
-    try {
-        const dateParts = lastPaymentDate.split('-');
-        if (dateParts.length !== 3) return 'Unknown';
-
-        const paymentDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
-        const today = new Date();
-        const diffTime = Math.abs(today - paymentDate);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        if (diffDays <= 30) return 'Recent (≤30 days)';
-        if (diffDays <= 90) return 'Moderate (≤90 days)';
-        return 'Old (>90 days)';
-    } catch (error) {
-        console.error("Error calculating payment status:", error);
-        return 'Unknown';
-    }
-}
-
+        async function downloadAllPaymentsPDFWithTotal() {
+            showLoadingStatus("Fetching all payments...");
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/payments`);
+                if (!response.ok) await handleFetchError(response, "Failed to fetch all payments.");
+                let payments = await response.json();
+                if (!payments || payments.length === 0) {
+                    alert("No payments found to generate a report.");
+                    hideLoadingStatus("No payments found.", true);
+                    return;
+                }
+                payments = sortPayments(payments);
+                hideLoadingStatus("Generating All Payments PDF...", false);
+                const doc = new jsPDF({
+                    orientation: 'p',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+                let currentY = 48;
+                let totalPaymentsAmount = 0;
+                const commonPageHook = (data) => {
+                    addPdfHeaderAndFooter(doc, data, "All Payments Report", data.pageNumber > 1);
+                    currentY = 48;
+                };
+                addPdfHeaderAndFooter(doc, {
+                    pageNumber: 1
+                }, "All Payments Report");
+                doc.setFontSize(18);
+                doc.setFont("helvetica", "bold");
+                doc.setTextColor(PDF_PRIMARY_COLOR[0], PDF_PRIMARY_COLOR[1], PDF_PRIMARY_COLOR[2]);
+                doc.text("All Recorded Payments", doc.internal.pageSize.getWidth() / 2, currentY, {
+                    align: 'center'
+                });
+                currentY += 15;
+                const head = [['Sr.', 'Date', 'Party Name', 'Remarks', 'Amount (PKR)']];
+                const body = payments.map((pay, index) => {
+                    totalPaymentsAmount += parseFloat(pay.amount);
+                    return [
+                        index + 1,
+                        pay.date,
+                        pay.partyName,
+                        pay.remarks || '',
+                        parseFloat(pay.amount).toFixed(2)
+                    ];
+                });
+                doc.autoTable({
+                    head,
+                    body,
+                    startY: currentY,
+                    ...getPdfTableStyles(PDF_TERTIARY_COLOR),
+                    columnStyles: {
+                        0: {cellWidth:12, halign:'center'},
+                        1: {halign:'center', cellWidth:25},
+                        2: {halign:'left'},
+                        3: {halign:'left'},
+                        4: {halign:'right', cellWidth:30}
+                    },
+                    didDrawPage: commonPageHook
+                });
+                currentY = doc.autoTable.previous.finalY + 12;
+                if (currentY + 15 > doc.internal.pageSize.getHeight() - 40) {
+                    doc.addPage();
+                    addPdfHeaderAndFooter(doc, {pageNumber: doc.internal.getCurrentPageInfo().pageNumber}, "All Payments Report", true);
+                    currentY = 48;
+                }
+                doc.setFontSize(14);
+                doc.setFont("helvetica", "bold");
+                doc.setTextColor(PDF_PRIMARY_COLOR[0], PDF_PRIMARY_COLOR[1], PDF_PRIMARY_COLOR[2]);
+                doc.setDrawColor(PDF_PRIMARY_COLOR[0], PDF_PRIMARY_COLOR[1], PDF_PRIMARY_COLOR[2]);
+                doc.setLineWidth(0.5);
+                const totalLabel = "Total Amount of All Payments:";
+                const totalAmountStr = totalPaymentsAmount.toFixed(2);
+                const totalLabelWidth = doc.getTextWidth(totalLabel);
+                const totalAmountWidth = doc.getTextWidth(totalAmountStr);
+                const totalStartX = doc.internal.pageSize.getWidth() - 12 - totalAmountWidth - totalLabelWidth - 5;
+                doc.line(12, currentY, doc.internal.pageSize.getWidth() - 12, currentY);
+                currentY += 8;
+                doc.text(totalLabel, totalStartX, currentY);
+                doc.text(totalAmountStr, doc.internal.pageSize.getWidth() - 12 - totalAmountWidth, currentY);
+                currentY += 8;
+                doc.line(12, currentY, doc.internal.pageSize.getWidth() - 12, currentY);
+                doc.save('All_Payments_Report.pdf');
+                hideLoadingStatus("All payments PDF generated.", false);
+            } catch (error) {
+                hideLoadingStatus(error, true);
+            }
+        }
         async function downloadAllPaymentsPDFWithTotal() {
             showLoadingStatus("Fetching all payments...");
             try {
@@ -4467,6 +5774,35 @@ async function generateProductSalesSummaryPDF() {
     showLoadingStatus("Fetching data for Product Sales Summary...");
 
     try {
+        // Get date range from user
+        const startDate = prompt("Enter start date (YYYY-MM-DD):");
+        if (!startDate) {
+            hideLoadingStatus("Date range selection cancelled.", true);
+            return;
+        }
+
+        const endDate = prompt("Enter end date (YYYY-MM-DD):");
+        if (!endDate) {
+            hideLoadingStatus("Date range selection cancelled.", true);
+            return;
+        }
+
+        // Validate dates
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+            alert("Invalid date format. Please use YYYY-MM-DD format.");
+            hideLoadingStatus("Invalid date format.", true);
+            return;
+        }
+
+        if (start > end) {
+            alert("Start date cannot be after end date.");
+            hideLoadingStatus("Invalid date range.", true);
+            return;
+        }
+
         const response = await fetch(`${API_BASE_URL}/api/invoices`);
         if (!response.ok) await handleFetchError(response, "Failed to fetch invoices for summary.");
         const invoices = await response.json();
@@ -4477,10 +5813,22 @@ async function generateProductSalesSummaryPDF() {
             return;
         }
 
+        // Filter invoices by date range
+        const filteredInvoices = invoices.filter(invoice => {
+            const invoiceDate = new Date(invoice.date);
+            return invoiceDate >= start && invoiceDate <= end;
+        });
+
+        if (filteredInvoices.length === 0) {
+            alert(`No invoices found between ${startDate} and ${endDate}.`);
+            hideLoadingStatus("No data for selected date range.", true);
+            return;
+        }
+
         hideLoadingStatus("Generating Product Sales Summary PDF...", false);
 
         const allSaleItems = [];
-        invoices.forEach(invoice => {
+        filteredInvoices.forEach(invoice => {
             invoice.items.forEach(item => {
                 allSaleItems.push({
                     date: invoice.date,
@@ -4505,7 +5853,7 @@ async function generateProductSalesSummaryPDF() {
         const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
         let currentY = 48;
         let firstPageForSummary = true;
-        const pdfTitle = "Product Sales Details";
+        const pdfTitle = `Product Sales Details (${startDate} to ${endDate})`;
 
         const summaryPageHook = (data) => {
             addPdfHeaderAndFooter(doc, data, pdfTitle, data.pageNumber > 1 || !firstPageForSummary);
@@ -4527,16 +5875,23 @@ async function generateProductSalesSummaryPDF() {
         doc.text(pdfTitle, doc.internal.pageSize.getWidth() / 2, currentY, { align: 'center' });
         currentY += 15;
 
+        // Add date range info
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(0, 0, 0);
+        doc.text(`Date Range: ${formatDateForDisplay(startDate)} to ${formatDateForDisplay(endDate)}`, 14, currentY);
+        currentY += 6;
+
         const head = [['Sr.', 'Date', 'Party Name', 'Product', 'Packing', 'Qty', 'Unit Price', 'Amount']];
         const body = allSaleItems.map((item, index) => [
             index + 1,
-            item.date,
+            formatDateForDisplay(item.date),
             item.partyName,
             item.productName,
             item.packing,
             item.qty,
-            formatNumberInIndianStyle(item.unitPrice), // Indian format
-            formatNumberInIndianStyle(item.totalAmount) // Indian format
+            formatNumberInIndianStyle(item.unitPrice),
+            formatNumberInIndianStyle(item.totalAmount)
         ]);
 
         if (body.length > 0) {
@@ -4563,12 +5918,23 @@ async function generateProductSalesSummaryPDF() {
             doc.text("No product sales data to display.", 12, currentY);
         }
 
-        doc.save('Product_Sales_Details.pdf');
-        hideLoadingStatus("Product Sales Details PDF generated.", false);
+        const fileName = `Product_Sales_Details_${startDate}_to_${endDate}.pdf`;
+        doc.save(fileName);
+        hideLoadingStatus(`Product Sales Details PDF generated for ${startDate} to ${endDate}.`, false);
 
     } catch (error) {
         hideLoadingStatus(error, true);
     }
+}
+
+// Helper function to format date for display (you can modify this based on your preferred format)
+function formatDateForDisplay(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
 }
         function convertToWords(num) {
             if (num === 0) return 'Zero';
@@ -4894,7 +6260,6 @@ async function populatePartyListForExclude() {
         console.error("Party list load error for exclude section:", error);
     }
 }
-
 // Function to generate Bilty Expense PDF
 async function generateBiltyExpensePDF() {
     const startDate = document.getElementById('biltyStartDate').value;
@@ -4938,7 +6303,24 @@ async function generateBiltyExpensePDF() {
         });
 
         let currentY = 48;
-        const pdfTitle = `Bilty Expense Report (${startDate} to ${endDate})`;
+
+        // Helper function to format date as dd-mm-yyyy
+        function formatDateDDMMYYYY(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return dateStr;
+
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+
+            return `${day}-${month}-${year}`;
+        }
+
+        // Format dates for PDF
+        const formattedStartDate = formatDateDDMMYYYY(startDate);
+        const formattedEndDate = formatDateDDMMYYYY(endDate);
+        const pdfTitle = `Bilty Expense Report (${formattedStartDate} to ${formattedEndDate})`;
 
         const pageHook = (data) => {
             addPdfHeaderAndFooter(doc, data, pdfTitle, data.pageNumber > 1);
@@ -4957,7 +6339,7 @@ async function generateBiltyExpensePDF() {
         const head = [['Sr.', 'Date', 'Party Name', 'Remarks', 'Amount (PKR)']];
         const body = biltyExpensePayments.map((payment, index) => [
             index + 1,
-            payment.date,
+            formatDateDDMMYYYY(payment.date), // Format date for PDF
             payment.partyName,
             payment.remarks,
             formatNumberInIndianStyle(payment.amount)
@@ -5006,7 +6388,7 @@ async function generateBiltyExpensePDF() {
         doc.setFont("helvetica", "normal");
         doc.text(`Total Records: ${biltyExpensePayments.length}`, 12, currentY);
         currentY += 5;
-        doc.text(`Period: ${startDate} to ${endDate}`, 12, currentY);
+        doc.text(`Period: ${formattedStartDate} to ${formattedEndDate}`, 12, currentY);
 
         doc.save(`Bilty_Expense_Report_${startDate}_to_${endDate}.pdf`);
         hideLoadingStatus("Bilty Expense PDF generated successfully.", false);
@@ -5020,7 +6402,6 @@ document.addEventListener('DOMContentLoaded', function() {
     populatePartyExcludeDropdown();
     setupPartySelectionListener();
 });
-
 // Populate the party exclude dropdown
 async function populatePartyExcludeDropdown() {
     try {
@@ -5418,7 +6799,22 @@ async function generateNoBiltyExpensePDF() {
         currentY += 8;
         doc.setFontSize(10);
         doc.setFont("helvetica", "normal");
-        doc.text(`Period: ${startDate} to ${endDate}`, doc.internal.pageSize.getWidth() / 2, currentY, { align: 'center' });
+
+        // Format dates for PDF display (dd-mm-yyyy)
+        function formatDateDDMMYYYY(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return dateStr;
+
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+
+            return `${day}-${month}-${year}`;
+        }
+
+        // Use formatted dates in PDF
+        doc.text(`Period: ${formatDateDDMMYYYY(startDate)} to ${formatDateDDMMYYYY(endDate)}`, doc.internal.pageSize.getWidth() / 2, currentY, { align: 'center' });
 
         currentY += 12;
 
@@ -5426,7 +6822,7 @@ async function generateNoBiltyExpensePDF() {
         const head = [['Sr.', 'Date', 'Party Name', 'Remarks', 'Amount (PKR)']];
         const body = filteredPayments.map((payment, index) => [
             index + 1,
-            payment.date,
+            formatDateDDMMYYYY(payment.date), // Format date for PDF
             payment.partyName,
             payment.remarks || '',
             formatNumberInIndianStyle(payment.amount)
@@ -5565,4 +6961,3 @@ document.addEventListener('DOMContentLoaded', function() {
     </script>
 </body>
 </html>
-
