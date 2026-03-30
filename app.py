@@ -1046,6 +1046,8 @@ def get_opening_balance_history(party_name):
         traceback.print_exc()
         return jsonify({"error": f"Error fetching opening balance history: {str(e)}"}), 500
 if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 5000))  # Replit sets this automatically
+
     if not os.path.exists(DATABASE_FILE):
         print(f"Database file '{DATABASE_FILE}' not found. Initializing database.")
         init_db()
@@ -1053,7 +1055,8 @@ if __name__ == '__main__':
         # Check tables exist on every startup, but don't clear data unless specified
         print(f"Database file '{DATABASE_FILE}' found. Checking schema.")
         init_db(clear_existing_data=False)
-    print(f"Starting Flask server on http://127.0.0.1:5000")
-    print("Ensure your HTML frontend makes API calls to this address.")
-    app.run(debug=True, port=5000)
+
+    print(f"Starting Flask server on http://0.0.0.0:{port}")
+    print("Ensure your HTML frontend makes API calls to this address or the Replit URL.")
+    app.run(host='0.0.0.0', port=port, debug=True)
 
