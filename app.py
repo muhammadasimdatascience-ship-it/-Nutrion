@@ -1,3 +1,4 @@
+import streamlit as st
 import os
 import sqlite3
 import traceback
@@ -13,19 +14,14 @@ INITIAL_INVOICE_NUMBER = 30
 app = Flask(__name__)
 CORS(app)
 
-
 # --- Database Helper Functions ---
-
 def get_db_connection():
     conn = sqlite3.connect(DATABASE_FILE)
     conn.row_factory = sqlite3.Row
     return conn
-
-
 def init_db(clear_existing_data=False):
     conn = get_db_connection()
     cursor = conn.cursor()
-
     if clear_existing_data:
         print("Clearing existing data from all tables...")
         cursor.execute("DROP TABLE IF EXISTS opening_balance_adjustments")
@@ -35,7 +31,6 @@ def init_db(clear_existing_data=False):
         cursor.execute("DROP TABLE IF EXISTS parties")
         cursor.execute("DROP TABLE IF EXISTS stock")
         print("Existing tables dropped.")
-
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS parties (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,7 +38,6 @@ def init_db(clear_existing_data=False):
             initial_opening_balance REAL DEFAULT 0.0
         )
     ''')
-
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS opening_balance_adjustments (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
